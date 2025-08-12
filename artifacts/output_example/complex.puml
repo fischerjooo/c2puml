@@ -176,6 +176,13 @@ class "complex_naming_test_t_third_struct_struct_union_struct" as TYPEDEF_COMPLE
     + int struct_union_struct_field
 }
 
+class "config_param" as TYPEDEF_CONFIG_PARAM <<struct>> #LightYellow
+{
+    + int config_flags
+    + char[64] config_name
+    + config_value config_value
+}
+
 class "data_item_t" as TYPEDEF_DATA_ITEM_T <<struct>> #LightYellow
 {
     + config_value value
@@ -481,11 +488,53 @@ class "complex_naming_test_t_mixed_union" as TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED
     + complex_naming_test_t_mixed_union_deep_in_union deep_in_union
 }
 
+class "config_param_config_value" as TYPEDEF_CONFIG_PARAM_CONFIG_VALUE <<union>> #LightYellow
+{
+    + int int_config
+    + float float_config
+}
+
+class "config_value" as TYPEDEF_CONFIG_VALUE <<union>> #LightYellow
+{
+    + int int_config
+    + float float_config
+}
+
+class "data_union" as TYPEDEF_DATA_UNION <<union>> #LightYellow
+{
+    + int int_value
+    + float float_value
+    + char[64] string_value
+    + data_union_point_value point_value
+}
+
+class "first_anon_union" as TYPEDEF_FIRST_ANON_UNION <<union>> #LightYellow
+{
+    + int union_int
+    + float union_float
+}
+
+class "first_union" as TYPEDEF_FIRST_UNION <<union>> #LightYellow
+{
+    + int union_field1
+}
+
 class "item_value" as TYPEDEF_ITEM_VALUE <<union>> #LightYellow
 {
     + int int_data
     + float float_data
     + item_value_point_data point_data
+}
+
+class "level3_union" as TYPEDEF_LEVEL3_UNION <<union>> #LightYellow
+{
+    + int level3_int
+    + float level3_float
+}
+
+class "mixed_union" as TYPEDEF_MIXED_UNION <<union>> #LightYellow
+{
+    + mixed_union_mixed_struct mixed_struct
 }
 
 class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
@@ -512,10 +561,21 @@ class "multiple_simple_anonymous_t_second_union" as TYPEDEF_MULTIPLE_SIMPLE_ANON
     + int union_field2
 }
 
+class "result_data" as TYPEDEF_RESULT_DATA <<union>> #LightYellow
+{
+    + int success_value
+    + char[128] error_message
+}
+
 class "result_generator_t_result_data" as TYPEDEF_RESULT_GENERATOR_T_RESULT_DATA <<union>> #LightYellow
 {
     + int success_value
     + char[128] error_message
+}
+
+class "second_union" as TYPEDEF_SECOND_UNION <<union>> #LightYellow
+{
+    + int union_field2
 }
 
 class "struct_union" as TYPEDEF_STRUCT_UNION <<union>> #LightYellow

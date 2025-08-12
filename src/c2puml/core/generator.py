@@ -196,30 +196,20 @@ class Generator:
         funcptr_alias_names: set[str],
     ):
         """Generate typedef classes for all files in include tree"""
-        # Build suppression sets to avoid duplicate typedefs like RESULT_DATA vs RESULT_GENERATOR_T_RESULT_DATA
+        # Build suppression sets driven by anonymous_relationships to avoid removing legitimate types
+        # Only suppress a short name if it matches the trailing segment of a child extracted from a parent
         suppressed_structs: set[str] = set()
         suppressed_unions: set[str] = set()
-
-        # Compute suffix-based duplicates across all files
-        all_struct_names: List[str] = []
-        all_union_names: List[str] = []
         for _, fm in include_tree.items():
-            all_struct_names.extend(list(fm.structs.keys()))
-            all_union_names.extend(list(fm.unions.keys()))
-
-        # Suppress short names when a longer name exists that ends with _<short>
-        def compute_suffix_suppression(names: List[str]) -> set[str]:
-            names_set = set(names)
-            suppressed: set[str] = set()
-            for name in names_set:
-                for other in names_set:
-                    if other != name and (other.endswith("_" + name) or other.endswith(name) and len(other) > len(name) and ("_" + name) in other):
-                        suppressed.add(name)
-                        break
-            return suppressed
-
-        suppressed_structs |= compute_suffix_suppression(all_struct_names)
-        suppressed_unions |= compute_suffix_suppression(all_union_names)
+            for parent, children in fm.anonymous_relationships.items():
+                for child in children:
+                    # Child is the extracted type name like Parent_field
+                    short = child.split("_")[-1]
+                    # If a standalone struct/union also exists with this short name, mark for suppression
+                    if short in fm.structs and child in fm.structs:
+                        suppressed_structs.add(short)
+                    if short in fm.unions and child in fm.unions:
+                        suppressed_unions.add(short)
 
         for file_path, file_data in sorted(include_tree.items()):
             self._generate_typedef_classes(
@@ -693,8 +683,6 @@ class Generator:
     ):
         """Generate classes for union typedefs"""
         for union_name, union_data in sorted(file_model.unions.items()):
-            if union_name in suppressed_unions:
-                continue
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(

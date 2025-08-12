@@ -80,6 +80,12 @@ class "enabled_feature_t" as TYPEDEF_ENABLED_FEATURE_T <<struct>> #LightYellow
     + char[32] name
 }
 
+class "enabled_t" as TYPEDEF_ENABLED_T <<struct>> #LightYellow
+{
+    + int enabled_id
+    + char[32] enabled_name
+}
+
 class "feature_struct_t" as TYPEDEF_FEATURE_STRUCT_T <<struct>> #LightYellow
 {
     + int feature_id
