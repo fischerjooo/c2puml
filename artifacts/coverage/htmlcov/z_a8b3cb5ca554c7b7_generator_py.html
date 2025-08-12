@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">456 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">371<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">85<span class="text"> missing</span></button>
+            <span class="text">454 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">370<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">84<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a8b3cb5ca554c7b7_parser_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-12 12:02 +0000
+            created at 2025-08-12 16:48 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -998,27 +998,23 @@
     <p class="run"><span class="n"><a id="t916" href="#t916">916</a></span><span class="t">                <span class="nam">lines</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">relationship</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t917" href="#t917">917</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t918" href="#t918">918</a></span><span class="t">    <span class="key">def</span> <span class="nam">_get_anonymous_uml_id</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">entity_name</span><span class="op">:</span> <span class="nam">str</span><span class="op">,</span> <span class="nam">uml_ids</span><span class="op">:</span> <span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">)</span> <span class="op">-></span> <span class="nam">Optional</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t919" href="#t919">919</a></span><span class="t">        <span class="str">"""Get UML ID for an anonymous structure entity, trying different patterns."""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t920" href="#t920">920</a></span><span class="t">        <span class="com"># Try direct name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t919" href="#t919">919</a></span><span class="t">        <span class="str">"""Get UML ID for an anonymous structure entity using typedef-based keys with case-insensitive fallback."""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t920" href="#t920">920</a></span><span class="t">        <span class="com"># Try direct key</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t921" href="#t921">921</a></span><span class="t">        <span class="key">if</span> <span class="nam">entity_name</span> <span class="key">in</span> <span class="nam">uml_ids</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t922" href="#t922">922</a></span><span class="t">            <span class="key">return</span> <span class="nam">uml_ids</span><span class="op">[</span><span class="nam">entity_name</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t923" href="#t923">923</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t924" href="#t924">924</a></span><span class="t">        <span class="com"># Try with typedef prefix (lowercase)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t925" href="#t925">925</a></span><span class="t">        <span class="nam">typedef_key</span> <span class="op">=</span> <span class="str">f"typedef_{entity_name.lower()}"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t926" href="#t926">926</a></span><span class="t">        <span class="key">if</span> <span class="nam">typedef_key</span> <span class="key">in</span> <span class="nam">uml_ids</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t927" href="#t927">927</a></span><span class="t">            <span class="key">return</span> <span class="nam">uml_ids</span><span class="op">[</span><span class="nam">typedef_key</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t924" href="#t924">924</a></span><span class="t">        <span class="com"># Try exact typedef key</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t925" href="#t925">925</a></span><span class="t">        <span class="nam">typedef_exact</span> <span class="op">=</span> <span class="str">f"typedef_{entity_name}"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t926" href="#t926">926</a></span><span class="t">        <span class="key">if</span> <span class="nam">typedef_exact</span> <span class="key">in</span> <span class="nam">uml_ids</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t927" href="#t927">927</a></span><span class="t">            <span class="key">return</span> <span class="nam">uml_ids</span><span class="op">[</span><span class="nam">typedef_exact</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t928" href="#t928">928</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t929" href="#t929">929</a></span><span class="t">        <span class="com"># Try struct prefix</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t930" href="#t930">930</a></span><span class="t">        <span class="nam">struct_key</span> <span class="op">=</span> <span class="str">f"struct_{entity_name.lower()}"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t931" href="#t931">931</a></span><span class="t">        <span class="key">if</span> <span class="nam">struct_key</span> <span class="key">in</span> <span class="nam">uml_ids</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t932" href="#t932">932</a></span><span class="t">            <span class="key">return</span> <span class="nam">uml_ids</span><span class="op">[</span><span class="nam">struct_key</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t933" href="#t933">933</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t934" href="#t934">934</a></span><span class="t">        <span class="com"># Try union prefix</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t935" href="#t935">935</a></span><span class="t">        <span class="nam">union_key</span> <span class="op">=</span> <span class="str">f"union_{entity_name.lower()}"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t936" href="#t936">936</a></span><span class="t">        <span class="key">if</span> <span class="nam">union_key</span> <span class="key">in</span> <span class="nam">uml_ids</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t937" href="#t937">937</a></span><span class="t">            <span class="key">return</span> <span class="nam">uml_ids</span><span class="op">[</span><span class="nam">union_key</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t938" href="#t938">938</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t939" href="#t939">939</a></span><span class="t">        <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t929" href="#t929">929</a></span><span class="t">        <span class="com"># Case-insensitive match for typedef keys</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t930" href="#t930">930</a></span><span class="t">        <span class="nam">entity_lower</span> <span class="op">=</span> <span class="nam">entity_name</span><span class="op">.</span><span class="nam">lower</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t931" href="#t931">931</a></span><span class="t">        <span class="key">for</span> <span class="nam">key</span><span class="op">,</span> <span class="nam">value</span> <span class="key">in</span> <span class="nam">uml_ids</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t932" href="#t932">932</a></span><span class="t">            <span class="key">if</span> <span class="nam">key</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"typedef_"</span><span class="op">)</span> <span class="key">and</span> <span class="nam">key</span><span class="op">[</span><span class="nam">len</span><span class="op">(</span><span class="str">"typedef_"</span><span class="op">)</span><span class="op">:</span><span class="op">]</span><span class="op">.</span><span class="nam">lower</span><span class="op">(</span><span class="op">)</span> <span class="op">==</span> <span class="nam">entity_lower</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t933" href="#t933">933</a></span><span class="t">                <span class="key">return</span> <span class="nam">value</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t934" href="#t934">934</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t935" href="#t935">935</a></span><span class="t">        <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -1028,7 +1024,7 @@
             <a class="nav" href="z_a8b3cb5ca554c7b7_parser_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-12 12:02 +0000
+            created at 2025-08-12 16:48 +0000
         </p>
     </div>
 </footer>
