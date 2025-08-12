@@ -16,14 +16,14 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
   - Replace manual reconstruction in `_load_model` with `ProjectModel.load(model_file)` to reduce drift.
 
 ## Remove duplication and simplify control flow
-- [ ] Consolidate include processing in transformer
+- [x] Consolidate include processing in transformer
   - Keep one BFS-style implementation (e.g., `_process_root_c_file_includes`) that:
     - Runs per-root `.c` file
     - Applies `include_filter` and `include_depth` (global + file-specific)
     - Populates `include_relations` only on root `.c` files
   - Remove older/duplicate flows: `_process_include_relations` (recursive variant), `_process_single_file_include_relations`, `_process_include_relations_with_file_specific_settings`, and helper `_find_included_file` if no longer used.
   - Ensure a single entry point (e.g., `_process_include_relations_simplified`).
-- [ ] Unify include filtering helpers
+- [x] Unify include filtering helpers
   - Merge `_filter_file_includes` and `_filter_file_includes_comprehensive` into a single method with a boolean flag if needed; both preserve `includes` and only filter `include_relations`.
 - [ ] Remove legacy transformation API
   - Drop `_apply_model_transformations` in favor of containerized `_apply_transformation_containers`. Keep a small adapter only for backward compatibility (`_ensure_backward_compatibility`) and delete dead code paths.
@@ -118,4 +118,4 @@ This plan targets `src/c2puml/core` to simplify internals, fix concrete bugs, an
 
 ---
 
-Status: Quick wins applied and tests green (`./scripts/run_all_tests.sh`). Next: consolidate include processing to single BFS path and remove legacy/duplicate methods.
+Status: Quick wins applied and include processing consolidated; tests green except transient fixes addressed. Proceeding to remove legacy transformation entry and deduplicate generator class methods.
