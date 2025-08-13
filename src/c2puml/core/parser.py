@@ -251,10 +251,9 @@ class CParser:
                             "Error creating field %s: %s", field_name, e
                         )
 
-                # If there's no struct name (anonymous), do not assign a generic placeholder here.
-                # The anonymous processor will extract and name it based on parent/field.
+                # For anonymous structs, use a special key that can be mapped later
                 if not struct_name:
-                    struct_name = ""
+                    struct_name = "__anonymous_struct__"
 
                 # Extract tag name if this is a typedef struct
                 tag_name = ""

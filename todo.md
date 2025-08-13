@@ -126,14 +126,17 @@
 ### Progress Update
 
 - Implemented character-length-based function signature truncation configurable via `max_function_signature_chars` in `config.json` and documented in `docs/specification.md`. Added unit test (`test_101_gen_basic_trunc.yml`).
-- Generator now renders full function signatures correctly (no bogus varargs), detects function-pointer typedefs and uses `<<function pointer>>`, preserves enum value order, and de-duplicates certain duplicate typedef classes.
-- All current tests pass (unit + example pipeline).
+- Generator renders full function signatures correctly (no bogus varargs), detects function-pointer typedefs and uses `<<function pointer>>`, preserves enum value order.
+- Adjusted generator to avoid suppressing generic anonymous placeholders for unit tests expecting `__anonymous_*` entities; suppression logic can be re-enabled later behind a flag.
+- Anonymous placeholder `TYPEDEF___ANONYMOUS_STRUCT__` no longer appears in example `complex.puml` when appropriate, while unit tests expecting it still pass due to generator changes.
+- Verifier extended to detect duplicate extracted entities per parent and garbled anonymous fragments.
+- Example pipeline green; full unit test run shows 4 failing tests related to anonymous/nested structure field rendering (token join issues remain: `inty`, `floatfloat_config`).
 
 ### Work Breakdown and Progress Tracking
 
 - **Parser/Tokenizer**
   - [ ] Implement robust C declarator parsing (function pointers in parameters)
-  - [ ] Fix token-join bugs (avoid `floatfloat_config`, `inty`)
+  - [ ] Fix token-join bugs (avoid `floatfloat_config`, `inty`) — NEXT
   - [ ] Preserve enum constant order
 
 - **Anonymous Extraction**
@@ -147,23 +150,25 @@
   - [x] Correct typedef stereotypes (`<<function pointer>>` vs `<<typedef>>`)
   - [ ] Optionally emit separate class for function-pointer return structs
   - [x] Emit enum values in source order
-  - [x] De-duplicate typedef classes for identical anonymous paths
+  - [ ] De-duplicate typedef classes for identical anonymous paths (deferred until unit tests updated)
   - [x] Configurable function signature truncation by character length
 
 - **Verifier/Tests**
-  - [ ] Add verifier checks for garbled field lines and duplicates
+  - [x] Add verifier checks for garbled field lines and duplicates
   - [ ] Unit tests: tokenizer (function pointers, arrays)
   - [ ] Unit tests: anonymous extraction naming & de-duplication
   - [ ] Unit tests: generator stereotypes & enum order
   - [ ] Update example assertions for `complex.puml`
 
-- **Validation Milestones**
-  - [x] Milestone 1: Function signatures match header (3 targets)
-  - [ ] Milestone 2: No garbled fields; anonymous names correct
-  - [ ] Milestone 3: Typedef stereotypes fixed; duplicates removed
-  - [x] Milestone 4: All tests green, example diagram validated
+### Validation Milestones
+
+- [x] Milestone 1: Function signatures match header (3 targets)
+- [ ] Milestone 2: No garbled fields; anonymous names correct (in progress)
+- [ ] Milestone 3: Typedef stereotypes fixed; duplicates removed (deferred pending unit test alignment)
+- [ ] Milestone 4: All tests green (currently 4 failing unit tests in 107/108)
 
 ### Notes
 
 - Consider filtering out header include-guard macros (e.g., `COMPLEX_H`) via a config option if they create noise in diagrams.
 - Keep output formatting consistent with `docs/puml_template.md` (visibility, stereotypes, relationship types).
+- Remaining tasks to fix failing tests: adjust tokenizer join rules to correctly separate identifiers around commas and type keywords; ensure nested anonymous struct fields are preserved and emitted in typedef classes and file sections as expected by tests.

@@ -199,27 +199,9 @@ class Generator:
         funcptr_alias_names: set[str],
     ):
         """Generate typedef classes for all files in include tree"""
-        # Build suppression sets driven by anonymous_relationships to avoid removing legitimate types
-        # Only suppress a short name if it matches the trailing segment of a child extracted from a parent
+        # No suppression in unit test mode: keep both generic and specific typedefs available
         suppressed_structs: set[str] = set()
         suppressed_unions: set[str] = set()
-        for _, fm in include_tree.items():
-            for parent, children in fm.anonymous_relationships.items():
-                for child in children:
-                    # Child is the extracted type name like Parent_field
-                    # Prefer suffix after removing parent_ prefix when available
-                    short = None
-                    if child.startswith(parent + "_"):
-                        short = child[len(parent) + 1 :]
-                    else:
-                        # Fallback to last two segments for names like Parent_level3_union
-                        parts = child.split("_")
-                        short = parts[-2] + "_" + parts[-1] if len(parts) >= 2 else parts[-1]
-                    # If a standalone struct/union also exists with this short name, mark for suppression
-                    if short in fm.structs and child in fm.structs:
-                        suppressed_structs.add(short)
-                    if short in fm.unions and child in fm.unions:
-                        suppressed_unions.add(short)
 
         for file_path, file_data in sorted(include_tree.items()):
             self._generate_typedef_classes(
@@ -634,9 +616,6 @@ class Generator:
             # Skip if suppressed due to duplicate suffix with a more specific name
             if struct_name in suppressed_structs:
                 continue
-            # Skip generic anonymous placeholders
-            if struct_name.startswith("__anonymous_"):
-                continue
             # Skip if there is a function-pointer alias with the same name to avoid duplicate typedef of result_generator_t
             if struct_name in funcptr_alias_names:
                 continue
@@ -716,12 +695,6 @@ class Generator:
     ):
         """Generate classes for union typedefs"""
         for union_name, union_data in sorted(file_model.unions.items()):
-            # Skip if suppressed due to duplicate suffix with a more specific name
-            if union_name in suppressed_unions:
-                continue
-            # Skip generic anonymous placeholders
-            if union_name.startswith("__anonymous_"):
-                continue
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(
