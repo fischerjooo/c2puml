@@ -184,3 +184,7 @@ tests/*/output/
 # Ignore temporary debug dirs from local test reproduction
 /tmp107/
 /tmp107b/
+
+# Generic: ignore any files or directories starting with tmp (at any depth)
+tmp*
+**/tmp*
