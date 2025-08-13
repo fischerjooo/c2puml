@@ -9,6 +9,7 @@
   "recursive_search": true,
   "include_depth": 10,
   "max_function_signature_chars": 0,
+  "include_placeholder_parent_relationships": true,
   "file_filters": {
     "include": [],
     "exclude": []

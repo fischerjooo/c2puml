@@ -155,6 +155,10 @@ Usage:
             generator = Generator()
             # Apply config for signature truncation
             Generator.max_function_signature_chars = getattr(config, "max_function_signature_chars", 0)
+            # Apply config for anonymous placeholder parent relationships
+            Generator.include_placeholder_parent_relationships = getattr(
+                config, "include_placeholder_parent_relationships", False
+            )
             # Prefer transformed model, else fallback to model.json
             if os.path.exists(transformed_model_file):
                 model_to_use = transformed_model_file
@@ -202,6 +206,10 @@ Usage:
         generator = Generator()
         # Apply config for signature truncation
         Generator.max_function_signature_chars = getattr(config, "max_function_signature_chars", 0)
+        # Apply config for anonymous placeholder parent relationships
+        Generator.include_placeholder_parent_relationships = getattr(
+            config, "include_placeholder_parent_relationships", False
+        )
         generator.generate(
             model_file=transformed_model_file,
             output_dir=output_folder,

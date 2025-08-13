@@ -27,6 +27,7 @@ class Config:
 
     # Generator formatting options
     max_function_signature_chars: int = 0  # 0 or less means unlimited (no truncation)
+    include_placeholder_parent_relationships: bool = False
 
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
@@ -62,6 +63,8 @@ class Config:
             self.include_depth = 1
         if not hasattr(self, "max_function_signature_chars"):
             self.max_function_signature_chars = 0
+        if not hasattr(self, "include_placeholder_parent_relationships"):
+            self.include_placeholder_parent_relationships = False
         if not hasattr(self, "file_filters"):
             self.file_filters = {}
         if not hasattr(self, "file_specific"):

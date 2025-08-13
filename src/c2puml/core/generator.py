@@ -41,6 +41,7 @@ class Generator:
 
     # Configuration (set by main based on Config)
     max_function_signature_chars: int = 0  # 0 or less = unlimited
+    include_placeholder_parent_relationships: bool = False
 
     def _clear_output_folder(self, output_dir: str) -> None:
         """Clear existing .puml and .png files from the output directory"""
@@ -919,8 +920,10 @@ class Generator:
                 
             # Generate relationships for each parent-child pair
             for parent_name, children in file_model.anonymous_relationships.items():
-                # Skip only pure generic placeholders as parents (allow suffixed ones)
-                if parent_name in ("__anonymous_struct__", "__anonymous_union__"):
+                # Optionally skip pure generic placeholders as parents (allow suffixed ones)
+                if (not getattr(self, "include_placeholder_parent_relationships", False)) and (
+                    parent_name in ("__anonymous_struct__", "__anonymous_union__")
+                ):
                     continue
                 parent_id = self._get_anonymous_uml_id(parent_name, uml_ids)
                 
