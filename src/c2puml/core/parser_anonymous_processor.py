@@ -683,6 +683,20 @@ class AnonymousTypedefProcessor:
         # Special handling: Check if there are flattened fields that should be replaced with references
         self._fix_flattened_fields_with_references(file_model)
 
+        # De-duplicate anonymous relationships to prevent inflated relationship counts
+        if file_model.anonymous_relationships:
+            for parent, children in list(file_model.anonymous_relationships.items()):
+                # Preserve order while removing duplicates
+                seen = set()
+                deduped = []
+                for child in children:
+                    key = (parent, child)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    deduped.append(child)
+                file_model.anonymous_relationships[parent] = deduped
+
     def _fix_flattened_fields_with_references(self, file_model: FileModel) -> None:
         """Fix cases where fields have been flattened but should reference extracted entities."""
         for struct_name, struct_data in file_model.structs.items():
