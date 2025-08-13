@@ -10,7 +10,7 @@ configfile: pytest.ini
 plugins: xdist-3.8.0, cov-6.2.1, mock-3.14.1, metadata-3.1.1, html-4.1.1, benchmark-5.1.0
 collecting ... collected 68 items
 
-tests/example/test_901_basic_example.py::TestBasicExample::test_basic_example PASSED [  1%]
+tests/example/test_901_basic_example.py::TestBasicExample::test_basic_example FAILED [  1%]
 tests/feature/test_201_cli_modes.py::TestCLIModesComprehensive::test_cli_modes_and_features_comprehensive PASSED [  2%]
 tests/feature/test_202_include_proc.py::TestIncludeProcessingConsolidated::test_include_processing_basic_consolidated PASSED [  4%]
 tests/feature/test_202_include_proc.py::TestIncludeProcessingConsolidated::test_include_processing_consolidated PASSED [  5%]
@@ -79,6 +79,71 @@ tests/unit/test_133_include_filter.py::TestIncludeFilteringComprehensive::test_i
 tests/unit/test_134_include_proc_unit.py::TestIncludeProcessingComprehensive::test_basic_include_processing PASSED [ 98%]
 tests/unit/test_135_nested_structs.py::TestNestedStructuresPuml::test_nested_structures_puml PASSED [100%]
 
-============================== 68 passed in 7.89s ==============================
+=================================== FAILURES ===================================
+_____________________ TestBasicExample.test_basic_example ______________________
+
+self = <test_901_basic_example.TestBasicExample testMethod=test_basic_example>
+
+    def test_basic_example(self):
+        """Run full pipeline on example project and validate outputs"""
+        # Load assertions from YAML (assertions-only for example tests)
+        test_data = self.data_loader.load_test_data("901_basic_example")
+    
+        # Determine workspace root (two levels up from this file)
+        workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    
+        # Execute c2puml with project root as working directory
+        result = self.executor.run_full_pipeline("tests/example/config.json", workspace_root)
+    
+        # Validate execution
+        self.cli_validator.assert_cli_success(result)
+    
+        # Collect outputs from configured output directory
+        output_dir = os.path.join(workspace_root, "artifacts", "output_example")
+        model_file = self.output_validator.assert_model_file_exists(output_dir)
+    
+        # Load model
+        with open(model_file, 'r') as f:
+            model_data = json.load(f)
+    
+        # Load all PUML files into a dict {filename: content}
+        puml_files = {}
+        for entry in os.listdir(output_dir):
+            if entry.endswith('.puml'):
+                puml_path = os.path.join(output_dir, entry)
+                with open(puml_path, 'r', encoding='utf-8') as pf:
+                    puml_files[entry] = pf.read()
+    
+        # Process YAML assertions
+>       self.validators_processor.process_assertions(
+            test_data["assertions"], model_data, puml_files, result, self
+        )
+
+tests/example/test_901_basic_example.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/framework/validators_processor.py:65: in process_assertions
+    self._process_puml_assertions(assertions["puml"], puml_files, test_case)
+tests/framework/validators_processor.py:324: in _process_puml_assertions
+    self._process_single_puml_file_assertions(
+tests/framework/validators_processor.py:413: in _process_single_puml_file_assertions
+    self.puml_validator.assert_puml_relationship(puml_content, source, target, rel_type)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <tests.framework.validators.PlantUMLValidator object at 0x7f02f0c30760>
+puml_content = '@startuml complex\n\nclass "complex" as COMPLEX <<source>> #LightBlue\n{\n    -- Global Variables --\n    - Process_C...TRUCT : <<contains>>\nTYPEDEF_UNION_WITH_UNION_T *-- TYPEDEF_UNION_WITH_UNION_T_NESTED_UNION : <<contains>>\n\n@enduml'
+source = 'TYPEDEF___ANONYMOUS_STRUCT__'
+target = 'TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION', rel_type = '*--'
+
+    def assert_puml_relationship(self, puml_content: str, source: str, target: str, rel_type: str) -> None:
+        """Assert that a relationship exists in PlantUML content"""
+        rel_pattern = rf'{re.escape(source)}\s+{re.escape(rel_type)}\s+{re.escape(target)}'
+        if not re.search(rel_pattern, puml_content, re.IGNORECASE):
+>           raise AssertionError(f"Relationship '{source} {rel_type} {target}' not found in PlantUML content")
+E           AssertionError: Relationship 'TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION' not found in PlantUML content
+
+tests/framework/validators.py:347: AssertionError
+=========================== short test summary info ============================
+FAILED tests/example/test_901_basic_example.py::TestBasicExample::test_basic_example - AssertionError: Relationship 'TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION' not found in PlantUML content
+========================= 1 failed, 67 passed in 8.11s =========================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:943: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
