@@ -767,6 +767,7 @@ class Generator:
         self._generate_declaration_relationships(lines, include_tree, uml_ids, project_model)
         self._generate_uses_relationships(lines, include_tree, uml_ids, project_model)
         self._generate_anonymous_relationships(lines, project_model, uml_ids)
+        self._generate_direct_field_compositions(lines, include_tree, uml_ids)
 
     def _generate_include_relationships(
         self,
@@ -935,6 +936,49 @@ class Generator:
             lines.append("' Anonymous structure relationships (composition)")
             for relationship in relationships_to_generate:
                 lines.append(relationship)
+
+    def _generate_direct_field_compositions(
+        self,
+        lines: List[str],
+        include_tree: Dict[str, FileModel],
+        uml_ids: Dict[str, str],
+    ) -> None:
+        """Add composition for fields that clearly reference a typedef of the same logical entity.
+
+        Criterion: field.type is a typedef in current file_model (structs or unions) and
+        either type == field.name (e.g., 'data_variant data_variant') or type endswith '_'+field.name
+        (e.g., 'complex_struct_t_metadata metadata').
+        """
+        emitted: set[tuple[str, str]] = set()
+        for _, file_model in include_tree.items():
+            parent_id = None
+            # Parent UML id is this typedef's UML id; iterate each struct typedef as a potential owner
+            for struct_name, struct_data in file_model.structs.items():
+                parent_id = uml_ids.get(f"typedef_{struct_name}")
+                if not parent_id:
+                    continue
+                for f in struct_data.fields:
+                    child_name = f.type.strip()
+                    # Only consider types that are typedefs in this file
+                    if child_name in file_model.structs or child_name in file_model.unions:
+                        if child_name == f.name or child_name.endswith("_" + f.name):
+                            child_id = uml_ids.get(f"typedef_{child_name}")
+                            if child_id and (parent_id, child_id) not in emitted:
+                                lines.append(f"{parent_id} *-- {child_id} : <<contains>>")
+                                emitted.add((parent_id, child_id))
+            # Also allow unions to own direct fields (rare but possible)
+            for union_name, union_data in file_model.unions.items():
+                parent_id = uml_ids.get(f"typedef_{union_name}")
+                if not parent_id:
+                    continue
+                for f in union_data.fields:
+                    child_name = f.type.strip()
+                    if child_name in file_model.structs or child_name in file_model.unions:
+                        if child_name == f.name or child_name.endswith("_" + f.name):
+                            child_id = uml_ids.get(f"typedef_{child_name}")
+                            if child_id and (parent_id, child_id) not in emitted:
+                                lines.append(f"{parent_id} *-- {child_id} : <<contains>>")
+                                emitted.add((parent_id, child_id))
 
     def _get_anonymous_uml_id(self, entity_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
         """Get UML ID for an anonymous structure entity using typedef-based keys with case-insensitive fallback."""
