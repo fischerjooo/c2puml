@@ -767,6 +767,7 @@ class Generator:
         self._generate_declaration_relationships(lines, include_tree, uml_ids, project_model)
         self._generate_uses_relationships(lines, include_tree, uml_ids, project_model)
         self._generate_anonymous_relationships(lines, project_model, uml_ids)
+        self._generate_field_composition_relationships(lines, include_tree, uml_ids)
 
     def _generate_include_relationships(
         self,
@@ -954,3 +955,35 @@ class Generator:
                 return value
 
         return None
+
+    def _generate_field_composition_relationships(
+        self,
+        lines: List[str],
+        include_tree: Dict[str, FileModel],
+        uml_ids: Dict[str, str],
+    ) -> None:
+        """Generate composition relationships for fields that reference typedef structs/unions."""
+        relationships: list[str] = []
+        for _, file_model in include_tree.items():
+            for parent_name, struct_data in file_model.structs.items():
+                parent_id = uml_ids.get(f"typedef_{parent_name}")
+                if not parent_id:
+                    continue
+                for f in struct_data.fields:
+                    child_name = f.type.strip()
+                    child_id = uml_ids.get(f"typedef_{child_name}")
+                    if child_id:
+                        relationships.append(f"{parent_id} *-- {child_id} : <<contains>>")
+            for parent_name, union_data in file_model.unions.items():
+                parent_id = uml_ids.get(f"typedef_{parent_name}")
+                if not parent_id:
+                    continue
+                for f in union_data.fields:
+                    child_name = f.type.strip()
+                    child_id = uml_ids.get(f"typedef_{child_name}")
+                    if child_id:
+                        relationships.append(f"{parent_id} *-- {child_id} : <<contains>>")
+        if relationships:
+            lines.append("")
+            for rel in relationships:
+                lines.append(rel)
