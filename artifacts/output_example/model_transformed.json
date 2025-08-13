@@ -63,11 +63,6 @@
         },
         {
           "depth": 2,
-          "included_file": "common.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
           "included_file": "libpq-fe.h",
           "source_file": "database.h"
         },
@@ -80,11 +75,6 @@
           "depth": 2,
           "included_file": "sqlite3.h",
           "source_file": "database.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "common.h",
-          "source_file": "network.h"
         }
       ],
       "includes": [
@@ -748,10 +738,6 @@
         }
       },
       "anonymous_relationships": {
-        "__anonymous_struct__": [
-          "__anonymous_struct___level3_union",
-          "level3_union"
-        ],
         "array_of_anon_structs_t": [
           "array_of_anon_structs_t_items"
         ],
@@ -1089,26 +1075,6 @@
           "name": "Process_T",
           "tag_name": "",
           "uses": []
-        },
-        "__anonymous_struct__": {
-          "fields": [
-            {
-              "name": "level2_id",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "level3_union",
-              "type": "level3_union",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "__anonymous_struct__",
-          "tag_name": "",
-          "uses": [
-            "level3_union"
-          ]
         },
         "array_of_anon_structs_t": {
           "fields": [
@@ -2081,23 +2047,6 @@
         }
       },
       "unions": {
-        "__anonymous_struct___level3_union": {
-          "fields": [
-            {
-              "name": "level3_int",
-              "type": "int",
-              "value": null
-            },
-            {
-              "name": "level3_float",
-              "type": "float",
-              "value": null
-            }
-          ],
-          "name": "__anonymous_struct___level3_union",
-          "tag_name": "",
-          "uses": []
-        },
         "callback_with_anon_struct_t_config_param_config_value": {
           "fields": [
             {
@@ -5279,6 +5228,11 @@
           "depth": 2,
           "included_file": "geometry.h",
           "source_file": "sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
+          "source_file": "sample.h"
         }
       ],
       "includes": [
@@ -5606,6 +5560,11 @@
         {
           "depth": 2,
           "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
           "source_file": "sample.h"
         },
         {
@@ -6182,24 +6141,6 @@
       "macros": [],
       "name": "transformed.c",
       "structs": {
-        "__anonymous_struct__": {
-          "fields": [
-            {
-              "name": ")",
-              "type": "struct old_point * point = malloc ( sizeof ( struct old_point )",
-              "value": null
-            },
-            {
-              "name": "point",
-              "type": "if ( point ) { point -> x = x ; point -> y = y ; } return",
-              "value": null
-            }
-          ],
-          "methods": [],
-          "name": "__anonymous_struct__",
-          "tag_name": "",
-          "uses": []
-        },
         "old_point": {
           "fields": [
             {
@@ -6489,6 +6430,11 @@
         },
         {
           "depth": 2,
+          "included_file": "logger.h",
+          "source_file": "complex_example.h"
+        },
+        {
+          "depth": 2,
           "included_file": "math_utils.h",
           "source_file": "geometry.h"
         },
@@ -6501,6 +6447,11 @@
           "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "math_utils.h"
         },
         {
           "depth": 3,
@@ -6530,11 +6481,6 @@
         {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "typedef_test.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
           "source_file": "typedef_test.h"
         },
         {

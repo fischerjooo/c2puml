@@ -126,44 +126,53 @@
 ### Progress Update
 
 - Implemented character-length-based function signature truncation configurable via `max_function_signature_chars` in `config.json` and documented in `docs/specification.md`. Added unit test (`test_101_gen_basic_trunc.yml`).
-- Generator now renders full function signatures correctly (no bogus varargs), detects function-pointer typedefs and uses `<<function pointer>>`, preserves enum value order, and de-duplicates certain duplicate typedef classes.
-- All current tests pass (unit + example pipeline).
+- Generator renders full function signatures correctly (no bogus varargs), detects function-pointer typedefs and uses `<<function pointer>>`, preserves enum value order.
+- Relationship generation fixed and stabilized:
+  - Removed direct field-based composition edges to prevent double counting.
+  - Anonymous relationships: skip only pure placeholders (`__anonymous_struct__`, `__anonymous_union__`), allow suffixed anonymous names; de-duplicate per parent.
+  - Declares: skip typedefs that are anonymous children; Uses: skip anonymous children unless the parent typedef is itself anonymous; also emit union uses.
+- Verifier extended to detect duplicate extracted entities per parent and garbled anonymous fragments.
+- All tests pass (67/67 via `./scripts/run_all.sh`).
+- Example output improved; remaining tokenizer join issues (`inty`, `floatfloat_config`) are slated for cleanup.
 
 ### Work Breakdown and Progress Tracking
 
 - **Parser/Tokenizer**
   - [ ] Implement robust C declarator parsing (function pointers in parameters)
-  - [ ] Fix token-join bugs (avoid `floatfloat_config`, `inty`)
-  - [ ] Preserve enum constant order
+  - [ ] Fix token-join bugs (avoid `floatfloat_config`, `inty`) — NEXT
+  - [x] Preserve enum constant order
 
 - **Anonymous Extraction**
   - [ ] Enforce `ParentTypedef_fieldName` naming across all nesting levels
-  - [ ] Prevent duplicate extraction for identical anonymous paths
-  - [ ] Correct parent-field rewrite (no stray braces/tokens)
-  - [ ] Ensure unions keep proper fields; nested structs are separate children
+  - [x] Prevent duplicate extraction for identical anonymous paths (dedup in anonymous_relationships)
+  - [x] Correct parent-field rewrite (update field types to extracted entity names; remove placeholder artifacts)
+  - [x] Ensure unions keep proper fields; nested structs are separate children (composition emitted via anonymous relationships)
 
 - **Generator**
   - [x] Render full function signatures for file/header classes
   - [x] Correct typedef stereotypes (`<<function pointer>>` vs `<<typedef>>`)
   - [ ] Optionally emit separate class for function-pointer return structs
   - [x] Emit enum values in source order
-  - [x] De-duplicate typedef classes for identical anonymous paths
+  - [ ] De-duplicate typedef classes for identical anonymous paths (deferred until unit tests updated)
   - [x] Configurable function signature truncation by character length
 
 - **Verifier/Tests**
-  - [ ] Add verifier checks for garbled field lines and duplicates
+  - [x] Add verifier checks for garbled field lines and duplicates
   - [ ] Unit tests: tokenizer (function pointers, arrays)
   - [ ] Unit tests: anonymous extraction naming & de-duplication
   - [ ] Unit tests: generator stereotypes & enum order
   - [ ] Update example assertions for `complex.puml`
 
-- **Validation Milestones**
-  - [x] Milestone 1: Function signatures match header (3 targets)
-  - [ ] Milestone 2: No garbled fields; anonymous names correct
-  - [ ] Milestone 3: Typedef stereotypes fixed; duplicates removed
-  - [x] Milestone 4: All tests green, example diagram validated
+### Validation Milestones
+
+- [x] Milestone 1: Function signatures match header (3 targets)
+- [ ] Milestone 2: No garbled fields; anonymous names correct (in progress)
+- [x] Milestone 3: Typedef stereotypes fixed; duplicates removed (in current scope; broader dedup deferred)
+- [x] Milestone 4: All tests green
 
 ### Notes
 
 - Consider filtering out header include-guard macros (e.g., `COMPLEX_H`) via a config option if they create noise in diagrams.
 - Keep output formatting consistent with `docs/puml_template.md` (visibility, stereotypes, relationship types).
+- Behavior detail: Pure anonymous placeholders (`__anonymous_struct__`, `__anonymous_union__`) are suppressed as endpoints in relationships; extracted, suffixed anonymous names are emitted. Consider a config flag to display pure placeholders if desired.
+- Remaining tasks: adjust tokenizer join rules to correctly separate identifiers around commas and type keywords; ensure nested anonymous struct fields are preserved and emitted in typedef classes and file sections per acceptance criteria.

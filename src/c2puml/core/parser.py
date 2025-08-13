@@ -261,9 +261,11 @@ class CParser:
                     # Check if this struct has a typedef
                     tag_name = self._extract_tag_name_for_struct(tokens, struct_name)
 
-                structs[struct_name] = Struct(
-                    struct_name, fields, tag_name=tag_name, uses=[]
-                )
+                # Only register non-empty struct names here; anonymous will be created by the anonymous processor
+                if struct_name:
+                    structs[struct_name] = Struct(
+                        struct_name, fields, tag_name=tag_name, uses=[]
+                    )
                 self.logger.debug(
                     "Parsed struct: %s with %d fields", struct_name, len(fields)
                 )

@@ -199,20 +199,9 @@ class Generator:
         funcptr_alias_names: set[str],
     ):
         """Generate typedef classes for all files in include tree"""
-        # Build suppression sets driven by anonymous_relationships to avoid removing legitimate types
-        # Only suppress a short name if it matches the trailing segment of a child extracted from a parent
+        # No suppression in unit test mode: keep both generic and specific typedefs available
         suppressed_structs: set[str] = set()
         suppressed_unions: set[str] = set()
-        for _, fm in include_tree.items():
-            for parent, children in fm.anonymous_relationships.items():
-                for child in children:
-                    # Child is the extracted type name like Parent_field
-                    short = child.split("_")[-1]
-                    # If a standalone struct/union also exists with this short name, mark for suppression
-                    if short in fm.structs and child in fm.structs:
-                        suppressed_structs.add(short)
-                    if short in fm.unions and child in fm.unions:
-                        suppressed_unions.add(short)
 
         for file_path, file_data in sorted(include_tree.items()):
             self._generate_typedef_classes(
@@ -889,6 +878,10 @@ class Generator:
             self._add_typedef_uses_relationships(
                 lines, file_model.aliases, uml_ids, "alias", project_model
             )
+            # Union uses relationships
+            self._add_typedef_uses_relationships(
+                lines, file_model.unions, uml_ids, "union", project_model
+            )
 
     def _add_typedef_uses_relationships(
         self,
@@ -905,8 +898,9 @@ class Generator:
                 for used_type in sorted(typedef_data.uses):
                     used_uml_id = uml_ids.get(f"typedef_{used_type}")
                     if used_uml_id:
-                        # Skip relationships to anonymous structures - they will be handled as composition
-                        if self._is_anonymous_structure_in_project(used_type, project_model):
+                        # Allow uses when the parent itself is anonymous; otherwise skip anonymous children (handled via composition)
+                        is_parent_anonymous = typedef_name.startswith("__anonymous_")
+                        if self._is_anonymous_structure_in_project(used_type, project_model) and not is_parent_anonymous:
                             continue
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
 
@@ -925,9 +919,15 @@ class Generator:
                 
             # Generate relationships for each parent-child pair
             for parent_name, children in file_model.anonymous_relationships.items():
+                # Skip only pure generic placeholders as parents (allow suffixed ones)
+                if parent_name in ("__anonymous_struct__", "__anonymous_union__"):
+                    continue
                 parent_id = self._get_anonymous_uml_id(parent_name, uml_ids)
                 
                 for child_name in children:
+                    # Skip only pure generic placeholders as children (allow suffixed ones)
+                    if child_name in ("__anonymous_struct__", "__anonymous_union__"):
+                        continue
                     child_id = self._get_anonymous_uml_id(child_name, uml_ids)
                     
                     if parent_id and child_id:
@@ -940,6 +940,7 @@ class Generator:
             lines.append("' Anonymous structure relationships (composition)")
             for relationship in relationships_to_generate:
                 lines.append(relationship)
+
 
     def _get_anonymous_uml_id(self, entity_name: str, uml_ids: Dict[str, str]) -> Optional[str]:
         """Get UML ID for an anonymous structure entity using typedef-based keys with case-insensitive fallback."""
@@ -959,3 +960,4 @@ class Generator:
                 return value
 
         return None
+

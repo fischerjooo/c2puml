@@ -1253,7 +1253,7 @@ def find_struct_fields(
                             break
                 
                 if field_name:
-                    # Extract the content between braces for anonymous structure processing
+                    # Extract the content between braces for anonymous processor using special format
                     content = _extract_brace_content(field_tokens)
                     if content:
                         # Preserve content for anonymous processor using special format
@@ -1267,6 +1267,19 @@ def find_struct_fields(
                         fields.append((field_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
                         # Let the normal flow handle semicolon advancement
+                else:
+                    # Anonymous nested struct without a field name
+                    content = _extract_brace_content(field_tokens)
+                    if content:
+                        import base64
+                        encoded_content = base64.b64encode(content.encode()).decode()
+                        # Use generic field name for anonymous struct
+                        generic_name = "__anonymous_struct__"
+                        field_type = f"struct {{ /*ANON:{encoded_content}:{generic_name}*/ ... }}"
+                    else:
+                        generic_name = "__anonymous_struct__"
+                        field_type = "struct { ... }"
+                    fields.append((generic_name, field_type))
             # Check if this is a nested union field
             elif (
                 len(field_tokens) >= 3
@@ -1289,7 +1302,7 @@ def find_struct_fields(
                             break
                 
                 if field_name:
-                    # Extract the content between braces for anonymous structure processing
+                    # Extract the content between braces for anonymous processor
                     content = _extract_brace_content(field_tokens)
                     if content:
                         # Preserve content for anonymous processor using special format
@@ -1303,6 +1316,18 @@ def find_struct_fields(
                         fields.append((field_name, field_type))
                         # Skip parsing the nested union's fields as separate fields
                         # Let the normal flow handle semicolon advancement
+                else:
+                    # Anonymous nested union without a field name
+                    content = _extract_brace_content(field_tokens)
+                    if content:
+                        import base64
+                        encoded_content = base64.b64encode(content.encode()).decode()
+                        generic_name = "__anonymous_union__"
+                        field_type = f"union {{ /*ANON:{encoded_content}:{generic_name}*/ ... }}"
+                    else:
+                        generic_name = "__anonymous_union__"
+                        field_type = "union { ... }"
+                    fields.append((generic_name, field_type))
             # Function pointer array field: type (*name[size])(params)
             elif (
                 len(field_tokens) >= 8
