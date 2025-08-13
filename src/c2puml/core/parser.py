@@ -251,9 +251,10 @@ class CParser:
                             "Error creating field %s: %s", field_name, e
                         )
 
-                # For anonymous structs, use a special key that can be mapped later
+                # If there's no struct name (anonymous), do not assign a generic placeholder here.
+                # The anonymous processor will extract and name it based on parent/field.
                 if not struct_name:
-                    struct_name = "__anonymous_struct__"
+                    struct_name = ""
 
                 # Extract tag name if this is a typedef struct
                 tag_name = ""
@@ -261,9 +262,11 @@ class CParser:
                     # Check if this struct has a typedef
                     tag_name = self._extract_tag_name_for_struct(tokens, struct_name)
 
-                structs[struct_name] = Struct(
-                    struct_name, fields, tag_name=tag_name, uses=[]
-                )
+                # Only register non-empty struct names here; anonymous will be created by the anonymous processor
+                if struct_name:
+                    structs[struct_name] = Struct(
+                        struct_name, fields, tag_name=tag_name, uses=[]
+                    )
                 self.logger.debug(
                     "Parsed struct: %s with %d fields", struct_name, len(fields)
                 )

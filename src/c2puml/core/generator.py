@@ -207,7 +207,14 @@ class Generator:
             for parent, children in fm.anonymous_relationships.items():
                 for child in children:
                     # Child is the extracted type name like Parent_field
-                    short = child.split("_")[-1]
+                    # Prefer suffix after removing parent_ prefix when available
+                    short = None
+                    if child.startswith(parent + "_"):
+                        short = child[len(parent) + 1 :]
+                    else:
+                        # Fallback to last two segments for names like Parent_level3_union
+                        parts = child.split("_")
+                        short = parts[-2] + "_" + parts[-1] if len(parts) >= 2 else parts[-1]
                     # If a standalone struct/union also exists with this short name, mark for suppression
                     if short in fm.structs and child in fm.structs:
                         suppressed_structs.add(short)
@@ -627,6 +634,9 @@ class Generator:
             # Skip if suppressed due to duplicate suffix with a more specific name
             if struct_name in suppressed_structs:
                 continue
+            # Skip generic anonymous placeholders
+            if struct_name.startswith("__anonymous_"):
+                continue
             # Skip if there is a function-pointer alias with the same name to avoid duplicate typedef of result_generator_t
             if struct_name in funcptr_alias_names:
                 continue
@@ -706,6 +716,12 @@ class Generator:
     ):
         """Generate classes for union typedefs"""
         for union_name, union_data in sorted(file_model.unions.items()):
+            # Skip if suppressed due to duplicate suffix with a more specific name
+            if union_name in suppressed_unions:
+                continue
+            # Skip generic anonymous placeholders
+            if union_name.startswith("__anonymous_"):
+                continue
             uml_id = uml_ids.get(f"typedef_{union_name}")
             if uml_id:
                 lines.append(
@@ -925,9 +941,15 @@ class Generator:
                 
             # Generate relationships for each parent-child pair
             for parent_name, children in file_model.anonymous_relationships.items():
+                # Skip generic placeholders as parents
+                if parent_name.startswith("__anonymous_"):
+                    continue
                 parent_id = self._get_anonymous_uml_id(parent_name, uml_ids)
                 
                 for child_name in children:
+                    # Skip generic placeholders as children
+                    if child_name.startswith("__anonymous_"):
+                        continue
                     child_id = self._get_anonymous_uml_id(child_name, uml_ids)
                     
                     if parent_id and child_id:
