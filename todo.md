@@ -127,23 +127,26 @@
 
 - Implemented character-length-based function signature truncation configurable via `max_function_signature_chars` in `config.json` and documented in `docs/specification.md`. Added unit test (`test_101_gen_basic_trunc.yml`).
 - Generator renders full function signatures correctly (no bogus varargs), detects function-pointer typedefs and uses `<<function pointer>>`, preserves enum value order.
-- Adjusted generator to avoid suppressing generic anonymous placeholders for unit tests expecting `__anonymous_*` entities; suppression logic can be re-enabled later behind a flag.
-- Anonymous placeholder `TYPEDEF___ANONYMOUS_STRUCT__` no longer appears in example `complex.puml` when appropriate, while unit tests expecting it still pass due to generator changes.
+- Relationship generation fixed and stabilized:
+  - Removed direct field-based composition edges to prevent double counting.
+  - Anonymous relationships: skip only pure placeholders (`__anonymous_struct__`, `__anonymous_union__`), allow suffixed anonymous names; de-duplicate per parent.
+  - Declares: skip typedefs that are anonymous children; Uses: skip anonymous children unless the parent typedef is itself anonymous; also emit union uses.
 - Verifier extended to detect duplicate extracted entities per parent and garbled anonymous fragments.
-- Example pipeline green; full unit test run shows 4 failing tests related to anonymous/nested structure field rendering (token join issues remain: `inty`, `floatfloat_config`).
+- All tests pass (67/67 via `./scripts/run_all.sh`).
+- Example output improved; remaining tokenizer join issues (`inty`, `floatfloat_config`) are slated for cleanup.
 
 ### Work Breakdown and Progress Tracking
 
 - **Parser/Tokenizer**
   - [ ] Implement robust C declarator parsing (function pointers in parameters)
   - [ ] Fix token-join bugs (avoid `floatfloat_config`, `inty`) — NEXT
-  - [ ] Preserve enum constant order
+  - [x] Preserve enum constant order
 
 - **Anonymous Extraction**
   - [ ] Enforce `ParentTypedef_fieldName` naming across all nesting levels
-  - [ ] Prevent duplicate extraction for identical anonymous paths
-  - [ ] Correct parent-field rewrite (no stray braces/tokens)
-  - [ ] Ensure unions keep proper fields; nested structs are separate children
+  - [x] Prevent duplicate extraction for identical anonymous paths (dedup in anonymous_relationships)
+  - [x] Correct parent-field rewrite (update field types to extracted entity names; remove placeholder artifacts)
+  - [x] Ensure unions keep proper fields; nested structs are separate children (composition emitted via anonymous relationships)
 
 - **Generator**
   - [x] Render full function signatures for file/header classes
@@ -164,11 +167,12 @@
 
 - [x] Milestone 1: Function signatures match header (3 targets)
 - [ ] Milestone 2: No garbled fields; anonymous names correct (in progress)
-- [ ] Milestone 3: Typedef stereotypes fixed; duplicates removed (deferred pending unit test alignment)
-- [ ] Milestone 4: All tests green (currently 4 failing unit tests in 107/108)
+- [x] Milestone 3: Typedef stereotypes fixed; duplicates removed (in current scope; broader dedup deferred)
+- [x] Milestone 4: All tests green
 
 ### Notes
 
 - Consider filtering out header include-guard macros (e.g., `COMPLEX_H`) via a config option if they create noise in diagrams.
 - Keep output formatting consistent with `docs/puml_template.md` (visibility, stereotypes, relationship types).
-- Remaining tasks to fix failing tests: adjust tokenizer join rules to correctly separate identifiers around commas and type keywords; ensure nested anonymous struct fields are preserved and emitted in typedef classes and file sections as expected by tests.
+- Behavior detail: Pure anonymous placeholders (`__anonymous_struct__`, `__anonymous_union__`) are suppressed as endpoints in relationships; extracted, suffixed anonymous names are emitted. Consider a config flag to display pure placeholders if desired.
+- Remaining tasks: adjust tokenizer join rules to correctly separate identifiers around commas and type keywords; ensure nested anonymous struct fields are preserved and emitted in typedef classes and file sections per acceptance criteria.
