@@ -72,6 +72,19 @@ class ModelVerifier:
         if not file_model.name or not file_model.name.strip():
             self.issues.append(f"File name is empty in {file_path}")
 
+        # Anonymous extraction sanity: detect duplicates per parent and garbled content
+        if file_model.anonymous_relationships:
+            for parent, children in file_model.anonymous_relationships.items():
+                # Duplicates under same parent
+                seen = set()
+                for child in children:
+                    key = (parent, child)
+                    if child in seen:
+                        self.issues.append(
+                            f"Duplicate extracted anonymous entity '{child}' for parent '{parent}' in {file_path}"
+                        )
+                    seen.add(child)
+
         # Verify structs
         for struct_name, struct in file_model.structs.items():
             self._verify_struct(file_path, struct_name, struct)
@@ -237,6 +250,7 @@ class ModelVerifier:
             r"^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]+$",  # Mostly brackets and whitespace
             r"^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$",  # All brackets and whitespace
             r"^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$",  # Excessive brackets/whitespace
+            r"}\s+\w+;\s*struct\s*\{",  # Garbled anonymous extraction pattern like '} name; struct {'
         ]
 
         for pattern in suspicious_patterns:
