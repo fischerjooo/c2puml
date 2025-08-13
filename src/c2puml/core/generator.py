@@ -915,14 +915,14 @@ class Generator:
                 
             # Generate relationships for each parent-child pair
             for parent_name, children in file_model.anonymous_relationships.items():
-                # Skip generic placeholders as parents
-                if parent_name.startswith("__anonymous_"):
+                # Skip only pure generic placeholders as parents (allow suffixed ones)
+                if parent_name in ("__anonymous_struct__", "__anonymous_union__"):
                     continue
                 parent_id = self._get_anonymous_uml_id(parent_name, uml_ids)
                 
                 for child_name in children:
-                    # Skip generic placeholders as children
-                    if child_name.startswith("__anonymous_"):
+                    # Skip only pure generic placeholders as children (allow suffixed ones)
+                    if child_name in ("__anonymous_struct__", "__anonymous_union__"):
                         continue
                     child_id = self._get_anonymous_uml_id(child_name, uml_ids)
                     
