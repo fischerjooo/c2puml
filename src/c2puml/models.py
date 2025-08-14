@@ -189,7 +189,7 @@ class FileModel:
     unions: Dict[str, Union] = field(default_factory=dict)
     include_relations: List[IncludeRelation] = field(default_factory=list)
     anonymous_relationships: Dict[str, List[str]] = field(default_factory=dict)  # parent -> [child1, child2, ...]
-
+    placeholder_headers: Set[str] = field(default_factory=set)  # Headers shown as empty (placeholders) in diagrams
     def __post_init__(self):
         """Extract filename from file_path if not provided"""
         if not self.name:
@@ -203,6 +203,8 @@ class FileModel:
 
         # Convert set to list for JSON serialization and sort for consistency
         data["includes"] = sorted(list(self.includes))
+        # Serialize placeholder headers as sorted list
+        data["placeholder_headers"] = sorted(list(self.placeholder_headers))
         # Convert include_relations to list of dicts and sort for consistency
         data["include_relations"] = sorted(
             [asdict(rel) for rel in self.include_relations],
@@ -340,6 +342,8 @@ class FileModel:
         new_data["unions"] = unions
         new_data["aliases"] = aliases
         new_data["include_relations"] = include_relations
+        # Load placeholder headers (if present)
+        new_data["placeholder_headers"] = set(data.get("placeholder_headers", []))
 
         return cls(**new_data)
 

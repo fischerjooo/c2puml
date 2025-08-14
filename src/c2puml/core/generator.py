@@ -98,6 +98,8 @@ class Generator:
     ) -> str:
         """Generate a PlantUML diagram for a file following the template format"""
         basename = Path(file_model.name).stem
+        # Capture placeholder headers for this diagram (if provided by transformer)
+        self._placeholder_headers = set(getattr(file_model, "placeholder_headers", set()))
         include_tree = self._build_include_tree(
             file_model, project_model
         )
@@ -142,6 +144,9 @@ class Generator:
         # Precompute names of function-pointer aliases to suppress duplicate struct classes
         funcptr_alias_names: set[str] = set()
         for _file_path, file_data in include_tree.items():
+            # Skip placeholder headers entirely for content processing
+            if _file_path.endswith(".h") and _file_path in getattr(self, "_placeholder_headers", set()):
+                continue
             for alias_name, alias_data in file_data.aliases.items():
                 if self._is_function_pointer_type(alias_data.original_type):
                     funcptr_alias_names.add(alias_name)
@@ -204,6 +209,9 @@ class Generator:
         suppressed_unions: set[str] = set()
 
         for file_path, file_data in sorted(include_tree.items()):
+            # Skip typedef class generation for placeholder headers
+            if file_path.endswith(".h") and file_path in getattr(self, "_placeholder_headers", set()):
+                continue
             self._generate_typedef_classes(
                 lines,
                 file_data,
@@ -293,6 +301,10 @@ class Generator:
             elif filename.endswith(".h"):
                 # H files: HEADER_ prefix
                 uml_ids[file_key] = f"{PREFIX_HEADER}{basename}"
+
+            # For placeholder headers, only generate the file UML ID; skip typedef UML IDs
+            if filename.endswith(".h") and Path(filename).name in getattr(self, "_placeholder_headers", set()):
+                continue
 
             # Generate typedef UML IDs
             for typedef_name in file_model.structs:
@@ -493,6 +505,12 @@ class Generator:
 
         lines.append(f'class "{basename}" as {uml_id} <<{class_type}>> {color}')
         lines.append("{")
+
+        # If this header is marked as placeholder for this diagram, render as empty class
+        if class_type == "header" and Path(filename).name in getattr(self, "_placeholder_headers", set()):
+            lines.append("}")
+            lines.append("")
+            return
 
         self._add_macros_section(lines, file_model, macro_prefix)
         if use_dynamic_visibility:
@@ -828,6 +846,9 @@ class Generator:
         typedef_collections_names = ["structs", "enums", "aliases", "unions"]
 
         for file_name, file_model in sorted(include_tree.items()):
+            # Suppress declaration relationships from placeholder headers
+            if file_name.endswith(".h") and Path(file_name).name in getattr(self, "_placeholder_headers", set()):
+                continue
             file_uml_id = self._get_file_uml_id(file_name, uml_ids)
             if file_uml_id:
                 for collection_name in typedef_collections_names:
@@ -836,7 +857,7 @@ class Generator:
                         # Skip anonymous structures - they should not have declares relationships from files
                         if self._is_anonymous_structure_in_project(typedef_name, project_model):
                             continue
-                            
+                        
                         typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
                         if typedef_uml_id:
                             lines.append(
