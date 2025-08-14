@@ -478,6 +478,7 @@ The system uses a JSON-based configuration file with the following parameters:
 - **`recursive_search`**: Whether to search subdirectories recursively (default: true)
 - **`include_depth`**: Depth for processing include relationships (default: 1)
 - **`file_filters`**: Regex patterns for including/excluding files
+- **`always_show_includes`**: When true, headers excluded by `include_filter` are still shown as empty header classes in diagrams, and their include relation is drawn. Their content and further includes are not processed.
 
 - **`transformations`**: Rules for model transformation and file selection
 
