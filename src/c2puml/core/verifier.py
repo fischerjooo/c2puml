@@ -34,6 +34,9 @@ class ModelVerifier:
         # Verify project-level data
         self._verify_project_data(model)
 
+        # New invariants: filenames as keys and include_relations ownership
+        self._verify_filename_keys_and_relations(model)
+
         # Verify each file
         for file_path, file_model in model.files.items():
             self._verify_file(file_path, file_model)
@@ -68,6 +71,19 @@ class ModelVerifier:
 
         if not file_model.name or not file_model.name.strip():
             self.issues.append(f"File name is empty in {file_path}")
+
+        # Anonymous extraction sanity: detect duplicates per parent and garbled content
+        if file_model.anonymous_relationships:
+            for parent, children in file_model.anonymous_relationships.items():
+                # Duplicates under same parent
+                seen = set()
+                for child in children:
+                    key = (parent, child)
+                    if child in seen:
+                        self.issues.append(
+                            f"Duplicate extracted anonymous entity '{child}' for parent '{parent}' in {file_path}"
+                        )
+                    seen.add(child)
 
         # Verify structs
         for struct_name, struct in file_model.structs.items():
@@ -173,6 +189,20 @@ class ModelVerifier:
                 f"Alias original type is empty for '{alias_name}' in {file_path}"
             )
 
+    def _verify_filename_keys_and_relations(self, model: ProjectModel) -> None:
+        """Check filename-key invariant and include_relations placement."""
+        for key, fm in model.files.items():
+            # Keys should be filenames (equal to FileModel.name)
+            if key != fm.name:
+                self.issues.append(
+                    f"Model.files key '{key}' does not match FileModel.name '{fm.name}'"
+                )
+            # Only .c files should carry include_relations; others must be empty
+            if not fm.name.endswith(".c") and fm.include_relations:
+                self.issues.append(
+                    f"Header/non-C file '{fm.name}' has include_relations; expected empty"
+                )
+
     def _verify_field(self, file_path: str, context: str, field: Field) -> None:
         """Verify a field (struct field, function parameter, global variable)"""
         # Check for invalid names
@@ -220,6 +250,7 @@ class ModelVerifier:
             r"^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]+$",  # Mostly brackets and whitespace
             r"^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$",  # All brackets and whitespace
             r"^[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*[\[\]\{\}\(\)\s\\\n]*$",  # Excessive brackets/whitespace
+            r"}\s+\w+;\s*struct\s*\{",  # Garbled anonymous extraction pattern like '} name; struct {'
         ]
 
         for pattern in suspicious_patterns:
