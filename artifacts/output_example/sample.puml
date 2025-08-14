@@ -136,6 +136,8 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 
 
 ' Include relationships
+HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
+HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
 SAMPLE --> HEADER_GEOMETRY : <<include>>
@@ -143,7 +145,6 @@ SAMPLE --> HEADER_LOGGER : <<include>>
 SAMPLE --> HEADER_MATH_UTILS : <<include>>
 SAMPLE --> HEADER_SAMPLE : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 
 ' Declaration relationships

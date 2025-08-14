@@ -72,10 +72,10 @@ assertions:
       main.puml:
         # Keep include arrow to keep.h and filtered.h
         contains_lines:
-          - MAIN --> HEADER_KEEP : <<include>>
-          - MAIN --> HEADER_FILTERED : <<include>>
+          - 'MAIN --> HEADER_KEEP : <<include>>'
+          - 'MAIN --> HEADER_FILTERED : <<include>>'
           # Ensure keep.h content is rendered and its deeper include (deep.h) is processed normally
-          - HEADER_KEEP --> HEADER_DEEP : <<include>>
+          - 'HEADER_KEEP --> HEADER_DEEP : <<include>>'
         # filtered.h class exists but is empty (no content lines)
         contains_elements:
           - filtered
