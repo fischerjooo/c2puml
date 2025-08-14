@@ -25,6 +25,9 @@ class Config:
     recursive_search: bool = True
     include_depth: int = 1
 
+    # Generator formatting options
+    max_function_signature_chars: int = 0  # 0 or less means unlimited (no truncation)
+
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
     file_specific: Dict[str, Dict[str, Any]] = field(default_factory=dict)
@@ -57,6 +60,8 @@ class Config:
             self.recursive_search = True
         if not hasattr(self, "include_depth"):
             self.include_depth = 1
+        if not hasattr(self, "max_function_signature_chars"):
+            self.max_function_signature_chars = 0
         if not hasattr(self, "file_filters"):
             self.file_filters = {}
         if not hasattr(self, "file_specific"):
@@ -168,6 +173,7 @@ class Config:
             "model_output_path": self.model_output_path,
             "recursive_search": self.recursive_search,
             "include_depth": self.include_depth,
+            "max_function_signature_chars": self.max_function_signature_chars,
             "file_filters": self.file_filters,
             "file_specific": self.file_specific,
             "transformations": self.transformations,

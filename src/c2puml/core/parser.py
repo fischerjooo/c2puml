@@ -125,6 +125,11 @@ class CParser:
                 file_model = self.parse_file(file_path, relative_path)
 
                 # Use filename as key (filenames are guaranteed to be unique)
+                if file_model.name in files:
+                    raise RuntimeError(
+                        f"Duplicate filename detected: '{file_model.name}' from '{file_path}'. "
+                        f"Already seen from '{files[file_model.name].file_path}'."
+                    )
                 files[file_model.name] = file_model
 
                 self.logger.debug("Successfully parsed: %s", relative_path)
@@ -256,9 +261,11 @@ class CParser:
                     # Check if this struct has a typedef
                     tag_name = self._extract_tag_name_for_struct(tokens, struct_name)
 
-                structs[struct_name] = Struct(
-                    struct_name, fields, tag_name=tag_name, uses=[]
-                )
+                # Only register non-empty struct names here; anonymous will be created by the anonymous processor
+                if struct_name:
+                    structs[struct_name] = Struct(
+                        struct_name, fields, tag_name=tag_name, uses=[]
+                    )
                 self.logger.debug(
                     "Parsed struct: %s with %d fields", struct_name, len(fields)
                 )
@@ -800,8 +807,58 @@ class CParser:
         if pos >= len(tokens):
             return None
 
-        # Check if it's a struct/enum/union typedef (we'll handle these separately)
+        # Check if it's a struct/enum/union typedef
         if tokens[pos].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
+            # Look ahead to see if this complex type is immediately followed by a function-pointer declarator
+            # Pattern to detect: ... } ( * name ) ( ... )
+            look = pos
+            # Find the matching closing brace of the outer struct/union/enum
+            if tokens[look].type in [TokenType.STRUCT, TokenType.ENUM, TokenType.UNION]:
+                # Advance to the opening brace
+                while look < len(tokens) and tokens[look].type != TokenType.LBRACE:
+                    look += 1
+                if look < len(tokens) and tokens[look].type == TokenType.LBRACE:
+                    brace_count = 1
+                    look += 1
+                    while look < len(tokens) and brace_count > 0:
+                        if tokens[look].type == TokenType.LBRACE:
+                            brace_count += 1
+                        elif tokens[look].type == TokenType.RBRACE:
+                            brace_count -= 1
+                        look += 1
+                    # Now 'look' is token after the closing brace
+                    j = look
+                    # Skip whitespace/comments
+                    while j < len(tokens) and tokens[j].type in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                        j += 1
+                    # Detect function-pointer declarator: ( * IDENT ) (
+                    if (
+                        j + 4 < len(tokens)
+                        and tokens[j].type == TokenType.LPAREN
+                        and tokens[j + 1].type == TokenType.ASTERISK
+                        and tokens[j + 2].type == TokenType.IDENTIFIER
+                        and tokens[j + 3].type == TokenType.RPAREN
+                        and tokens[j + 4].type == TokenType.LPAREN
+                    ):
+                        typedef_name = tokens[j + 2].value
+                        # Collect the full typedef original type up to the semicolon, preserving parentheses/brackets spacing
+                        k = pos
+                        formatted: list[str] = []
+                        while k < len(tokens) and tokens[k].type != TokenType.SEMICOLON:
+                            t = tokens[k]
+                            if t.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
+                                formatted.append(t.value)
+                            elif formatted and formatted[-1] not in ["(", ")", "[", "]"]:
+                                # Prepend space before non-bracket tokens when previous isn't a bracket
+                                formatted.append(" " + t.value)
+                            else:
+                                formatted.append(t.value)
+                            k += 1
+                        original_type = "".join(formatted)
+                        # Clean excessive whitespace inside type
+                        original_type = self._clean_type_string(original_type)
+                        return (typedef_name, original_type)
+            # Fallback to standard complex typedef parsing
             return self._parse_complex_typedef(tokens, pos)
 
         # Collect all non-whitespace/comment tokens until semicolon
@@ -1504,8 +1561,9 @@ class CParser:
                 type_tokens = param_tokens[:-1]
                 param_type = " ".join(t.value for t in type_tokens)
                 
-                # Fix array bracket spacing
+                # Fix array bracket spacing and pointer spacing
                 param_type = self._fix_array_bracket_spacing(param_type)
+                param_type = self._fix_pointer_spacing(param_type)
 
             # Handle unnamed parameters (just type)
             if param_name in [
@@ -1566,6 +1624,15 @@ class CParser:
         # Remove spaces around array brackets
         type_str = re.sub(r'\s*\[\s*', '[', type_str)
         type_str = re.sub(r'\s*\]\s*', ']', type_str)
+        return type_str
+
+    def _fix_pointer_spacing(self, type_str: str) -> str:
+        """Fix spacing around pointer asterisks in type strings"""
+        import re
+        # Fix double pointer spacing: "type * *" -> "type **"
+        type_str = re.sub(r'\*\s+\*', '**', type_str)
+        # Fix triple pointer spacing: "type * * *" -> "type ***"
+        type_str = re.sub(r'\*\s+\*\s+\*', '***', type_str)
         return type_str
 
     def _clean_type_string(self, type_str: str) -> str:

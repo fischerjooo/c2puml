@@ -160,7 +160,7 @@ Create `config.json` for customization. The configuration supports multiple filt
 
 ### File-Specific Configuration
 
-The `file_specific` feature allows you to configure file-specific settings for different root files. Each file can have its own `include_filter` and `include_depth` settings:
+The `file_specific` feature allows you to configure file-specific settings for different root `.c` files. Each file can have its own `include_filter` and can override the global `include_depth` used by the transformer:
 
 ```json
 "file_specific": {
@@ -184,9 +184,9 @@ The `file_specific` feature allows you to configure file-specific settings for d
 
 **Available file-specific settings:**
 - **include_filter** (optional): Array of regex patterns to filter includes for this specific file
-- **include_depth** (optional): Override the global include_depth setting for this specific file
+- **include_depth** (optional): Override the global include_depth setting for this specific file (applied by transformer)
 
-Files without file-specific configuration will use the global settings. This enables fine-grained control over include processing for each root file, creating cleaner, more focused diagrams.
+Files without file-specific configuration will use the global settings. Include relationships are computed in the transformer and stored in `include_relations` on root `.c` files, which the generator consumes. The generator no longer accepts an `include_depth` parameter and falls back to direct includes only when `include_relations` are absent.
 
 ### Model Transformations
 
