@@ -1,0 +1,96 @@
+test:
+  name: Always Show Includes – Feature
+  description: When always_show_includes is true, headers filtered out by include_filter are still shown as empty header classes with include arrows, but their content and deeper includes are not processed.
+  category: feature
+  id: '211'
+---
+source_files:
+  main.c: |
+    #include "keep.h"
+    #include "filtered.h"
+    int main(void) { return keep() + filtered(); }
+  keep.h: |
+    #ifndef KEEP_H
+    #define KEEP_H
+    #include "deep.h"
+    int keep(void);
+    #endif
+  filtered.h: |
+    #ifndef FILTERED_H
+    #define FILTERED_H
+    #include "deep2.h"
+    int filtered(void);
+    #endif
+  deep.h: |
+    #ifndef DEEP_H
+    #define DEEP_H
+    int deep(void);
+    #endif
+  deep2.h: |
+    #ifndef DEEP2_H
+    #define DEEP2_H
+    int deep2(void);
+    #endif
+---
+config.json: |
+  {
+    "project_name": "always_show_includes_feature",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3,
+    "always_show_includes": true,
+    "file_specific": {
+      "main.c": {
+        "include_filter": ["^keep\\.h$"]
+      }
+    }
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+      - model.json
+      - model_transformed.json
+      - main.puml
+  model:
+    expected_files:
+      - main.c
+      - keep.h
+      - filtered.h
+      - deep.h
+      - deep2.h
+    files:
+      main.c:
+        includes_exist:
+          - keep.h
+          - filtered.h
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        # Keep include arrow to keep.h and filtered.h
+        contains_lines:
+          - 'MAIN --> HEADER_KEEP : <<include>>'
+          - 'MAIN --> HEADER_FILTERED : <<include>>'
+          # Ensure keep.h content is rendered and its deeper include (deep.h) is processed normally
+          - 'HEADER_KEEP --> HEADER_DEEP : <<include>>'
+        # filtered.h class exists but is empty (no content lines)
+        contains_elements:
+          - filtered
+        classes_exist:
+          - { name: 'HEADER_FILTERED', stereotype: 'header' }
+          - { name: 'HEADER_KEEP', stereotype: 'header' }
+        not_contains_lines:
+          # Ensure filtered.h content isn't rendered
+          - "+ int filtered()"
+          - "+ int deep2()"
+          # Ensure no include arrow to deep2.h (because filtered.h deeper includes must not be processed)
+          - HEADER_FILTERED --> HEADER_DEEP2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
+      - ./output/main.puml

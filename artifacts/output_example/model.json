@@ -58,6 +58,7 @@
       ],
       "macros": [],
       "name": "application.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -156,6 +157,7 @@
         "UNUSED(x)"
       ],
       "name": "common.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -591,6 +593,7 @@
       ],
       "macros": [],
       "name": "complex.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -1014,6 +1017,7 @@
         "UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)"
       ],
       "name": "complex.h",
+      "placeholder_headers": [],
       "structs": {
         "Process_T": {
           "fields": [
@@ -2513,6 +2517,7 @@
         "COMPLEX_EXAMPLE_H"
       ],
       "name": "complex_example.h",
+      "placeholder_headers": [],
       "structs": {
         "ComplexExample_t": {
           "fields": [
@@ -2618,6 +2623,7 @@
         "PROJECT_NAME"
       ],
       "name": "config.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -2777,6 +2783,7 @@
       ],
       "macros": [],
       "name": "database.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -2990,6 +2997,7 @@
         "MAX_QUERY_LENGTH"
       ],
       "name": "database.h",
+      "placeholder_headers": [],
       "structs": {
         "DatabaseConfig": {
           "fields": [
@@ -3155,6 +3163,7 @@
         "FILTERED_MACRO(x)"
       ],
       "name": "filtered_header.h",
+      "placeholder_headers": [],
       "structs": {
         "filtered_struct_t": {
           "fields": [
@@ -3197,6 +3206,7 @@
         "FIRST_LEVEL_H"
       ],
       "name": "first_level.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -3257,6 +3267,7 @@
       ],
       "macros": [],
       "name": "geometry.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -3318,6 +3329,7 @@
         "GEOMETRY_H"
       ],
       "name": "geometry.h",
+      "placeholder_headers": [],
       "structs": {
         "triangle_t": {
           "fields": [
@@ -3562,6 +3574,7 @@
         "LIBPQ_FE_H"
       ],
       "name": "libpq-fe.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -3623,6 +3636,7 @@
       ],
       "macros": [],
       "name": "logger.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -3710,6 +3724,7 @@
         "LOGGER_H"
       ],
       "name": "logger.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -3781,6 +3796,7 @@
       ],
       "macros": [],
       "name": "math_utils.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -3865,6 +3881,7 @@
         "MATH_UTILS_H"
       ],
       "name": "math_utils.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -4069,6 +4086,7 @@
         "MYSQL_SUCCESS"
       ],
       "name": "mysql.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -4243,6 +4261,7 @@
       ],
       "macros": [],
       "name": "network.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -4470,6 +4489,7 @@
         "NETWORK_H"
       ],
       "name": "network.h",
+      "placeholder_headers": [],
       "structs": {
         "NetworkConfig": {
           "fields": [
@@ -4554,6 +4574,7 @@
       ],
       "macros": [],
       "name": "preprocessed.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -4673,6 +4694,7 @@
         "PREPROCESSED_H"
       ],
       "name": "preprocessed.h",
+      "placeholder_headers": [],
       "structs": {
         "basic_struct_t": {
           "fields": [
@@ -5114,6 +5136,7 @@
         "MAX_SIZE"
       ],
       "name": "sample.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -5224,6 +5247,7 @@
         "VERSION"
       ],
       "name": "sample.h",
+      "placeholder_headers": [],
       "structs": {
         "point_t": {
           "fields": [
@@ -5416,6 +5440,7 @@
         "MAX_SIZE"
       ],
       "name": "sample2.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -5852,6 +5877,7 @@
         "SQLITE_TOOBIG"
       ],
       "name": "sqlite3.h",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -6025,6 +6051,7 @@
         "OLD_VERSION"
       ],
       "name": "transformed.c",
+      "placeholder_headers": [],
       "structs": {
         "__anonymous_struct__": {
           "fields": [
@@ -6317,6 +6344,7 @@
         "TRANSFORMED_H"
       ],
       "name": "transformed.h",
+      "placeholder_headers": [],
       "structs": {
         "legacy_node": {
           "fields": [
@@ -6508,6 +6536,7 @@
       ],
       "macros": [],
       "name": "typedef_test.c",
+      "placeholder_headers": [],
       "structs": {},
       "unions": {}
     },
@@ -6599,6 +6628,7 @@
         "TYPEDEF_TEST_H"
       ],
       "name": "typedef_test.h",
+      "placeholder_headers": [],
       "structs": {
         "MyBuffer": {
           "fields": [

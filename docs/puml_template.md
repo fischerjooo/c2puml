@@ -52,6 +52,7 @@ This template defines the structure for generating PlantUML diagrams from C sour
 ### Include Relationships
 - **C files including headers**: `{C_FILE} --> {HEADER_FILE} : <<include>>`
 - **Header-to-header includes**: `{HEADER_FILE} --> {OTHER_HEADER_FILE} : <<include>>`
+- Note: When `always_show_includes` is enabled, headers filtered out by `include_filter` are still rendered as empty header classes, and the include arrows remain visible.
 
 ### Declaration Relationships
 - **Files declaring typedefs**: `{FILE} ..> {TYPEDEF} : <<declares>>`
