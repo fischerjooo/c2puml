@@ -377,6 +377,7 @@ class Transformer:
         """
         global_include_depth = config.get("include_depth", 1)
         file_specific_config = config.get("file_specific", {})
+        include_filter_local_only = config.get("include_filter_local_only", False)
         
         self.logger.info(
             "Processing includes with simplified depth-based approach (global_depth=%d)", 
@@ -398,7 +399,7 @@ class Transformer:
         
         for root_file in c_files:
             self._process_root_c_file_includes(
-                root_file, file_map, global_include_depth, file_specific_config
+                root_file, file_map, global_include_depth, file_specific_config, include_filter_local_only
             )
             
         return model
@@ -408,7 +409,8 @@ class Transformer:
         root_file: FileModel, 
         file_map: Dict[str, FileModel],
         global_include_depth: int,
-        file_specific_config: Dict[str, Any]
+        file_specific_config: Dict[str, Any],
+        include_filter_local_only: bool
     ) -> None:
         """
         Process includes for a single root C file following the simplified approach:
@@ -426,6 +428,12 @@ class Transformer:
             file_config = file_specific_config[root_filename]
             include_depth = file_config.get("include_depth", global_include_depth)
             include_filters = file_config.get("include_filter", [])
+        
+        # If configured to keep only local header, ensure filter pattern for local header is present
+        if include_filter_local_only:
+            local_header_pattern = f"^{Path(root_filename).stem}\\.h$"
+            if local_header_pattern not in include_filters:
+                include_filters.append(local_header_pattern)
         
         # Skip processing if depth is 1 or less (no include relations needed)
         if include_depth <= 1:

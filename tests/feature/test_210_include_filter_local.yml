@@ -1,0 +1,94 @@
+test:
+  name: Include Filter Local Only – Feature
+  description: When include_filter_local_only is true, only the local header (basename.c -> basename.h) is kept for include relations per C file, unless additional include_filter patterns are given.
+  category: feature
+  id: '210'
+---
+source_files:
+  app.c: |
+    #include "app.h"
+    #include "other.h"
+    #include "deep/dep.h"
+    int app(void) { return 0; }
+  app.h: |
+    #ifndef APP_H
+    #define APP_H
+    int app(void);
+    #endif
+  other.h: |
+    #ifndef OTHER_H
+    #define OTHER_H
+    int other(void);
+    #endif
+  deep/dep.h: |
+    #ifndef DEP_H
+    #define DEP_H
+    int dep(void);
+    #endif
+  util.c: |
+    #include "util.h"
+    #include "app.h"
+    int util(void) { return 1; }
+  util.h: |
+    #ifndef UTIL_H
+    #define UTIL_H
+    int util(void);
+    #endif
+---
+config.json: |
+  {
+    "project_name": "include_filter_local_only",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2,
+    "include_filter_local_only": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+      - model.json
+      - model_transformed.json
+      - app.puml
+      - util.puml
+  model:
+    expected_files:
+      - app.c
+      - app.h
+      - other.h
+      - dep.h
+      - util.c
+      - util.h
+    files:
+      app.c:
+        includes_exist:
+          - app.h
+          - other.h
+          - deep/dep.h
+      util.c:
+        includes_exist:
+          - util.h
+          - app.h
+  puml:
+    syntax_valid: true
+    files:
+      app.puml:
+        contains_lines:
+          - APP --> HEADER_APP
+        not_contains_lines:
+          - APP --> HEADER_OTHER
+          - APP --> HEADER_DEP
+      util.puml:
+        contains_lines:
+          - UTIL --> HEADER_UTIL
+        not_contains_lines:
+          - UTIL --> HEADER_APP
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
+      - ./output/app.puml
+      - ./output/util.puml
