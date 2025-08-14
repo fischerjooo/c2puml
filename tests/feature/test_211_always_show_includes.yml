@@ -74,18 +74,20 @@ assertions:
         contains_lines:
           - MAIN --> HEADER_KEEP : <<include>>
           - MAIN --> HEADER_FILTERED : <<include>>
+          # Ensure keep.h content is rendered and its deeper include (deep.h) is processed normally
+          - HEADER_KEEP --> HEADER_DEEP : <<include>>
         # filtered.h class exists but is empty (no content lines)
         contains_elements:
           - filtered
+        classes_exist:
+          - { name: 'HEADER_FILTERED', stereotype: 'header' }
+          - { name: 'HEADER_KEEP', stereotype: 'header' }
         not_contains_lines:
           # Ensure filtered.h content isn't rendered
           - "+ int filtered()"
           - "+ int deep2()"
           # Ensure no include arrow to deep2.h (because filtered.h deeper includes must not be processed)
           - HEADER_FILTERED --> HEADER_DEEP2
-        contains_lines:
-          # Ensure keep.h content is rendered and its deeper include (deep.h) is processed normally
-          - HEADER_KEEP --> HEADER_DEEP : <<include>>
   files:
     output_dir_exists: ./output
     files_exist:
