@@ -29,6 +29,12 @@ class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
     + void process_data(const point3d_t * point)
 }
 
+class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYellow
+{
+    + struct old_point * point = malloc ( sizeof ( struct old_point ) )
+    + if ( point ) { point -> x = x ; point -> y = y ; } return point
+}
+
 class "old_point" as TYPEDEF_OLD_POINT <<struct>> #LightYellow
 {
     + int x
@@ -66,6 +72,7 @@ class "config_t" as TYPEDEF_CONFIG_T <<typedef>> #LightYellow
 TRANSFORMED --> HEADER_TRANSFORMED : <<include>>
 
 ' Declaration relationships
+TRANSFORMED ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
 TRANSFORMED ..> TYPEDEF_OLD_POINT : <<declares>>
 HEADER_TRANSFORMED ..> TYPEDEF_MODERN_CONFIG : <<declares>>
 HEADER_TRANSFORMED ..> TYPEDEF_POINT3D_T : <<declares>>
