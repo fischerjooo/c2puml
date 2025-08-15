@@ -198,3 +198,89 @@
 - Keep output formatting consistent with `docs/puml_template.md` (visibility, stereotypes, relationship types).
 - Behavior detail: Pure anonymous placeholders (`__anonymous_struct__`, `__anonymous_union__`) are suppressed as endpoints in relationships; extracted, suffixed anonymous names are emitted. Consider a config flag to display pure placeholders if desired.
 - Remaining tasks: adjust tokenizer join rules to correctly separate identifiers around commas and type keywords; ensure nested anonymous struct fields are preserved and emitted in typedef classes and file sections per acceptance criteria.
+
+### Unified Type System Refactor (Detailed Tracking and Steps)
+
+- **Links**: `docs/unified_type_system.md`, `docs/naming_spec.md`
+
+#### Scope Boundaries
+- In-scope: types, typedefs, anonymous aggregates, function-pointer typedefs, relationships generation.
+- Out-of-scope (later): advanced C++ constructs, templates, attributes, preprocessor semantics beyond current.
+
+#### Workstreams
+- [ ] Data model & registry
+  - [ ] Introduce `TypeEntity`, `TypeExpr` classes in `src/c2puml/models.py`
+  - [ ] Implement `TypeRegistry` (register, get_or_create_primitive, synthesize_anonymous_name, resolve_chain)
+  - [ ] Serialize new structures into `model.json` (guarded by feature flag)
+- [ ] Parser integration
+  - [ ] Build `TypeExpr` from declarators in `parser_tokenizer.py`
+  - [ ] Convert named struct/union/enum and typedefs to `TypeEntity`
+  - [ ] Extract anonymous aggregates as `TypeEntity` with `OwnerRef`
+- [ ] Anonymous processor rework
+  - [ ] Replace ad-hoc lists with `OwnerRef` and synthesized names in `parser_anonymous_processor.py`
+  - [ ] Ensure deduplication by `(parent_typedef_id, field_path)`
+- [ ] Resolver
+  - [ ] Pass to resolve NamedType references and compute `alias_chain` + `canonical_target_id`
+  - [ ] Populate per-file `declares`
+- [ ] Generator adaptation
+  - [ ] Render content based on `TypeEntity.kind`
+  - [ ] Derive `declares`, `uses`, `contains` at render time from unified structures
+  - [ ] Preserve current formatting and ordering; keep truncation feature
+- [ ] Verifier
+  - [ ] Validate synthesized names and uniqueness
+  - [ ] Validate `alias_chain` termination and cycles detection
+  - [ ] Detect unresolved `NamedType` references
+- [ ] Feature flag & migration
+  - [ ] Config: `"use_unified_types": false` (default)
+  - [ ] Dual-path generator to read legacy model or unified model
+  - [ ] Remove legacy paths after parity
+- [ ] Documentation
+  - [ ] Update `docs/specification.md` with v4 details upon feature completion
+  - [ ] Keep `docs/naming_spec.md` as the single source of truth for naming
+
+#### Step-by-Step Tasks
+- [ ] Step 1: Add data classes and registry (no behavioral change)
+  - [ ] Implement classes and unit tests for pure construction/serialization
+- [ ] Step 2: Parser produces `TypeExpr` trees for typedefs and fields
+  - [ ] Unit tests: declarator coverage (arrays, pointers, function pointers)
+- [ ] Step 3: Anonymous extraction emits `TypeEntity` + `OwnerRef`
+  - [ ] Unit tests: 1–3 level nesting, dedup, naming
+- [ ] Step 4: Resolver computes `alias_chain` and `canonical_target_id`
+  - [ ] Unit tests: typedef-of-typedef, primitive and aggregate targets
+- [ ] Step 5: Generator reads unified model (feature-flagged)
+  - [ ] Feature tests: stereotypes, relationships, ordering, truncation
+- [ ] Step 6: Parity run on example project and consolidated tests
+  - [ ] Flip flag on CI shadow job; compare outputs
+- [ ] Step 7: Remove legacy `typedef_relations` and `anonymous_relationships`
+  - [ ] Update docs and tests
+
+#### Test Plan (TDD)
+- Unit (new YAMLs under `tests/unit/`):
+  - [ ] `test_140_typeexpr_declarators.yml`: arrays, pointers, function pointers
+  - [ ] `test_141_anonymous_naming.yml`: 1–3 level nesting; single-underscore
+  - [ ] `test_142_typedef_chains.yml`: alias chains to primitive and aggregates
+  - [ ] `test_143_relationships_unified.yml`: derives declares/uses/contains
+- Feature:
+  - [ ] `test_212_unified_flag.yml`: generator parity with and without flag
+- Integration:
+  - [ ] `test_302_unified_example.yml`: full example parity assertions
+
+#### Acceptance Criteria per Phase
+- Phase 1: Models and registry serialize/deserialize; 100% unit coverage on new classes
+- Phase 3: Anonymous types named `Parent_field1_field2`; no duplicates; contains edges correct
+- Phase 4: Typedef chains always terminate; cycles reported by verifier
+- Phase 5: Generator parity with legacy for sample set; enum order preserved; stereotypes correct
+- Phase 6: All tests green with `use_unified_types=true` on local; shadow CI diff clean
+
+#### Risks & Mitigations
+- Naming collisions → deterministic suffixing and verifier checks
+- Mixed legacy/unified paths → feature flag with narrow blast radius
+- Performance regressions → cache resolved ids in registry; avoid repeated renders
+
+#### Metrics & Instrumentation
+- Counters: synthesized types, deduplications, unresolved references, alias chain lengths
+- Enforce maximum alias depth (configurable) with warnings
+
+#### Definition of Done
+- All tests pass (`./scripts/run_all.sh`) with `use_unified_types=true`
+- Legacy paths removed; docs updated; examples regenerated; CI green
