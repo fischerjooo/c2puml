@@ -1,3 +1,25 @@
+### Unified Type System Refactor (Design + Plan)
+
+- **Goal**: Replace special-case anonymous handling with a unified type model using `TypeEntity` and `TypeExpr`, unify typedef relations, and derive relationships uniformly.
+
+#### Milestones
+- [ ] Phase 1: Docs + test scaffolding (no behavior change)
+- [ ] Phase 2: Add `TypeExpr` + `TypeEntity` models and registry (behind feature flag)
+- [ ] Phase 3: Anonymous extraction to `TypeEntity` + `OwnerRef` (keep legacy side-by-side)
+- [ ] Phase 4: Typedef unfolding + canonical targets; generator reads unified model
+- [ ] Phase 5: Remove legacy `typedef_relations` and `anonymous_relationships`
+
+#### TDD Tasks
+- [ ] Tokenizer → declarator → TypeExpr trees (function pointers, arrays, qualifiers)
+- [ ] Anonymous extraction: synthesized names `Parent__field__path`, OwnerRef, dedup
+- [ ] Typedef chains: alias → alias → primitive/aggregate; compute `canonical_target_id`
+- [ ] Generator mapping: stereotypes by kind; relationships declares/uses/contains
+- [ ] Integration: example parity; no duplicates; order preserved
+
+#### Notes
+- Relationship derivation from unified model eliminates ad-hoc collectors and duplicates.
+- Keep generator compatibility by adapting from unified model first, then remove legacy paths.
+
 ### Fix Plan for complex.puml generation
 
 - **Context**: Compare `artifacts/output_example/complex.puml` with `tests/example/source/complex.c` and `tests/example/source/complex.h`. Several generation defects were found in function signatures, anonymous type extraction, typedef classification, and field rendering.
