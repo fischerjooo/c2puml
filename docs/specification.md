@@ -795,3 +795,8 @@ Configuration (in `config.json`):
 Example behavior:
 - With `max_function_signature_chars: 60`, a signature like `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void (* pre_process)(int*, int), void (* post_process)(int*, int))` may become `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, ...)` depending on the exact threshold.
 
+
+## 6. Planned: Unified Type System (v4)
+
+A refactor is planned to unify all type handling under a single model with `TypeEntity` and `TypeExpr`, eliminating special-case anonymous processing and simplifying typedef relations. See `docs/unified_type_system.md` for the complete concept and migration plan. The change is designed to be incremental and backward-compatible during the transition, with adapters in the generator and parser to preserve current behavior until the legacy paths are removed.
+
