@@ -11,7 +11,7 @@
 
 #### TDD Tasks
 - [ ] Tokenizer → declarator → TypeExpr trees (function pointers, arrays, qualifiers)
-- [ ] Anonymous extraction: synthesized names `Parent__field__path`, OwnerRef, dedup
+- [ ] Anonymous extraction: synthesized names `Parent_field_path`, OwnerRef, dedup
 - [ ] Typedef chains: alias → alias → primitive/aggregate; compute `canonical_target_id`
 - [ ] Generator mapping: stereotypes by kind; relationships declares/uses/contains
 - [ ] Integration: example parity; no duplicates; order preserved

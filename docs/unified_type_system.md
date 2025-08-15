@@ -28,7 +28,7 @@
 ### 2) Type Registry and Canonical IDs
 - Global TypeRegistry builds a bijection between names/synthesized names and TypeEntity ids.
 - For anonymous types, synthesize deterministic names using context path:
-  - Pattern: PARENT_TYPEDEF__fieldA__fieldB (double underscore as separator)
+  - Pattern: PARENT_TYPEDEF_fieldA_fieldB (single underscore as separator)
   - Collisions resolved with numeric suffixes, tracked in registry.
 - Deduplication is handled by canonicalization of owner+field-path.
 
