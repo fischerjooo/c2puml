@@ -100,6 +100,9 @@ All arrows in PlantUML are generated from these uniform sources; no special-case
 - Uniform relationship derivation removes ad-hoc collectors and duplicate logic.
 - Easier future features: cycles, better function-pointer returns, arrays-of-function-pointers, qualifiers.
 
+## Naming
+- See `docs/naming_spec.md` for synthesized anonymous type naming (single-underscore), OwnerRef details, and derivation examples.
+
 ## Migration Plan
 - Phase 1 (Docs & Tests):
   - Document design (this file) and add non-executed YAML fixtures for upcoming tests.
