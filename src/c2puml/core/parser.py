@@ -387,6 +387,7 @@ class CParser:
             func_name,
             return_type,
             is_declaration,
+            is_inline,
         ) in function_infos:
             # Map back to original token positions to parse parameters
             original_start = self._find_original_token_pos(
@@ -406,11 +407,12 @@ class CParser:
             try:
                 # Create function with declaration flag
                 function = Function(func_name, return_type, parameters)
-                # Add a custom attribute to track if this is a declaration
+                # Add custom attributes to track if this is a declaration and if it's inline
                 function.is_declaration = is_declaration
+                function.is_inline = is_inline
                 functions.append(function)
                 self.logger.debug(
-                    f"Parsed function: {func_name} with {len(parameters)} parameters (declaration: {is_declaration})"
+                    f"Parsed function: {func_name} with {len(parameters)} parameters (declaration: {is_declaration}, inline: {is_inline})"
                 )
             except Exception as e:
                 self.logger.warning("Error creating function %s: %s", func_name, e)
