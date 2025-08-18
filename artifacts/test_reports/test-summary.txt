@@ -1,12 +1,12 @@
 Test Execution Summary
 =====================
-Generated: 2025-08-18 11:25:00
+Generated: 2025-08-18 13:10:52
 
 Test Results
 ------------
-========================= 1 failed, 72 passed in 8.30s =========================
+========================= 1 failed, 72 passed in 8.97s =========================
 Status: FAILED - 1 failed, 0 errors
 
 Test Collection: collecting ... collected 73 items
 
-Execution Time: 20 seconds
+Execution Time: 22 seconds
