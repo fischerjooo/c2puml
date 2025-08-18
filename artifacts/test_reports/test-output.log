@@ -134,7 +134,7 @@ tests/framework/validators_processor.py:413: in _process_single_puml_file_assert
     self.puml_validator.assert_puml_relationship(puml_content, source, target, rel_type)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <tests.framework.validators.PlantUMLValidator object at 0x7f73dffb2d90>
+self = <tests.framework.validators.PlantUMLValidator object at 0x7f980f961dc0>
 puml_content = '@startuml complex\n\nclass "complex" as COMPLEX <<source>> #LightBlue\n{\n    -- Global Variables --\n    - Process_C...TRUCT : <<contains>>\nTYPEDEF_UNION_WITH_UNION_T *-- TYPEDEF_UNION_WITH_UNION_T_NESTED_UNION : <<contains>>\n\n@enduml'
 source = 'TYPEDEF___ANONYMOUS_STRUCT__'
 target = 'TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION', rel_type = '*--'
@@ -149,6 +149,6 @@ E           AssertionError: Relationship 'TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPED
 tests/framework/validators.py:347: AssertionError
 =========================== short test summary info ============================
 FAILED tests/example/test_901_basic_example.py::TestBasicExample::test_basic_example - AssertionError: Relationship 'TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION' not found in PlantUML content
-========================= 1 failed, 72 passed in 8.97s =========================
+========================= 1 failed, 72 passed in 9.03s =========================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:943: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
