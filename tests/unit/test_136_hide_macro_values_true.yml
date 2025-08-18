@@ -1,0 +1,64 @@
+test:
+  name: Hide Macro Values - Hide Values
+  description: Test that simple macro values are hidden when hide_macro_values=true, function-like macros remain the same
+  category: unit
+  id: '136_hide_macro_values_true'
+---
+source_files:
+  test.h: |
+    #ifndef TEST_H
+    #define TEST_H
+    
+    #define PI 3.14159
+    #define VERSION "1.0.0"
+    #define MAX_SIZE 1024
+    #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    #define MAX(a, b) ((a) > (b) ? (a) : (b))
+    #define CALC(x, y) ((x) * (y) + 10)
+    #define DEBUG_FLAG
+    
+    #endif
+  test.c: |
+    #include "test.h"
+    #include <stdio.h>
+    
+    int main() {
+        printf("PI = %f\n", PI);
+        return 0;
+    }
+---
+config.json: |
+  {
+    "project_name": "test_hide_macro_values_true",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "hide_macro_values": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+      - model.json
+      - model_transformed.json
+      - test.puml
+  puml:
+    syntax_valid: true
+    files:
+      test.puml:
+        contains_lines:
+          - "+ #define PI"
+          - "+ #define VERSION"
+          - "+ #define MAX_SIZE"
+          - "+ #define DEBUG_FLAG"
+          - "+ #define MIN(a, b)"
+          - "+ #define MAX(a, b)"
+          - "+ #define CALC(x, y)"
+        not_contains_lines:
+          - "+ #define PI 3.14159"
+          - "+ #define VERSION \"1.0.0\""
+          - "+ #define MAX_SIZE 1024"
+          - "+ #define MIN(a, b) ((a) < (b) ? (a) : (b))"
+          - "+ #define MAX(a, b) ((a) > (b) ? (a) : (b))"
+          - "+ #define CALC(x, y) ((x) * (y) + 10)"

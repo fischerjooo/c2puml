@@ -25,9 +25,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE 256
-    + #define MAX_LABEL_LEN 64
-    + #define PROJECT_NAME "ComplexCProject"
+    + #define DEFAULT_BUFFER_SIZE
+    + #define MAX_LABEL_LEN
+    + #define PROJECT_NAME
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -63,9 +63,9 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     -- Macros --
     + #define MAX(a, b)
     + #define MIN(a, b)
-    + #define PI 3.14159
+    + #define PI
     + #define SAMPLE_H
-    + #define VERSION "1.0.0"
+    + #define VERSION
     -- Global Variables --
     + char * DEFAULT_LABEL
     + int MAX_POINTS
@@ -250,13 +250,11 @@ HEADER_COMPLEX_EXAMPLE --> HEADER_LOGGER : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
 TYPEDEF_TEST --> HEADER_COMPLEX_EXAMPLE : <<include>>
 TYPEDEF_TEST --> HEADER_GEOMETRY : <<include>>
 TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
 TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_CONFIG : <<include>>
-HEADER_TYPEDEF_TEST --> HEADER_LOGGER : <<include>>
 HEADER_TYPEDEF_TEST --> HEADER_SAMPLE : <<include>>
 
 ' Declaration relationships

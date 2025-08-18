@@ -143,18 +143,20 @@
         "stdint.h"
       ],
       "macros": [
-        "ARRAY_SIZE(arr)",
-        "COMMON_H",
-        "DEPRECATED",
-        "ERROR_GENERAL",
-        "ERROR_INVALID_PARAM",
-        "ERROR_MEMORY",
-        "ERROR_TIMEOUT",
-        "MAX(a, b)",
-        "MIN(a, b)",
-        "PACKED",
-        "SUCCESS",
-        "UNUSED(x)"
+        "#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))",
+        "#define COMMON_H",
+        "#define DEPRECATED",
+        "#define DEPRECATED __attribute__((deprecated))",
+        "#define ERROR_GENERAL -1",
+        "#define ERROR_INVALID_PARAM -2",
+        "#define ERROR_MEMORY -3",
+        "#define ERROR_TIMEOUT -4",
+        "#define MAX(a, b) ((a) > (b) ? (a) : (b))",
+        "#define MIN(a, b) ((a) < (b) ? (a) : (b))",
+        "#define PACKED",
+        "#define PACKED __attribute__((packed))",
+        "#define SUCCESS 0",
+        "#define UNUSED(x) (void)(x)"
       ],
       "name": "common.h",
       "placeholder_headers": [],
@@ -1003,18 +1005,19 @@
         "stdint.h"
       ],
       "macros": [
-        "COMPLEX_H",
-        "COMPLEX_MACRO_FUNC(x, y, z)",
-        "CREATE_FUNC_NAME(prefix, suffix)",
-        "DEPRECATED",
-        "HANDLE_OPERATION(op_type, data, size, callback)",
-        "PROCESS_ARRAY(arr, size, callback)",
-        "STRINGIFY(x)",
-        "TOSTRING(x)",
-        "UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)",
-        "UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)",
-        "UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)",
-        "UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)"
+        "#define COMPLEX_H",
+        "#define COMPLEX_MACRO_FUNC(x, y, z) do { \n    int temp_var = (x) + (y) * (z); \n    if (temp_var > 100) { \n        temp_var = temp_var / 2; \n    } else { \n        temp_var = temp_var * 3; \n    } \n    (x) = temp_var; \n} while(0)",
+        "#define CREATE_FUNC_NAME(prefix, suffix) prefix##_##suffix",
+        "#define DEPRECATED",
+        "#define DEPRECATED __attribute__((deprecated))",
+        "#define HANDLE_OPERATION(op_type, data, size, callback) do { \n    switch ((op_type)) { \n        case OP_ADD: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] + 1; \n            } \n            break; \n        case OP_SUB: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] - 1; \n            } \n            break; \n        case OP_MUL: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] * 2; \n            } \n            break; \n        case OP_DIV: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] / 2; \n            } \n            break; \n    } \n    if ((callback) != NULL) { \n        (callback)((data), (size)); \n    } \n} while(0)",
+        "#define PROCESS_ARRAY(arr, size, callback) do { \n    for (int i = 0; i < (size); i++) { \n        int result = (callback)(&(arr)[i]); \n        if (result < 0) { \n            break; \n        } \n    } \n} while(0)",
+        "#define STRINGIFY(x) #x",
+        "#define TOSTRING(x) STRINGIFY(x)",
+        "#define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \n{                                                                     \n    (ptr_pau8)[1U] = (uint8)((value_u16));                            \n    (ptr_pau8)[0U] = (uint8)((value_u16) >> 8U);                      \n}",
+        "#define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \n{                                                                     \n    (ptr_pau8)[3U] = (uint8)((value_u32));                            \n    (ptr_pau8)[2U] = (uint8)((value_u32) >> 8U);                      \n    (ptr_pau8)[1U] = (uint8)((value_u32) >> 16U);                     \n    (ptr_pau8)[0U] = (uint8)((value_u32) >> 24U);                     \n}",
+        "#define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8) \n    (((uint16)((ptr_pau8)[0U]) << 8U) | ((uint16)((ptr_pau8)[1U])))",
+        "#define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8) \n    (((uint32)((ptr_pau8)[0U]) << 24U) | \n     ((uint32)((ptr_pau8)[1U]) << 16U) | \n     ((uint32)((ptr_pau8)[2U]) << 8U) | \n     ((uint32)((ptr_pau8)[3U])))"
       ],
       "name": "complex.h",
       "placeholder_headers": [],
@@ -2514,7 +2517,7 @@
         "logger.h"
       ],
       "macros": [
-        "COMPLEX_EXAMPLE_H"
+        "#define COMPLEX_EXAMPLE_H"
       ],
       "name": "complex_example.h",
       "placeholder_headers": [],
@@ -2617,10 +2620,10 @@
         "stdint.h"
       ],
       "macros": [
-        "CONFIG_H",
-        "DEFAULT_BUFFER_SIZE",
-        "MAX_LABEL_LEN",
-        "PROJECT_NAME"
+        "#define CONFIG_H",
+        "#define DEFAULT_BUFFER_SIZE 256",
+        "#define MAX_LABEL_LEN 64",
+        "#define PROJECT_NAME \"ComplexCProject\""
       ],
       "name": "config.h",
       "placeholder_headers": [],
@@ -2992,9 +2995,9 @@
         "stdlib.h"
       ],
       "macros": [
-        "DATABASE_H",
-        "MAX_DB_NAME_LENGTH",
-        "MAX_QUERY_LENGTH"
+        "#define DATABASE_H",
+        "#define MAX_DB_NAME_LENGTH 256",
+        "#define MAX_QUERY_LENGTH 4096"
       ],
       "name": "database.h",
       "placeholder_headers": [],
@@ -3158,9 +3161,9 @@
         "stdlib.h"
       ],
       "macros": [
-        "FILTERED_CONSTANT",
-        "FILTERED_HEADER_H",
-        "FILTERED_MACRO(x)"
+        "#define FILTERED_CONSTANT 42",
+        "#define FILTERED_HEADER_H",
+        "#define FILTERED_MACRO(x) ((x) * 2)"
       ],
       "name": "filtered_header.h",
       "placeholder_headers": [],
@@ -3203,7 +3206,7 @@
         "filtered_header.h"
       ],
       "macros": [
-        "FIRST_LEVEL_H"
+        "#define FIRST_LEVEL_H"
       ],
       "name": "first_level.h",
       "placeholder_headers": [],
@@ -3326,7 +3329,7 @@
         "sample.h"
       ],
       "macros": [
-        "GEOMETRY_H"
+        "#define GEOMETRY_H"
       ],
       "name": "geometry.h",
       "placeholder_headers": [],
@@ -3569,9 +3572,9 @@
         "stddef.h"
       ],
       "macros": [
-        "CONNECTION_BAD",
-        "CONNECTION_OK",
-        "LIBPQ_FE_H"
+        "#define CONNECTION_BAD 1",
+        "#define CONNECTION_OK 0",
+        "#define LIBPQ_FE_H"
       ],
       "name": "libpq-fe.h",
       "placeholder_headers": [],
@@ -3721,7 +3724,7 @@
         "stdio.h"
       ],
       "macros": [
-        "LOGGER_H"
+        "#define LOGGER_H"
       ],
       "name": "logger.h",
       "placeholder_headers": [],
@@ -3878,7 +3881,7 @@
         "config.h"
       ],
       "macros": [
-        "MATH_UTILS_H"
+        "#define MATH_UTILS_H"
       ],
       "name": "math_utils.h",
       "placeholder_headers": [],
@@ -4081,9 +4084,9 @@
         "stddef.h"
       ],
       "macros": [
-        "MYSQL_ERROR",
-        "MYSQL_H",
-        "MYSQL_SUCCESS"
+        "#define MYSQL_ERROR -1",
+        "#define MYSQL_H",
+        "#define MYSQL_SUCCESS 0"
       ],
       "name": "mysql.h",
       "placeholder_headers": [],
@@ -4484,9 +4487,9 @@
         "unistd.h"
       ],
       "macros": [
-        "DEFAULT_PORT",
-        "MAX_CONNECTIONS",
-        "NETWORK_H"
+        "#define DEFAULT_PORT 8080",
+        "#define MAX_CONNECTIONS 100",
+        "#define NETWORK_H"
       ],
       "name": "network.h",
       "placeholder_headers": [],
@@ -4687,11 +4690,11 @@
         "stdint.h"
       ],
       "macros": [
-        "DEBUG_MODE",
-        "FEATURE_ENABLED",
-        "MAX_SIZE",
-        "MIN_SIZE",
-        "PREPROCESSED_H"
+        "#define DEBUG_MODE 0",
+        "#define FEATURE_ENABLED 1",
+        "#define MAX_SIZE 100",
+        "#define MIN_SIZE 10",
+        "#define PREPROCESSED_H"
       ],
       "name": "preprocessed.h",
       "placeholder_headers": [],
@@ -5131,9 +5134,9 @@
         "string.h"
       ],
       "macros": [
-        "CALC(x, y)",
-        "DEBUG_MODE",
-        "MAX_SIZE"
+        "#define CALC(x, y) ((x) + (y))",
+        "#define DEBUG_MODE 1U",
+        "#define MAX_SIZE 100U"
       ],
       "name": "sample.c",
       "placeholder_headers": [],
@@ -5240,11 +5243,11 @@
         "stddef.h"
       ],
       "macros": [
-        "MAX(a, b)",
-        "MIN(a, b)",
-        "PI",
-        "SAMPLE_H",
-        "VERSION"
+        "#define MAX(a, b) ((a) > (b) ? (a) : (b))",
+        "#define MIN(a, b) ((a) < (b) ? (a) : (b))",
+        "#define PI 3.14159",
+        "#define SAMPLE_H",
+        "#define VERSION \"1.0.0\""
       ],
       "name": "sample.h",
       "placeholder_headers": [],
@@ -5435,9 +5438,9 @@
         "string.h"
       ],
       "macros": [
-        "CALC(x, y)",
-        "DEBUG_MODE",
-        "MAX_SIZE"
+        "#define CALC(x, y) ((x) + (y))",
+        "#define DEBUG_MODE 1U",
+        "#define MAX_SIZE 100U"
       ],
       "name": "sample2.c",
       "placeholder_headers": [],
@@ -5845,36 +5848,36 @@
         "stddef.h"
       ],
       "macros": [
-        "SQLITE3_H",
-        "SQLITE_ABORT",
-        "SQLITE_AUTH",
-        "SQLITE_BUSY",
-        "SQLITE_CANTOPEN",
-        "SQLITE_CONSTRAINT",
-        "SQLITE_CORRUPT",
-        "SQLITE_DONE",
-        "SQLITE_EMPTY",
-        "SQLITE_ERROR",
-        "SQLITE_FORMAT",
-        "SQLITE_FULL",
-        "SQLITE_INTERNAL",
-        "SQLITE_INTERRUPT",
-        "SQLITE_IOERR",
-        "SQLITE_LOCKED",
-        "SQLITE_MISMATCH",
-        "SQLITE_MISUSE",
-        "SQLITE_NOLFS",
-        "SQLITE_NOMEM",
-        "SQLITE_NOTADB",
-        "SQLITE_NOTFOUND",
-        "SQLITE_OK",
-        "SQLITE_PERM",
-        "SQLITE_PROTOCOL",
-        "SQLITE_RANGE",
-        "SQLITE_READONLY",
-        "SQLITE_ROW",
-        "SQLITE_SCHEMA",
-        "SQLITE_TOOBIG"
+        "#define SQLITE3_H",
+        "#define SQLITE_ABORT        4   /* Callback routine requested an abort */",
+        "#define SQLITE_AUTH        23   /* Authorization denied */",
+        "#define SQLITE_BUSY         5   /* The database file is locked */",
+        "#define SQLITE_CANTOPEN    14   /* Unable to open the database file */",
+        "#define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */",
+        "#define SQLITE_CORRUPT     11   /* The database disk image is malformed */",
+        "#define SQLITE_DONE        101  /* sqlite3_step() has finished executing */",
+        "#define SQLITE_EMPTY       16   /* Database is empty */",
+        "#define SQLITE_ERROR        1   /* SQL error or missing database */",
+        "#define SQLITE_FORMAT      24   /* Auxiliary database format error */",
+        "#define SQLITE_FULL        13   /* Insertion failed because database is full */",
+        "#define SQLITE_INTERNAL     2   /* Internal logic error in SQLite */",
+        "#define SQLITE_INTERRUPT    9   /* Operation terminated by sqlite3_interrupt()*/",
+        "#define SQLITE_IOERR       10   /* Some kind of disk I/O error occurred */",
+        "#define SQLITE_LOCKED       6   /* A table in the database is locked */",
+        "#define SQLITE_MISMATCH    20   /* Data type mismatch */",
+        "#define SQLITE_MISUSE      21   /* Library used incorrectly */",
+        "#define SQLITE_NOLFS       22   /* Uses OS features not supported on host */",
+        "#define SQLITE_NOMEM        7   /* A malloc() failed */",
+        "#define SQLITE_NOTADB      26   /* File opened that is not a database file */",
+        "#define SQLITE_NOTFOUND    12   /* Unknown opcode in sqlite3_file_control() */",
+        "#define SQLITE_OK           0   /* Successful result */",
+        "#define SQLITE_PERM         3   /* Access permission denied */",
+        "#define SQLITE_PROTOCOL    15   /* Database lock protocol error */",
+        "#define SQLITE_RANGE       25   /* 2nd parameter to sqlite3_bind out of range */",
+        "#define SQLITE_READONLY     8   /* Attempt to write a readonly database */",
+        "#define SQLITE_ROW         100  /* sqlite3_step() has another row ready */",
+        "#define SQLITE_SCHEMA      17   /* The database schema changed */",
+        "#define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */"
       ],
       "name": "sqlite3.h",
       "placeholder_headers": [],
@@ -6046,9 +6049,9 @@
         "transformed.h"
       ],
       "macros": [
-        "DEPRECATED_MAX_SIZE",
-        "LEGACY_DEBUG",
-        "OLD_VERSION"
+        "#define DEPRECATED_MAX_SIZE 1024",
+        "#define LEGACY_DEBUG 1",
+        "#define OLD_VERSION \"1.0\""
       ],
       "name": "transformed.c",
       "placeholder_headers": [],
@@ -6338,10 +6341,10 @@
         "unistd.h"
       ],
       "macros": [
-        "DEPRECATED_FLAG",
-        "LEGACY_BUFFER_SIZE",
-        "OLD_API_VERSION",
-        "TRANSFORMED_H"
+        "#define DEPRECATED_FLAG 0x01",
+        "#define LEGACY_BUFFER_SIZE 512",
+        "#define OLD_API_VERSION 100",
+        "#define TRANSFORMED_H"
       ],
       "name": "transformed.h",
       "placeholder_headers": [],
@@ -6625,7 +6628,7 @@
         "stdint.h"
       ],
       "macros": [
-        "TYPEDEF_TEST_H"
+        "#define TYPEDEF_TEST_H"
       ],
       "name": "typedef_test.h",
       "placeholder_headers": [],

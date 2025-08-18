@@ -12,9 +12,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE 256
-    + #define MAX_LABEL_LEN 64
-    + #define PROJECT_NAME "ComplexCProject"
+    + #define DEFAULT_BUFFER_SIZE
+    + #define MAX_LABEL_LEN
+    + #define PROJECT_NAME
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen

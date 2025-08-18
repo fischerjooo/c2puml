@@ -29,6 +29,7 @@ class Config:
 
     # Generator formatting options
     max_function_signature_chars: int = 0  # 0 or less means unlimited (no truncation)
+    hide_macro_values: bool = False  # Hide macro values in generated PlantUML diagrams
 
     # Filters
     file_filters: Dict[str, List[str]] = field(default_factory=dict)
@@ -68,6 +69,8 @@ class Config:
             self.always_show_includes = False
         if not hasattr(self, "max_function_signature_chars"):
             self.max_function_signature_chars = 0
+        if not hasattr(self, "hide_macro_values"):
+            self.hide_macro_values = False
         if not hasattr(self, "file_filters"):
             self.file_filters = {}
         if not hasattr(self, "file_specific"):
@@ -182,6 +185,7 @@ class Config:
             "include_filter_local_only": self.include_filter_local_only,
             "always_show_includes": self.always_show_includes,
             "max_function_signature_chars": self.max_function_signature_chars,
+            "hide_macro_values": self.hide_macro_values,
             "file_filters": self.file_filters,
             "file_specific": self.file_specific,
             "transformations": self.transformations,
@@ -240,6 +244,7 @@ class Config:
             and self.include_depth == other.include_depth
             and self.include_filter_local_only == other.include_filter_local_only
             and self.always_show_includes == other.always_show_includes
+            and self.hide_macro_values == other.hide_macro_values
             and self.file_filters == other.file_filters
             and self.file_specific == other.file_specific
             and self.transformations == other.transformations

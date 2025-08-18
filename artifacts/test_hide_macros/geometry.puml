@@ -7,15 +7,6 @@ class "geometry" as GEOMETRY <<source>> #LightBlue
     + int triangle_area(const triangle_t * tri)
 }
 
-class "config" as HEADER_CONFIG <<header>> #LightGreen
-{
-    -- Macros --
-    + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE 256
-    + #define MAX_LABEL_LEN 64
-    + #define PROJECT_NAME "ComplexCProject"
-}
-
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
 {
     -- Macros --
@@ -23,15 +14,6 @@ class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
     -- Functions --
     + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
     + int triangle_area(const triangle_t * tri)
-}
-
-class "logger" as HEADER_LOGGER <<header>> #LightGreen
-{
-    -- Macros --
-    + #define LOGGER_H
-    -- Functions --
-    + void log_message(log_level_t level, const char * fmt, ...)
-    + void set_log_callback(log_callback_t cb)
 }
 
 class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
@@ -49,9 +31,9 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     -- Macros --
     + #define MAX(a, b)
     + #define MIN(a, b)
-    + #define PI 3.14159
+    + #define PI
     + #define SAMPLE_H
-    + #define VERSION "1.0.0"
+    + #define VERSION
     -- Global Variables --
     + char * DEFAULT_LABEL
     + int MAX_POINTS
@@ -61,40 +43,10 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     + void process_point(point_t * p)
 }
 
-class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow
-{
-    GS_OK
-    GS_ERROR
-    GS_UNKNOWN
-}
-
-class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
-{
-    alias of uint32_t
-}
-
-class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
-{
-    alias of int32_t
-}
-
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
 {
     + point_t[3] vertices
     + char[MAX_LABEL_LEN] label
-}
-
-class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
-{
-    LOG_DEBUG = 0
-    LOG_INFO
-    LOG_WARN
-    LOG_ERROR
-}
-
-class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow
-{
-    alias of void(* log_callback_t)(log_level_t level , const char * message)
 }
 
 class "math_op_t" as TYPEDEF_MATH_OP_T <<function pointer>> #LightYellow
@@ -126,17 +78,9 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 GEOMETRY --> HEADER_GEOMETRY : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
-HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
 
 ' Declaration relationships
-HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
-HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
-HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
 HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
 HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
@@ -144,6 +88,5 @@ HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
 
 ' Uses relationships
 TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
-TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
 
 @enduml
