@@ -330,34 +330,32 @@ class Generator:
     def _format_macro(self, macro: str, prefix: str = "") -> str:
         """Format a macro with the given prefix (+ for headers, - for source)."""
         import re
-        
-        # Check if we should hide macro values
+
         hide_values = getattr(self, "hide_macro_values", False)
-        
-        # Check if this is a function-like macro (has parameters)
-        is_function_like = "(" in macro and ")" in macro
-        
-        if is_function_like:
-            # Function-like macros: ALWAYS show only name and parameters (never show definition)
-            match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", macro)
-            if match:
-                macro_name_with_params = match.group(1)
-                return f"{INDENT}{prefix}#define {macro_name_with_params}"
-        else:
-            # Simple macros: respect the hide_macro_values setting
+
+        # Regex for function-like macro (no space before '(')
+        func_like_pattern = re.compile(r"#define\s+([A-Za-z_][A-Za-z0-9_]*\([^)]*\))")
+        obj_like_pattern = re.compile(r"#define\s+([A-Za-z_][A-Za-z0-9_]*)")
+
+        match = func_like_pattern.search(macro)
+        if match:
+            # Function-like macros: only show name+params
+            macro_name_with_params = match.group(1)
+            return f"{INDENT}{prefix}#define {macro_name_with_params}"
+
+        match = obj_like_pattern.search(macro)
+        if match:
             if hide_values:
-                # Extract name only
-                match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", macro)
-                if match:
-                    macro_name = match.group(1)
-                    return f"{INDENT}{prefix}#define {macro_name}"
+                # Only name
+                macro_name = match.group(1)
+                return f"{INDENT}{prefix}#define {macro_name}"
             else:
-                # Show full macro definition including values
+                # Full definition
                 clean_macro = macro.strip()
                 if clean_macro.startswith("#define"):
                     return f"{INDENT}{prefix}{clean_macro}"
-        
-        # Fallback: return as-is with prefix
+
+        # Fallback
         return f"{INDENT}{prefix}{macro}"
 
     def _format_global_variable(self, global_var, prefix: str = "") -> str:
@@ -369,8 +367,8 @@ class Generator:
         params = self._format_function_parameters(func.parameters)
         param_str_full = ", ".join(params)
 
-        # Remove 'extern' keyword from return type for UML diagrams
-        return_type = func.return_type.replace("extern ", "").strip()
+        # Remove 'extern' and 'LOCAL_INLINE' keywords from return type for UML diagrams
+        return_type = func.return_type.replace("extern ", "").replace("LOCAL_INLINE ", "").strip()
 
         # Build full signature
         full_signature = f"{INDENT}{prefix}{return_type} {func.name}({param_str_full})"
@@ -453,7 +451,7 @@ class Generator:
         if file_model.functions:
             lines.append(f"{INDENT}-- Functions --")
             for func in sorted(file_model.functions, key=lambda x: x.name):
-                if is_declaration_only and func.is_declaration:
+                if is_declaration_only and (func.is_declaration or func.is_inline):
                     lines.append(self._format_function_signature(func, prefix))
                 elif not is_declaration_only and not func.is_declaration:
                     lines.append(self._format_function_signature(func, prefix))
@@ -601,7 +599,7 @@ class Generator:
             private_functions = []
             
             for func in sorted(file_model.functions, key=lambda x: x.name):
-                if is_declaration_only and func.is_declaration:
+                if is_declaration_only and (func.is_declaration or func.is_inline):
                     prefix = "+ "
                     formatted_function = self._format_function_signature(func, prefix)
                     public_functions.append(formatted_function)
