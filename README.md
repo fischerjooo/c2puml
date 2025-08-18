@@ -188,6 +188,8 @@ The `file_specific` feature allows you to configure file-specific settings for d
 
 Files without file-specific configuration will use the global settings. Include relationships are computed in the transformer and stored in `include_relations` on root `.c` files, which the generator consumes. The generator no longer accepts an `include_depth` parameter and falls back to direct includes only when `include_relations` are absent.
 
+- **always_show_includes** (optional, global): When set to `true`, headers filtered out by `include_filter` remain visible in the diagram as empty header classes. Their contents and further includes are not processed, but their include relationships are still drawn from the file that included them.
+
 ### Model Transformations
 
 The transformer supports modifying the parsed model before generating diagrams:

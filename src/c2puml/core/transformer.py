@@ -377,6 +377,8 @@ class Transformer:
         """
         global_include_depth = config.get("include_depth", 1)
         file_specific_config = config.get("file_specific", {})
+        include_filter_local_only = config.get("include_filter_local_only", False)
+        always_show_includes = config.get("always_show_includes", False)
         
         self.logger.info(
             "Processing includes with simplified depth-based approach (global_depth=%d)", 
@@ -398,7 +400,7 @@ class Transformer:
         
         for root_file in c_files:
             self._process_root_c_file_includes(
-                root_file, file_map, global_include_depth, file_specific_config
+                root_file, file_map, global_include_depth, file_specific_config, include_filter_local_only, always_show_includes
             )
             
         return model
@@ -408,7 +410,9 @@ class Transformer:
         root_file: FileModel, 
         file_map: Dict[str, FileModel],
         global_include_depth: int,
-        file_specific_config: Dict[str, Any]
+        file_specific_config: Dict[str, Any],
+        include_filter_local_only: bool,
+        always_show_includes: bool
     ) -> None:
         """
         Process includes for a single root C file following the simplified approach:
@@ -426,6 +430,12 @@ class Transformer:
             file_config = file_specific_config[root_filename]
             include_depth = file_config.get("include_depth", global_include_depth)
             include_filters = file_config.get("include_filter", [])
+        
+        # If configured to keep only local header, ensure filter pattern for local header is present
+        if include_filter_local_only:
+            local_header_pattern = f"^{Path(root_filename).stem}\\.h$"
+            if local_header_pattern not in include_filters:
+                include_filters.append(local_header_pattern)
         
         # Skip processing if depth is 1 or less (no include relations needed)
         if include_depth <= 1:
@@ -456,6 +466,13 @@ class Transformer:
         
         # Track processed files to avoid cycles
         processed_files = set()
+
+        # Reset placeholder headers for this root file context
+        try:
+            root_file.placeholder_headers.clear()
+        except Exception:
+            # In case the model was loaded without this field
+            root_file.placeholder_headers = set()
         
         # Process includes level by level using BFS approach
         current_level = [root_file]  # Start with the root C file
@@ -478,14 +495,22 @@ class Transformer:
                 
                 # Process each include in the current file
                 for include_name in current_file.includes:
-                    # Apply include filters at all depths (not just depth 1)
+                    # Determine if this include is filtered out by patterns
+                    filtered_out_by_patterns = False
                     if compiled_filters:
                         if not any(pattern.search(include_name) for pattern in compiled_filters):
-                            self.logger.debug(
-                                "Filtered out include %s at depth %d for %s",
-                                include_name, depth, root_filename
-                            )
-                            continue
+                            if always_show_includes:
+                                filtered_out_by_patterns = True
+                                self.logger.debug(
+                                    "Include %s filtered by patterns at depth %d for %s, but will be shown as placeholder",
+                                    include_name, depth, root_filename
+                                )
+                            else:
+                                self.logger.debug(
+                                    "Filtered out include %s at depth %d for %s",
+                                    include_name, depth, root_filename
+                                )
+                                continue
                     
                     # Check if included file exists in our project
                     if include_name not in file_map:
@@ -536,6 +561,15 @@ class Transformer:
                         "Added include relation: %s -> %s (depth %d) for root %s",
                         current_filename, include_name, depth, root_filename
                     )
+                    
+                    # If filtered out by patterns and always_show_includes is enabled, mark as placeholder
+                    if filtered_out_by_patterns:
+                        try:
+                            root_file.placeholder_headers.add(include_name)
+                        except Exception:
+                            root_file.placeholder_headers = {include_name}
+                        # Do not process further includes/content for this header
+                        continue
                     
                     # Add included file to next level for further processing
                     included_file = file_map[include_name]

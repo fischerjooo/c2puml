@@ -24,6 +24,8 @@ class Config:
     model_output_path: str = "model.json"
     recursive_search: bool = True
     include_depth: int = 1
+    include_filter_local_only: bool = False
+    always_show_includes: bool = False
 
     # Generator formatting options
     max_function_signature_chars: int = 0  # 0 or less means unlimited (no truncation)
@@ -60,6 +62,10 @@ class Config:
             self.recursive_search = True
         if not hasattr(self, "include_depth"):
             self.include_depth = 1
+        if not hasattr(self, "include_filter_local_only"):
+            self.include_filter_local_only = False
+        if not hasattr(self, "always_show_includes"):
+            self.always_show_includes = False
         if not hasattr(self, "max_function_signature_chars"):
             self.max_function_signature_chars = 0
         if not hasattr(self, "file_filters"):
@@ -173,6 +179,8 @@ class Config:
             "model_output_path": self.model_output_path,
             "recursive_search": self.recursive_search,
             "include_depth": self.include_depth,
+            "include_filter_local_only": self.include_filter_local_only,
+            "always_show_includes": self.always_show_includes,
             "max_function_signature_chars": self.max_function_signature_chars,
             "file_filters": self.file_filters,
             "file_specific": self.file_specific,
@@ -230,6 +238,8 @@ class Config:
             and self.model_output_path == other.model_output_path
             and self.recursive_search == other.recursive_search
             and self.include_depth == other.include_depth
+            and self.include_filter_local_only == other.include_filter_local_only
+            and self.always_show_includes == other.always_show_includes
             and self.file_filters == other.file_filters
             and self.file_specific == other.file_specific
             and self.transformations == other.transformations
