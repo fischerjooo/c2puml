@@ -25,9 +25,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE 256
-    + #define MAX_LABEL_LEN 64
-    + #define PROJECT_NAME "ComplexCProject"
+    + #define DEFAULT_BUFFER_SIZE
+    + #define MAX_LABEL_LEN
+    + #define PROJECT_NAME
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -61,11 +61,11 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
-    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
-    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
-    + #define PI 3.14159
+    + #define MAX(a, b)
+    + #define MIN(a, b)
+    + #define PI
     + #define SAMPLE_H
-    + #define VERSION "1.0.0"
+    + #define VERSION
     -- Global Variables --
     + char * DEFAULT_LABEL
     + int MAX_POINTS
@@ -246,6 +246,7 @@ class "Number_t" as TYPEDEF_NUMBER_T <<union>> #LightYellow
 
 ' Include relationships
 HEADER_COMPLEX_EXAMPLE --> HEADER_CONFIG : <<include>>
+HEADER_COMPLEX_EXAMPLE --> HEADER_LOGGER : <<include>>
 HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>

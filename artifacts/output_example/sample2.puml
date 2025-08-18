@@ -3,9 +3,9 @@
 class "sample2" as SAMPLE2 <<source>> #LightBlue
 {
     -- Macros --
-    - #define CALC(x, y)
-    - #define DEBUG_MODE
-    - #define MAX_SIZE
+    - #define CALC(x, y) ((x) + (y))
+    - #define DEBUG_MODE 1U
+    - #define MAX_SIZE 100U
     -- Global Variables --
     - char[MAX_SIZE] buffer
     - int global_counter
@@ -24,17 +24,17 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE
-    + #define MAX_LABEL_LEN
-    + #define PROJECT_NAME
+    + #define DEFAULT_BUFFER_SIZE 256
+    + #define MAX_LABEL_LEN 64
+    + #define PROJECT_NAME "ComplexCProject"
 }
 
 class "filtered_header" as HEADER_FILTERED_HEADER <<header>> #LightGreen
 {
     -- Macros --
-    + #define FILTERED_CONSTANT
+    + #define FILTERED_CONSTANT 42
     + #define FILTERED_HEADER_H
-    + #define FILTERED_MACRO(x)
+    + #define FILTERED_MACRO(x) ((x) * 2)
     -- Global Variables --
     + char[100] filtered_global_string
     + int filtered_global_var
@@ -81,11 +81,11 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
-    + #define MAX(a, b)
-    + #define MIN(a, b)
-    + #define PI
+    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
+    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define PI 3.14159
     + #define SAMPLE_H
-    + #define VERSION
+    + #define VERSION "1.0.0"
     -- Global Variables --
     + char * DEFAULT_LABEL
     + int MAX_POINTS
@@ -171,7 +171,6 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 
 
 ' Include relationships
-HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
 HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>

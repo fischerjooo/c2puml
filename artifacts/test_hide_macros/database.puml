@@ -1,32 +1,37 @@
-@startuml application
+@startuml database
 
-class "application" as APPLICATION <<source>> #LightBlue
+class "database" as DATABASE <<source>> #LightBlue
 {
-    -- Global Variables --
-    - volatile int running
     -- Functions --
-    + int main(int argc, char *[] argv)
-
-    - void signal_handler(int sig)
+    + int database_begin_transaction(DatabaseConfig * config)
+    + int database_commit_transaction(DatabaseConfig * config)
+    + int database_connect(DatabaseConfig * config)
+    + void database_disconnect(DatabaseConfig * config)
+    + QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
+    + int database_execute_update(DatabaseConfig * config, const char * query)
+    + void database_free_result(QueryResult * result)
+    + const char * database_get_error(const DatabaseConfig * config)
+    + int database_is_connected(const DatabaseConfig * config)
+    + int database_rollback_transaction(DatabaseConfig * config)
 }
 
 class "common" as HEADER_COMMON <<header>> #LightGreen
 {
     -- Macros --
-    + #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+    + #define ARRAY_SIZE(arr)
     + #define COMMON_H
     + #define DEPRECATED
     + #define DEPRECATED __attribute__((deprecated))
-    + #define ERROR_GENERAL -1
-    + #define ERROR_INVALID_PARAM -2
-    + #define ERROR_MEMORY -3
-    + #define ERROR_TIMEOUT -4
-    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
-    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define ERROR_GENERAL
+    + #define ERROR_INVALID_PARAM
+    + #define ERROR_MEMORY
+    + #define ERROR_TIMEOUT
+    + #define MAX(a, b)
+    + #define MIN(a, b)
     + #define PACKED
     + #define PACKED __attribute__((packed))
-    + #define SUCCESS 0
-    + #define UNUSED(x) (void)(x)
+    + #define SUCCESS
+    + #define UNUSED(x)
     -- Functions --
     + void common_cleanup()
     + const char * common_get_error_string(result_t error)
@@ -37,8 +42,8 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
 {
     -- Macros --
     + #define DATABASE_H
-    + #define MAX_DB_NAME_LENGTH 256
-    + #define MAX_QUERY_LENGTH 4096
+    + #define MAX_DB_NAME_LENGTH
+    + #define MAX_QUERY_LENGTH
     -- Functions --
     + int database_begin_transaction(DatabaseConfig * config)
     + int database_commit_transaction(DatabaseConfig * config)
@@ -56,8 +61,8 @@ class "database" as HEADER_DATABASE <<header>> #LightGreen
 class "libpq-fe" as HEADER_LIBPQ_FE <<header>> #LightGreen
 {
     -- Macros --
-    + #define CONNECTION_BAD 1
-    + #define CONNECTION_OK 0
+    + #define CONNECTION_BAD
+    + #define CONNECTION_OK
     + #define LIBPQ_FE_H
     -- Functions --
     + void PQclear(PGresult * res)
@@ -76,9 +81,9 @@ class "libpq-fe" as HEADER_LIBPQ_FE <<header>> #LightGreen
 class "mysql" as HEADER_MYSQL <<header>> #LightGreen
 {
     -- Macros --
-    + #define MYSQL_ERROR -1
+    + #define MYSQL_ERROR
     + #define MYSQL_H
-    + #define MYSQL_SUCCESS 0
+    + #define MYSQL_SUCCESS
     -- Functions --
     + void mysql_close(MYSQL * mysql)
     + const char * mysql_error(MYSQL * mysql)
@@ -93,59 +98,39 @@ class "mysql" as HEADER_MYSQL <<header>> #LightGreen
     + MYSQL_RES * mysql_store_result(MYSQL * mysql)
 }
 
-class "network" as HEADER_NETWORK <<header>> #LightGreen
-{
-    -- Macros --
-    + #define DEFAULT_PORT 8080
-    + #define MAX_CONNECTIONS 100
-    + #define NETWORK_H
-    -- Functions --
-    + int network_accept(NetworkConfig * config)
-    + void network_cleanup(NetworkConfig * config)
-    + int network_connect(NetworkConfig * config, const char * host, int port)
-    + void network_disconnect(NetworkConfig * config)
-    + NetworkStatus network_get_status(const NetworkConfig * config)
-    + int network_init(NetworkConfig * config)
-    + int network_listen(NetworkConfig * config, int port)
-    + ssize_t network_receive(int socket_fd, void * buffer, size_t size)
-    + ssize_t network_send(int socket_fd, const void * data, size_t size)
-    + int network_set_nonblocking(int socket_fd)
-    + const char * network_status_string(NetworkStatus status)
-}
-
 class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
 {
     -- Macros --
     + #define SQLITE3_H
-    + #define SQLITE_ABORT        4   /* Callback routine requested an abort */
-    + #define SQLITE_AUTH        23   /* Authorization denied */
-    + #define SQLITE_BUSY         5   /* The database file is locked */
-    + #define SQLITE_CANTOPEN    14   /* Unable to open the database file */
-    + #define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */
-    + #define SQLITE_CORRUPT     11   /* The database disk image is malformed */
+    + #define SQLITE_ABORT
+    + #define SQLITE_AUTH
+    + #define SQLITE_BUSY
+    + #define SQLITE_CANTOPEN
+    + #define SQLITE_CONSTRAINT
+    + #define SQLITE_CORRUPT
     + #define SQLITE_DONE        101  /* sqlite3_step() has finished executing */
-    + #define SQLITE_EMPTY       16   /* Database is empty */
-    + #define SQLITE_ERROR        1   /* SQL error or missing database */
-    + #define SQLITE_FORMAT      24   /* Auxiliary database format error */
-    + #define SQLITE_FULL        13   /* Insertion failed because database is full */
-    + #define SQLITE_INTERNAL     2   /* Internal logic error in SQLite */
+    + #define SQLITE_EMPTY
+    + #define SQLITE_ERROR
+    + #define SQLITE_FORMAT
+    + #define SQLITE_FULL
+    + #define SQLITE_INTERNAL
     + #define SQLITE_INTERRUPT    9   /* Operation terminated by sqlite3_interrupt()*/
-    + #define SQLITE_IOERR       10   /* Some kind of disk I/O error occurred */
-    + #define SQLITE_LOCKED       6   /* A table in the database is locked */
-    + #define SQLITE_MISMATCH    20   /* Data type mismatch */
-    + #define SQLITE_MISUSE      21   /* Library used incorrectly */
-    + #define SQLITE_NOLFS       22   /* Uses OS features not supported on host */
+    + #define SQLITE_IOERR
+    + #define SQLITE_LOCKED
+    + #define SQLITE_MISMATCH
+    + #define SQLITE_MISUSE
+    + #define SQLITE_NOLFS
     + #define SQLITE_NOMEM        7   /* A malloc() failed */
-    + #define SQLITE_NOTADB      26   /* File opened that is not a database file */
+    + #define SQLITE_NOTADB
     + #define SQLITE_NOTFOUND    12   /* Unknown opcode in sqlite3_file_control() */
-    + #define SQLITE_OK           0   /* Successful result */
-    + #define SQLITE_PERM         3   /* Access permission denied */
-    + #define SQLITE_PROTOCOL    15   /* Database lock protocol error */
-    + #define SQLITE_RANGE       25   /* 2nd parameter to sqlite3_bind out of range */
-    + #define SQLITE_READONLY     8   /* Attempt to write a readonly database */
+    + #define SQLITE_OK
+    + #define SQLITE_PERM
+    + #define SQLITE_PROTOCOL
+    + #define SQLITE_RANGE
+    + #define SQLITE_READONLY
     + #define SQLITE_ROW         100  /* sqlite3_step() has another row ready */
-    + #define SQLITE_SCHEMA      17   /* The database schema changed */
-    + #define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
+    + #define SQLITE_SCHEMA
+    + #define SQLITE_TOOBIG
     -- Functions --
     + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, void ( * destructor ) ( void * ))
     + int sqlite3_bind_double(sqlite3_stmt * pStmt, int i, double value)
@@ -229,22 +214,6 @@ class "ExecStatusType" as TYPEDEF_EXECSTATUSTYPE <<enumeration>> #LightYellow
     PGRES_FATAL_ERROR = 7
 }
 
-class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
-{
-    + int socket_fd
-    + struct sockaddr_in address
-    + int port
-    + char * hostname
-}
-
-class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
-{
-    NET_STATUS_DISCONNECTED
-    NET_STATUS_CONNECTING
-    NET_STATUS_CONNECTED
-    NET_STATUS_ERROR
-}
-
 class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #LightYellow
 {
     alias of int(* sqlite3_callback)(void * , int , char * * , char * *)
@@ -252,9 +221,8 @@ class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #Light
 
 
 ' Include relationships
-APPLICATION --> HEADER_COMMON : <<include>>
-APPLICATION --> HEADER_DATABASE : <<include>>
-APPLICATION --> HEADER_NETWORK : <<include>>
+DATABASE --> HEADER_DATABASE : <<include>>
+HEADER_DATABASE --> HEADER_COMMON : <<include>>
 HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
 HEADER_DATABASE --> HEADER_MYSQL : <<include>>
 HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
@@ -268,8 +236,6 @@ HEADER_DATABASE ..> TYPEDEF_DATABASECONFIG : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_QUERYRESULT : <<declares>>
 HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
 HEADER_LIBPQ_FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
-HEADER_NETWORK ..> TYPEDEF_NETWORKCONFIG : <<declares>>
-HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
 HEADER_SQLITE3 ..> TYPEDEF_SQLITE3_CALLBACK : <<declares>>
 
 ' Uses relationships

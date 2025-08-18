@@ -3340,21 +3340,6 @@
           "depth": 2,
           "included_file": "sample.h",
           "source_file": "geometry.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "math_utils.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "logger.h",
-          "source_file": "sample.h"
         }
       ],
       "includes": [
@@ -5257,11 +5242,6 @@
       "include_relations": [
         {
           "depth": 2,
-          "included_file": "sample.h",
-          "source_file": "geometry.h"
-        },
-        {
-          "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
         },
@@ -5297,7 +5277,7 @@
         },
         {
           "depth": 2,
-          "included_file": "logger.h",
+          "included_file": "geometry.h",
           "source_file": "sample.h"
         }
       ],
@@ -5607,11 +5587,6 @@
       "include_relations": [
         {
           "depth": 2,
-          "included_file": "sample.h",
-          "source_file": "geometry.h"
-        },
-        {
-          "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
         },
@@ -5627,7 +5602,7 @@
         },
         {
           "depth": 2,
-          "included_file": "logger.h",
+          "included_file": "geometry.h",
           "source_file": "sample.h"
         },
         {
@@ -6120,11 +6095,85 @@
       "unions": {}
     },
     "transformed.c": {
-      "aliases": {},
+      "aliases": {
+        "legacy_int_t": {
+          "name": "legacy_int_t",
+          "original_type": "int",
+          "uses": []
+        },
+        "legacy_string_t": {
+          "name": "legacy_string_t",
+          "original_type": "char *",
+          "uses": []
+        }
+      },
       "anonymous_relationships": {},
-      "enums": {},
+      "enums": {
+        "legacy_color": {
+          "name": "legacy_color",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "LEGACY_RED",
+              "value": null
+            },
+            {
+              "name": "LEGACY_GREEN",
+              "value": null
+            },
+            {
+              "name": "LEGACY_BLUE",
+              "value": null
+            }
+          ]
+        },
+        "old_status": {
+          "name": "old_status",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OLD_STATUS_PENDING",
+              "value": null
+            },
+            {
+              "name": "OLD_STATUS_ACTIVE",
+              "value": null
+            },
+            {
+              "name": "OLD_STATUS_INACTIVE",
+              "value": null
+            }
+          ]
+        }
+      },
       "file_path": "/workspace/tests/example/source/transformed.c",
       "functions": [
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "debug_log",
+          "parameters": [
+            {
+              "name": "msg",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "deprecated_print_info",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
         {
           "is_declaration": false,
           "is_static": false,
@@ -6153,19 +6202,6 @@
         {
           "is_declaration": false,
           "is_static": false,
-          "name": "legacy_print_info",
-          "parameters": [
-            {
-              "name": "message",
-              "type": "const char *",
-              "value": null
-            }
-          ],
-          "return_type": "void"
-        },
-        {
-          "is_declaration": false,
-          "is_static": false,
           "name": "main",
           "parameters": [],
           "return_type": "int"
@@ -6187,9 +6223,34 @@
             }
           ],
           "return_type": "old_point *"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_function_one",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_static": false,
+          "name": "test_function_two",
+          "parameters": [],
+          "return_type": "void"
         }
       ],
-      "globals": [],
+      "globals": [
+        {
+          "name": "deprecated_message",
+          "type": "legacy_string_t",
+          "value": "\"old version\""
+        },
+        {
+          "name": "old_global_counter",
+          "type": "int",
+          "value": "0"
+        }
+      ],
       "include_relations": [
         {
           "depth": 1,
@@ -6203,7 +6264,11 @@
         "string.h",
         "transformed.h"
       ],
-      "macros": [],
+      "macros": [
+        "#define DEPRECATED_MAX_SIZE 1024",
+        "#define LEGACY_DEBUG 1",
+        "#define OLD_VERSION \"1.0\""
+      ],
       "name": "transformed.c",
       "placeholder_headers": [],
       "structs": {
@@ -6223,7 +6288,34 @@
           "methods": [],
           "name": "__anonymous_struct__",
           "tag_name": "",
-          "uses": []
+          "uses": [
+            "old_point"
+          ]
+        },
+        "legacy_data": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "position",
+              "type": "struct old_point",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "legacy_data",
+          "tag_name": "",
+          "uses": [
+            "old_point"
+          ]
         },
         "old_point": {
           "fields": [
@@ -6244,18 +6336,92 @@
           "uses": []
         }
       },
-      "unions": {}
+      "unions": {
+        "old_value": {
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "char",
+              "value": null
+            }
+          ],
+          "name": "old_value",
+          "tag_name": "",
+          "uses": []
+        }
+      }
     },
     "transformed.h": {
       "aliases": {
-        "config_t": {
-          "name": "config_t",
+        "legacy_handle_t": {
+          "name": "legacy_handle_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "legacy_uint_t": {
+          "name": "legacy_uint_t",
+          "original_type": "unsigned int",
+          "uses": []
+        },
+        "old_config_t": {
+          "name": "old_config_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "old_point_t": {
+          "name": "old_point_t",
           "original_type": "void *",
           "uses": []
         }
       },
       "anonymous_relationships": {},
       "enums": {
+        "legacy_mode": {
+          "name": "legacy_mode",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "LEGACY_MODE_READ",
+              "value": null
+            },
+            {
+              "name": "LEGACY_MODE_WRITE",
+              "value": null
+            },
+            {
+              "name": "LEGACY_MODE_APPEND",
+              "value": null
+            }
+          ]
+        },
+        "old_error_type": {
+          "name": "old_error_type",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OLD_ERROR_NONE",
+              "value": null
+            },
+            {
+              "name": "OLD_ERROR_INVALID",
+              "value": null
+            },
+            {
+              "name": "OLD_ERROR_MEMORY",
+              "value": null
+            }
+          ]
+        },
         "status_t": {
           "name": "status_t",
           "tag_name": "",
@@ -6287,6 +6453,26 @@
         {
           "is_declaration": true,
           "is_static": false,
+          "name": "debug_validate_config",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "old_config_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "deprecated_cleanup",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
           "name": "initialize_system",
           "parameters": [],
           "return_type": "status_t"
@@ -6301,18 +6487,11 @@
         {
           "is_declaration": true,
           "is_static": false,
-          "name": "legacy_cleanup",
-          "parameters": [],
-          "return_type": "void"
-        },
-        {
-          "is_declaration": true,
-          "is_static": false,
           "name": "legacy_init",
           "parameters": [
             {
               "name": "config",
-              "type": "config_t *",
+              "type": "old_config_t *",
               "value": null
             }
           ],
@@ -6336,7 +6515,7 @@
               "value": null
             }
           ],
-          "return_type": "config_t *"
+          "return_type": "old_config_t *"
         },
         {
           "is_declaration": true,
@@ -6350,27 +6529,63 @@
             }
           ],
           "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_static": false,
+          "name": "test_helper_function",
+          "parameters": [],
+          "return_type": "void"
         }
       ],
       "globals": [
         {
-          "name": "system_path",
+          "name": "legacy_path",
           "type": "char *",
+          "value": null
+        },
+        {
+          "name": "old_error_code",
+          "type": "int",
           "value": null
         }
       ],
       "include_relations": [],
       "includes": [
-        "stdio.h"
+        "stdio.h",
+        "time.h",
+        "unistd.h"
       ],
       "macros": [
-        "#define LEGACY_API_VERSION 100",
+        "#define DEPRECATED_FLAG 0x01",
+        "#define LEGACY_BUFFER_SIZE 512",
+        "#define OLD_API_VERSION 100",
         "#define TRANSFORMED_H"
       ],
       "name": "transformed.h",
       "placeholder_headers": [],
       "structs": {
-        "modern_config": {
+        "legacy_node": {
+          "fields": [
+            {
+              "name": "data",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "next",
+              "type": "struct legacy_node *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "legacy_node",
+          "tag_name": "",
+          "uses": [
+            "legacy_node"
+          ]
+        },
+        "old_config": {
           "fields": [
             {
               "name": "version",
@@ -6389,7 +6604,7 @@
             }
           ],
           "methods": [],
-          "name": "modern_config",
+          "name": "old_config",
           "tag_name": "",
           "uses": []
         },
@@ -6417,7 +6632,30 @@
           "uses": []
         }
       },
-      "unions": {}
+      "unions": {
+        "old_variant": {
+          "fields": [
+            {
+              "name": "int_val",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "double_val",
+              "type": "double",
+              "value": null
+            },
+            {
+              "name": "string_val",
+              "type": "char *",
+              "value": null
+            }
+          ],
+          "name": "old_variant",
+          "tag_name": "",
+          "uses": []
+        }
+      }
     },
     "typedef_test.c": {
       "aliases": {},
@@ -6511,6 +6749,11 @@
         {
           "depth": 2,
           "included_file": "config.h",
+          "source_file": "complex_example.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
           "source_file": "complex_example.h"
         },
         {
@@ -6792,5 +7035,5 @@
     }
   },
   "project_name": "example_project",
-  "source_folder": "tests/example/source,tests/example/source"
+  "source_folder": "tests/example/source"
 }

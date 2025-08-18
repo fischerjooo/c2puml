@@ -1,19 +1,32 @@
-@startuml geometry
+@startuml sample
 
-class "geometry" as GEOMETRY <<source>> #LightBlue
+class "sample" as SAMPLE <<source>> #LightBlue
 {
+    -- Macros --
+    - #define CALC(x, y)
+    - #define DEBUG_MODE
+    - #define MAX_SIZE
+    -- Global Variables --
+    - char[MAX_SIZE] buffer
+    - int global_counter
+    - double * global_ptr
     -- Functions --
-    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
-    + int triangle_area(const triangle_t * tri)
+    + int calculate_sum(int a, int b)
+    + point_t * create_point(int x, int y, const char * label)
+    + int main()
+    + void process_point(point_t * p)
+
+    - void demo_triangle_usage()
+    - static void internal_helper()
 }
 
 class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE 256
-    + #define MAX_LABEL_LEN 64
-    + #define PROJECT_NAME "ComplexCProject"
+    + #define DEFAULT_BUFFER_SIZE
+    + #define MAX_LABEL_LEN
+    + #define PROJECT_NAME
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -47,11 +60,11 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
-    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
-    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
-    + #define PI 3.14159
+    + #define MAX(a, b)
+    + #define MIN(a, b)
+    + #define PI
     + #define SAMPLE_H
-    + #define VERSION "1.0.0"
+    + #define VERSION
     -- Global Variables --
     + char * DEFAULT_LABEL
     + int MAX_POINTS
@@ -123,12 +136,14 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 
 
 ' Include relationships
-GEOMETRY --> HEADER_GEOMETRY : <<include>>
-HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
-HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+SAMPLE --> HEADER_GEOMETRY : <<include>>
+SAMPLE --> HEADER_LOGGER : <<include>>
+SAMPLE --> HEADER_MATH_UTILS : <<include>>
+SAMPLE --> HEADER_SAMPLE : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 
 ' Declaration relationships
 HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>

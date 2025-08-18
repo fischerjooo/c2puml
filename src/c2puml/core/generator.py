@@ -41,6 +41,7 @@ class Generator:
 
     # Configuration (set by main based on Config)
     max_function_signature_chars: int = 0  # 0 or less = unlimited
+    hide_macro_values: bool = False  # Hide macro values in generated PlantUML diagrams
 
     def _clear_output_folder(self, output_dir: str) -> None:
         """Clear existing .puml and .png files from the output directory"""
@@ -328,15 +329,34 @@ class Generator:
 
     def _format_macro(self, macro: str, prefix: str = "") -> str:
         """Format a macro with the given prefix (+ for headers, - for source)."""
-        if "(" in macro and ")" in macro:
-            # Function-like macro
-            macro_name = macro.split("(")[0].replace("#define ", "")
-            params = macro.split("(")[1].split(")")[0]
-            return f"{INDENT}{prefix}#define {macro_name}({params})"
+        import re
+        
+        # Check if we should hide macro values
+        hide_values = getattr(self, "hide_macro_values", False)
+        
+        if hide_values:
+            # Extract only macro name and parameters (current behavior)
+            if "(" in macro and ")" in macro:
+                # Function-like macro: extract name and parameters only
+                match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", macro)
+                if match:
+                    macro_name_with_params = match.group(1)
+                    return f"{INDENT}{prefix}#define {macro_name_with_params}"
+            else:
+                # Simple macro: extract name only
+                match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", macro)
+                if match:
+                    macro_name = match.group(1)
+                    return f"{INDENT}{prefix}#define {macro_name}"
         else:
-            # Basic macro
-            macro_name = macro.replace("#define ", "")
-            return f"{INDENT}{prefix}#define {macro_name}"
+            # Show full macro definition including values
+            # Clean up the macro definition and add proper prefix
+            clean_macro = macro.strip()
+            if clean_macro.startswith("#define"):
+                return f"{INDENT}{prefix}{clean_macro}"
+        
+        # Fallback: return as-is with prefix
+        return f"{INDENT}{prefix}{macro}"
 
     def _format_global_variable(self, global_var, prefix: str = "") -> str:
         """Format a global variable with the given prefix."""
