@@ -1336,31 +1336,30 @@ class Transformer:
             return
         
         def get_macro_name(macro: str) -> str:
-            # Extract macro name from "#define MACRO_NAME value" format
+            # Extract macro name from full macro definition
+            import re
             if macro.startswith("#define "):
-                name_token = macro.split(" ")[1]
-                # Remove parameters for matching (e.g., NAME(a,b) -> NAME)
-                if "(" in name_token and ")" in name_token:
-                    return name_token.split("(")[0]
-                return name_token
+                # Extract macro name using regex
+                match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", macro)
+                if match:
+                    return match.group(1)
             return macro
         
         def create_renamed_macro(name: str, macro: str) -> str:
-            # Replace the macro name in the original macro string
+            # Replace the macro name in the full macro definition
+            import re
             if macro.startswith("#define "):
-                parts = macro.split(" ", 2)  # ["#define", "OLD_NAME[params]", "rest?"]
-                if len(parts) >= 2:
-                    old_name_with_params = parts[1]
-                    params = ""
-                    if "(" in old_name_with_params and ")" in old_name_with_params:
-                        params = old_name_with_params[old_name_with_params.find("("):old_name_with_params.rfind(")")+1]
-                    new_token = f"{name}{params}"
-                    return f"#define {new_token} {parts[2]}" if len(parts) > 2 else f"#define {new_token}"
-            # If it's just a macro name without #define prefix, return the new name
-            if "(" in macro and ")" in macro:
-                params = macro[macro.find("("): macro.rfind(")")+1]
-                return f"{name}{params}"
-            return name
+                # Use regex to replace the macro name while preserving parameters and value
+                # Pattern matches: #define MACRO_NAME or #define MACRO_NAME(params)
+                pattern = r"(#define\s+)([A-Za-z_][A-Za-z0-9_]*)(\s*\([^)]*\))?(.*)?"
+                match = re.match(pattern, macro)
+                if match:
+                    define_part = match.group(1)  # "#define "
+                    old_name = match.group(2)     # "OLD_NAME"
+                    params = match.group(3) or "" # "(params)" or ""
+                    rest = match.group(4) or ""   # " value" or ""
+                    return f"{define_part}{name}{params}{rest}"
+            return macro
         
         file_model.macros = self._rename_list_elements(
             file_model.macros, patterns_map, get_macro_name, 
@@ -1667,9 +1666,13 @@ class Transformer:
     def _remove_macros(self, file_model: FileModel, patterns: List[str]) -> None:
         """Remove macros matching regex patterns"""
         def get_macro_name(macro: str) -> str:
-            # Extract macro name from "#define MACRO_NAME value" format
+            # Extract macro name from full macro definition
+            import re
             if macro.startswith("#define "):
-                return macro.split(" ")[1]
+                # Extract macro name using regex
+                match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", macro)
+                if match:
+                    return match.group(1)
             return macro
             
         file_model.macros = self._remove_list_elements(

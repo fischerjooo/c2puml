@@ -21,6 +21,7 @@ class TokenType(Enum):
     STATIC = "STATIC"
     EXTERN = "EXTERN"
     INLINE = "INLINE"
+    LOCAL_INLINE = "LOCAL_INLINE"
     CONST = "CONST"
     VOID = "VOID"
 
@@ -92,6 +93,7 @@ class CTokenizer:
         "static": TokenType.STATIC,
         "extern": TokenType.EXTERN,
         "inline": TokenType.INLINE,
+        "local_inline": TokenType.LOCAL_INLINE,
         "const": TokenType.CONST,
         "void": TokenType.VOID,
         "char": TokenType.CHAR,
@@ -497,11 +499,11 @@ class StructureFinder:
 
         return enums
 
-    def find_functions(self) -> List[Tuple[int, int, str, str, bool]]:
+    def find_functions(self) -> List[Tuple[int, int, str, str, bool, bool]]:
         """Find all function declarations and definitions in the token stream
 
         Returns:
-            List of tuples (start_pos, end_pos, func_name, return_type, is_declaration)
+            List of tuples (start_pos, end_pos, func_name, return_type, is_declaration, is_inline)
         """
         functions = []
         self.pos = 0
@@ -867,11 +869,11 @@ class StructureFinder:
         # The typedef name will be handled separately in the parser
         return enum_info
 
-    def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool]]:
+    def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool, bool]]:
         """Parse function declaration/definition
 
         Returns:
-            Tuple of (start_pos, end_pos, func_name, return_type, is_declaration)
+            Tuple of (start_pos, end_pos, func_name, return_type, is_declaration, is_inline)
         """
         start_pos = self.pos
 
@@ -940,6 +942,7 @@ class StructureFinder:
                                 TokenType.STATIC,
                                 TokenType.EXTERN,
                                 TokenType.INLINE,
+                                TokenType.LOCAL_INLINE,
                             ]:
                                 return_type_tokens.insert(0, self.tokens[current_pos])
                                 current_pos -= 1
@@ -959,6 +962,12 @@ class StructureFinder:
                                 t.value for t in return_type_tokens
                             ).strip()
 
+                            # Check if function is inline
+                            is_inline = any(
+                                token.type in [TokenType.INLINE, TokenType.LOCAL_INLINE]
+                                for token in return_type_tokens
+                            )
+
                             # Find end of function (either ; for declaration or { for definition)
                             end_pos = self._find_function_end(self.pos)
                             if end_pos:
@@ -971,6 +980,7 @@ class StructureFinder:
                                     func_name,
                                     return_type,
                                     is_declaration,
+                                    is_inline,
                                 )
 
             self.pos += 1
