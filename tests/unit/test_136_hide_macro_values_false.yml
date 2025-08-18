@@ -12,6 +12,7 @@ source_files:
     #define PI 3.14159
     #define VERSION "1.0.0"
     #define MAX_SIZE 1024
+    #define E_OK (1U)
     #define MIN(a, b) ((a) < (b) ? (a) : (b))
     #define MAX(a, b) ((a) > (b) ? (a) : (b))
     #define CALC(x, y) ((x) * (y) + 10)
@@ -51,6 +52,7 @@ assertions:
           - "+ #define PI 3.14159"
           - "+ #define VERSION \"1.0.0\""
           - "+ #define MAX_SIZE 1024"
+          - "+ #define E_OK (1U)"
           - "+ #define DEBUG_FLAG"
           - "+ #define MIN(a, b)"
           - "+ #define MAX(a, b)"

@@ -8,6 +8,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [
@@ -26,6 +27,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "signal_handler",
           "parameters": [
@@ -109,6 +111,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "common_cleanup",
           "parameters": [],
@@ -116,6 +119,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "common_get_error_string",
           "parameters": [
@@ -129,6 +133,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "common_init",
           "parameters": [],
@@ -171,6 +176,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "ProcessorAdapter_Process",
           "parameters": [
@@ -184,6 +190,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "ProcessorHardware_Process",
           "parameters": [
@@ -197,6 +204,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "ProcessorService_Process",
           "parameters": [
@@ -210,6 +218,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "add_operation",
           "parameters": [
@@ -228,6 +237,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "create_complex_handler",
           "parameters": [
@@ -256,6 +266,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "create_handler",
           "parameters": [
@@ -284,6 +295,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "divide_operation",
           "parameters": [
@@ -302,6 +314,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "execute_operations",
           "parameters": [
@@ -325,6 +338,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "get_math_operations",
           "parameters": [],
@@ -332,6 +346,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "init_math_operations",
           "parameters": [],
@@ -339,6 +354,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "modulo_operation",
           "parameters": [
@@ -357,6 +373,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "multiply_operation",
           "parameters": [
@@ -375,6 +392,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "print_result",
           "parameters": [
@@ -393,6 +411,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "process_with_callbacks",
           "parameters": [
@@ -431,6 +450,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "run_complex_tests",
           "parameters": [],
@@ -438,6 +458,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "subtract_operation",
           "parameters": [
@@ -456,6 +477,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_callback",
           "parameters": [
@@ -469,6 +491,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_complex_macro",
           "parameters": [
@@ -492,6 +515,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_handle_operation",
           "parameters": [
@@ -515,6 +539,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_handler_table",
           "parameters": [],
@@ -522,6 +547,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_mixed_union",
           "parameters": [],
@@ -529,6 +555,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_operation_set",
           "parameters": [],
@@ -536,6 +563,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_process_array",
           "parameters": [
@@ -554,6 +582,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_processor_job_processing",
           "parameters": [],
@@ -561,6 +590,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_processor_utility_macros",
           "parameters": [],
@@ -568,6 +598,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_stringify_macro",
           "parameters": [],
@@ -860,6 +891,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "create_complex_handler",
           "parameters": [
@@ -888,6 +920,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "create_handler",
           "parameters": [
@@ -916,6 +949,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "execute_operations",
           "parameters": [
@@ -939,6 +973,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "get_math_operations",
           "parameters": [],
@@ -946,6 +981,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "process_with_callbacks",
           "parameters": [
@@ -984,6 +1020,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "test_processor_job_processing",
           "parameters": [],
@@ -991,6 +1028,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "test_processor_utility_macros",
           "parameters": [],
@@ -2638,6 +2676,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_begin_transaction",
           "parameters": [
@@ -2651,6 +2690,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_commit_transaction",
           "parameters": [
@@ -2664,6 +2704,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_connect",
           "parameters": [
@@ -2677,6 +2718,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_disconnect",
           "parameters": [
@@ -2690,6 +2732,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_execute_query",
           "parameters": [
@@ -2708,6 +2751,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_execute_update",
           "parameters": [
@@ -2726,6 +2770,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_free_result",
           "parameters": [
@@ -2739,6 +2784,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_get_error",
           "parameters": [
@@ -2752,6 +2798,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_is_connected",
           "parameters": [
@@ -2765,6 +2812,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "database_rollback_transaction",
           "parameters": [
@@ -2817,6 +2865,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_begin_transaction",
           "parameters": [
@@ -2830,6 +2879,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_commit_transaction",
           "parameters": [
@@ -2843,6 +2893,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_connect",
           "parameters": [
@@ -2856,6 +2907,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_disconnect",
           "parameters": [
@@ -2869,6 +2921,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_escape_string",
           "parameters": [
@@ -2897,6 +2950,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_execute_query",
           "parameters": [
@@ -2915,6 +2969,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_execute_update",
           "parameters": [
@@ -2933,6 +2988,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_free_result",
           "parameters": [
@@ -2946,6 +3002,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_get_error",
           "parameters": [
@@ -2959,6 +3016,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_is_connected",
           "parameters": [
@@ -2972,6 +3030,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "database_rollback_transaction",
           "parameters": [
@@ -3105,6 +3164,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "filtered_function1",
           "parameters": [
@@ -3118,6 +3178,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "filtered_function2",
           "parameters": [
@@ -3131,6 +3192,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "filtered_function3",
           "parameters": [
@@ -3221,6 +3283,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "create_triangle",
           "parameters": [
@@ -3249,6 +3312,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "triangle_area",
           "parameters": [
@@ -3282,6 +3346,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "create_triangle",
           "parameters": [
@@ -3310,6 +3375,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "triangle_area",
           "parameters": [
@@ -3404,6 +3470,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQclear",
           "parameters": [
@@ -3417,6 +3484,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQconnectdb",
           "parameters": [
@@ -3430,6 +3498,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQerrorMessage",
           "parameters": [
@@ -3443,6 +3512,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQexec",
           "parameters": [
@@ -3461,6 +3531,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQfinish",
           "parameters": [
@@ -3474,6 +3545,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQfname",
           "parameters": [
@@ -3492,6 +3564,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQgetvalue",
           "parameters": [
@@ -3515,6 +3588,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQnfields",
           "parameters": [
@@ -3528,6 +3602,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQntuples",
           "parameters": [
@@ -3541,6 +3616,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQresultStatus",
           "parameters": [
@@ -3554,6 +3630,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "PQstatus",
           "parameters": [
@@ -3589,6 +3666,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "log_message",
           "parameters": [
@@ -3612,6 +3690,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "set_log_callback",
           "parameters": [
@@ -3682,6 +3761,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "log_message",
           "parameters": [
@@ -3705,6 +3785,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "set_log_callback",
           "parameters": [
@@ -3739,6 +3820,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "add",
           "parameters": [
@@ -3757,6 +3839,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "average",
           "parameters": [
@@ -3775,6 +3858,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "subtract",
           "parameters": [
@@ -3822,6 +3906,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "add",
           "parameters": [
@@ -3840,6 +3925,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "average",
           "parameters": [
@@ -3858,6 +3944,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "subtract",
           "parameters": [
@@ -3896,6 +3983,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_close",
           "parameters": [
@@ -3909,6 +3997,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_error",
           "parameters": [
@@ -3922,6 +4011,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_fetch_row",
           "parameters": [
@@ -3935,6 +4025,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_free_result",
           "parameters": [
@@ -3948,6 +4039,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_init",
           "parameters": [
@@ -3961,6 +4053,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_num_fields",
           "parameters": [
@@ -3974,6 +4067,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_num_rows",
           "parameters": [
@@ -3987,6 +4081,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_ping",
           "parameters": [
@@ -4000,6 +4095,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_query",
           "parameters": [
@@ -4018,6 +4114,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_real_connect",
           "parameters": [
@@ -4066,6 +4163,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "mysql_store_result",
           "parameters": [
@@ -4101,6 +4199,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_cleanup",
           "parameters": [
@@ -4114,6 +4213,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_connect",
           "parameters": [
@@ -4137,6 +4237,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_get_status",
           "parameters": [
@@ -4150,6 +4251,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_init",
           "parameters": [
@@ -4163,6 +4265,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_listen",
           "parameters": [
@@ -4181,6 +4284,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_receive",
           "parameters": [
@@ -4204,6 +4308,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_send",
           "parameters": [
@@ -4227,6 +4332,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_set_nonblocking",
           "parameters": [
@@ -4240,6 +4346,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "network_status_string",
           "parameters": [
@@ -4299,6 +4406,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_accept",
           "parameters": [
@@ -4312,6 +4420,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_cleanup",
           "parameters": [
@@ -4325,6 +4434,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_connect",
           "parameters": [
@@ -4348,6 +4458,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_disconnect",
           "parameters": [
@@ -4361,6 +4472,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_get_status",
           "parameters": [
@@ -4374,6 +4486,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_init",
           "parameters": [
@@ -4387,6 +4500,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_listen",
           "parameters": [
@@ -4405,6 +4519,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_receive",
           "parameters": [
@@ -4428,6 +4543,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_send",
           "parameters": [
@@ -4451,6 +4567,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_set_nonblocking",
           "parameters": [
@@ -4464,6 +4581,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "network_status_string",
           "parameters": [
@@ -4533,6 +4651,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "complex_function",
           "parameters": [],
@@ -4540,6 +4659,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [],
@@ -4547,6 +4667,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_function_pointers",
           "parameters": [],
@@ -4554,6 +4675,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_preprocessing_edge_cases",
           "parameters": [],
@@ -4561,6 +4683,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_typedef_preprocessing",
           "parameters": [],
@@ -4635,6 +4758,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "debug_feature",
           "parameters": [
@@ -4648,6 +4772,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "process_basic",
           "parameters": [],
@@ -4655,6 +4780,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "process_feature",
           "parameters": [
@@ -4982,6 +5108,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "calculate_sum",
           "parameters": [
@@ -5000,6 +5127,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "calculate_sum",
           "parameters": [
@@ -5018,6 +5146,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "create_point",
           "parameters": [
@@ -5041,6 +5170,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "create_point",
           "parameters": [
@@ -5064,6 +5194,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "demo_triangle_usage",
           "parameters": [],
@@ -5071,6 +5202,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "internal_helper",
           "parameters": [],
@@ -5078,6 +5210,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "internal_helper",
           "parameters": [],
@@ -5085,6 +5218,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [],
@@ -5092,6 +5226,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "process_point",
           "parameters": [
@@ -5170,6 +5305,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "calculate_sum",
           "parameters": [
@@ -5188,6 +5324,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "create_point",
           "parameters": [
@@ -5211,6 +5348,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "process_point",
           "parameters": [
@@ -5286,6 +5424,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "calculate_sum",
           "parameters": [
@@ -5304,6 +5443,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "calculate_sum",
           "parameters": [
@@ -5322,6 +5462,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "create_point",
           "parameters": [
@@ -5345,6 +5486,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "create_point",
           "parameters": [
@@ -5368,6 +5510,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "demo_triangle_usage",
           "parameters": [],
@@ -5375,6 +5518,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "internal_helper",
           "parameters": [],
@@ -5382,6 +5526,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "internal_helper",
           "parameters": [],
@@ -5389,6 +5534,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [],
@@ -5396,6 +5542,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "process_point",
           "parameters": [
@@ -5461,6 +5608,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_bind_blob",
           "parameters": [
@@ -5494,6 +5642,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_bind_double",
           "parameters": [
@@ -5517,6 +5666,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_bind_int",
           "parameters": [
@@ -5540,6 +5690,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_bind_text",
           "parameters": [
@@ -5573,6 +5724,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_close",
           "parameters": [
@@ -5586,6 +5738,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_blob",
           "parameters": [
@@ -5604,6 +5757,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_count",
           "parameters": [
@@ -5617,6 +5771,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_double",
           "parameters": [
@@ -5635,6 +5790,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_int",
           "parameters": [
@@ -5653,6 +5809,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_name",
           "parameters": [
@@ -5671,6 +5828,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_text",
           "parameters": [
@@ -5689,6 +5847,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_column_type",
           "parameters": [
@@ -5707,6 +5866,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_errmsg",
           "parameters": [
@@ -5720,6 +5880,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_exec",
           "parameters": [
@@ -5753,6 +5914,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_finalize",
           "parameters": [
@@ -5766,6 +5928,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_free",
           "parameters": [
@@ -5779,6 +5942,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_open",
           "parameters": [
@@ -5797,6 +5961,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_prepare_v2",
           "parameters": [
@@ -5830,6 +5995,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "sqlite3_step",
           "parameters": [
@@ -5940,6 +6106,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "debug_log",
           "parameters": [
@@ -5953,6 +6120,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "deprecated_print_info",
           "parameters": [
@@ -5966,6 +6134,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "keep_this_function",
           "parameters": [],
@@ -5973,6 +6142,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "legacy_calculate",
           "parameters": [
@@ -5991,6 +6161,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [],
@@ -5998,6 +6169,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "old_create_point",
           "parameters": [
@@ -6016,6 +6188,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_function_one",
           "parameters": [],
@@ -6023,6 +6196,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "test_function_two",
           "parameters": [],
@@ -6229,6 +6403,7 @@
       "functions": [
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "cleanup_resources",
           "parameters": [],
@@ -6236,6 +6411,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "debug_validate_config",
           "parameters": [
@@ -6249,6 +6425,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "deprecated_cleanup",
           "parameters": [],
@@ -6256,6 +6433,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "initialize_system",
           "parameters": [],
@@ -6263,6 +6441,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "keep_this_function",
           "parameters": [],
@@ -6270,6 +6449,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "legacy_init",
           "parameters": [
@@ -6283,6 +6463,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [],
@@ -6290,6 +6471,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "old_create_config",
           "parameters": [
@@ -6303,6 +6485,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "process_data",
           "parameters": [
@@ -6316,6 +6499,7 @@
         },
         {
           "is_declaration": true,
+          "is_inline": false,
           "is_static": false,
           "name": "test_helper_function",
           "parameters": [],
@@ -6449,6 +6633,7 @@
       "functions": [
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "create_complex",
           "parameters": [
@@ -6467,6 +6652,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "log_buffer",
           "parameters": [
@@ -6480,6 +6666,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "main",
           "parameters": [],
@@ -6487,6 +6674,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "my_callback",
           "parameters": [
@@ -6500,6 +6688,7 @@
         },
         {
           "is_declaration": false,
+          "is_inline": false,
           "is_static": false,
           "name": "process_buffer",
           "parameters": [
