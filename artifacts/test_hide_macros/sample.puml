@@ -1,11 +1,11 @@
-@startuml sample2
+@startuml sample
 
-class "sample2" as SAMPLE2 <<source>> #LightBlue
+class "sample" as SAMPLE <<source>> #LightBlue
 {
     -- Macros --
     - #define CALC(x, y)
-    - #define DEBUG_MODE 1U
-    - #define MAX_SIZE 100U
+    - #define DEBUG_MODE
+    - #define MAX_SIZE
     -- Global Variables --
     - char[MAX_SIZE] buffer
     - int global_counter
@@ -24,30 +24,9 @@ class "config" as HEADER_CONFIG <<header>> #LightGreen
 {
     -- Macros --
     + #define CONFIG_H
-    + #define DEFAULT_BUFFER_SIZE 256
-    + #define MAX_LABEL_LEN 64
-    + #define PROJECT_NAME "ComplexCProject"
-}
-
-class "filtered_header" as HEADER_FILTERED_HEADER <<header>> #LightGreen
-{
-    -- Macros --
-    + #define FILTERED_CONSTANT 42
-    + #define FILTERED_HEADER_H
-    + #define FILTERED_MACRO(x)
-    -- Global Variables --
-    + char[100] filtered_global_string
-    + int filtered_global_var
-    -- Functions --
-    + int filtered_function1(int param)
-    + void filtered_function2(const char * message)
-    + double filtered_function3(filtered_struct_t * data)
-}
-
-class "first_level" as HEADER_FIRST_LEVEL <<header>> #LightGreen
-{
-    -- Macros --
-    + #define FIRST_LEVEL_H
+    + #define DEFAULT_BUFFER_SIZE
+    + #define MAX_LABEL_LEN
+    + #define PROJECT_NAME
 }
 
 class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
@@ -83,9 +62,9 @@ class "sample" as HEADER_SAMPLE <<header>> #LightGreen
     -- Macros --
     + #define MAX(a, b)
     + #define MIN(a, b)
-    + #define PI 3.14159
+    + #define PI
     + #define SAMPLE_H
-    + #define VERSION "1.0.0"
+    + #define VERSION
     -- Global Variables --
     + char * DEFAULT_LABEL
     + int MAX_POINTS
@@ -110,20 +89,6 @@ class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
 class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
 {
     alias of int32_t
-}
-
-class "filtered_struct_t" as TYPEDEF_FILTERED_STRUCT_T <<struct>> #LightYellow
-{
-    + int filtered_field1
-    + char[50] filtered_field2
-    + double filtered_field3
-}
-
-class "filtered_enum_t" as TYPEDEF_FILTERED_ENUM_T <<enumeration>> #LightYellow
-{
-    FILTERED_VALUE_1 = 1
-    FILTERED_VALUE_2 = 2
-    FILTERED_VALUE_3 = 3
 }
 
 class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
@@ -171,23 +136,19 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 
 
 ' Include relationships
-HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
 HEADER_LOGGER --> HEADER_CONFIG : <<include>>
 HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+SAMPLE --> HEADER_GEOMETRY : <<include>>
+SAMPLE --> HEADER_LOGGER : <<include>>
+SAMPLE --> HEADER_MATH_UTILS : <<include>>
+SAMPLE --> HEADER_SAMPLE : <<include>>
 HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
-SAMPLE2 --> HEADER_FILTERED_HEADER : <<include>>
-SAMPLE2 --> HEADER_FIRST_LEVEL : <<include>>
-SAMPLE2 --> HEADER_GEOMETRY : <<include>>
-SAMPLE2 --> HEADER_LOGGER : <<include>>
-SAMPLE2 --> HEADER_MATH_UTILS : <<include>>
-SAMPLE2 --> HEADER_SAMPLE : <<include>>
+HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
 
 ' Declaration relationships
 HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
 HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
 HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
-HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_STRUCT_T : <<declares>>
-HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_ENUM_T : <<declares>>
 HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
 HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>

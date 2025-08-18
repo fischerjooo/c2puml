@@ -21,15 +21,15 @@ class "common" as HEADER_COMMON <<header>> #LightGreen
     + #define COMMON_H
     + #define DEPRECATED
     + #define DEPRECATED __attribute__((deprecated))
-    + #define ERROR_GENERAL -1
-    + #define ERROR_INVALID_PARAM -2
-    + #define ERROR_MEMORY -3
-    + #define ERROR_TIMEOUT -4
+    + #define ERROR_GENERAL
+    + #define ERROR_INVALID_PARAM
+    + #define ERROR_MEMORY
+    + #define ERROR_TIMEOUT
     + #define MAX(a, b)
     + #define MIN(a, b)
     + #define PACKED
     + #define PACKED __attribute__((packed))
-    + #define SUCCESS 0
+    + #define SUCCESS
     + #define UNUSED(x)
     -- Functions --
     + void common_cleanup()
@@ -40,8 +40,8 @@ class "common" as HEADER_COMMON <<header>> #LightGreen
 class "network" as HEADER_NETWORK <<header>> #LightGreen
 {
     -- Macros --
-    + #define DEFAULT_PORT 8080
-    + #define MAX_CONNECTIONS 100
+    + #define DEFAULT_PORT
+    + #define MAX_CONNECTIONS
     + #define NETWORK_H
     -- Functions --
     + int network_accept(NetworkConfig * config)

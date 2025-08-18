@@ -14,10 +14,10 @@ class "preprocessed" as PREPROCESSED <<source>> #LightBlue
 class "preprocessed" as HEADER_PREPROCESSED <<header>> #LightGreen
 {
     -- Macros --
-    + #define DEBUG_MODE 0
-    + #define FEATURE_ENABLED 1
-    + #define MAX_SIZE 100
-    + #define MIN_SIZE 10
+    + #define DEBUG_MODE
+    + #define FEATURE_ENABLED
+    + #define MAX_SIZE
+    + #define MIN_SIZE
     + #define PREPROCESSED_H
     -- Global Variables --
     + int global_basic

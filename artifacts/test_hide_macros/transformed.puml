@@ -1,0 +1,195 @@
+@startuml transformed
+
+class "transformed" as TRANSFORMED <<source>> #LightBlue
+{
+    -- Macros --
+    - #define DEPRECATED_MAX_SIZE
+    - #define LEGACY_DEBUG
+    - #define OLD_VERSION
+    -- Global Variables --
+    - legacy_string_t deprecated_message
+    - int old_global_counter
+    -- Functions --
+    + void keep_this_function()
+    + int main()
+
+    - void debug_log(const char * msg)
+    - void deprecated_print_info(const char * message)
+    - int legacy_calculate(int a, int b)
+    - old_point * old_create_point(int x, int y)
+    - void test_function_one()
+    - void test_function_two()
+}
+
+class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
+{
+    -- Macros --
+    + #define DEPRECATED_FLAG
+    + #define LEGACY_BUFFER_SIZE
+    + #define OLD_API_VERSION
+    + #define TRANSFORMED_H
+    -- Global Variables --
+    + char * legacy_path
+    + int old_error_code
+    -- Functions --
+    + void cleanup_resources()
+    + int debug_validate_config(old_config_t * config)
+    + void deprecated_cleanup()
+    + status_t initialize_system()
+    + void keep_this_function()
+    + int legacy_init(old_config_t * config)
+    + int main()
+    + old_config_t * old_create_config(const char * name)
+    + void process_data(const point3d_t * point)
+    + void test_helper_function()
+}
+
+class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYellow
+{
+    + struct old_point * point = malloc ( sizeof ( struct old_point ) )
+    + if ( point ) { point -> x = x ; point -> y = y ; } return point
+}
+
+class "legacy_data" as TYPEDEF_LEGACY_DATA <<struct>> #LightYellow
+{
+    + int id
+    + char[32] name
+    + struct old_point position
+}
+
+class "old_point" as TYPEDEF_OLD_POINT <<struct>> #LightYellow
+{
+    + int x
+    + int y
+}
+
+class "legacy_color" as TYPEDEF_LEGACY_COLOR <<enumeration>> #LightYellow
+{
+    LEGACY_RED
+    LEGACY_GREEN
+    LEGACY_BLUE
+}
+
+class "old_status" as TYPEDEF_OLD_STATUS <<enumeration>> #LightYellow
+{
+    OLD_STATUS_PENDING
+    OLD_STATUS_ACTIVE
+    OLD_STATUS_INACTIVE
+}
+
+class "legacy_int_t" as TYPEDEF_LEGACY_INT_T <<typedef>> #LightYellow
+{
+    alias of int
+}
+
+class "legacy_string_t" as TYPEDEF_LEGACY_STRING_T <<typedef>> #LightYellow
+{
+    alias of char *
+}
+
+class "old_value" as TYPEDEF_OLD_VALUE <<union>> #LightYellow
+{
+    + int i
+    + float f
+    + char c
+}
+
+class "legacy_node" as TYPEDEF_LEGACY_NODE <<struct>> #LightYellow
+{
+    + int data
+    + struct legacy_node * next
+}
+
+class "old_config" as TYPEDEF_OLD_CONFIG <<struct>> #LightYellow
+{
+    + int version
+    + char[64] name
+    + int flags
+}
+
+class "point3d_t" as TYPEDEF_POINT3D_T <<struct>> #LightYellow
+{
+    + int x
+    + int y
+    + int z
+}
+
+class "legacy_mode" as TYPEDEF_LEGACY_MODE <<enumeration>> #LightYellow
+{
+    LEGACY_MODE_READ
+    LEGACY_MODE_WRITE
+    LEGACY_MODE_APPEND
+}
+
+class "old_error_type" as TYPEDEF_OLD_ERROR_TYPE <<enumeration>> #LightYellow
+{
+    OLD_ERROR_NONE
+    OLD_ERROR_INVALID
+    OLD_ERROR_MEMORY
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<enumeration>> #LightYellow
+{
+    STATUS_OK
+    STATUS_ERROR
+    STATUS_PENDING
+}
+
+class "legacy_handle_t" as TYPEDEF_LEGACY_HANDLE_T <<typedef>> #LightYellow
+{
+    alias of void *
+}
+
+class "legacy_uint_t" as TYPEDEF_LEGACY_UINT_T <<typedef>> #LightYellow
+{
+    alias of unsigned int
+}
+
+class "old_config_t" as TYPEDEF_OLD_CONFIG_T <<typedef>> #LightYellow
+{
+    alias of void *
+}
+
+class "old_point_t" as TYPEDEF_OLD_POINT_T <<typedef>> #LightYellow
+{
+    alias of void *
+}
+
+class "old_variant" as TYPEDEF_OLD_VARIANT <<union>> #LightYellow
+{
+    + int int_val
+    + double double_val
+    + char * string_val
+}
+
+
+' Include relationships
+TRANSFORMED --> HEADER_TRANSFORMED : <<include>>
+
+' Declaration relationships
+TRANSFORMED ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
+TRANSFORMED ..> TYPEDEF_LEGACY_DATA : <<declares>>
+TRANSFORMED ..> TYPEDEF_OLD_POINT : <<declares>>
+TRANSFORMED ..> TYPEDEF_LEGACY_COLOR : <<declares>>
+TRANSFORMED ..> TYPEDEF_OLD_STATUS : <<declares>>
+TRANSFORMED ..> TYPEDEF_LEGACY_INT_T : <<declares>>
+TRANSFORMED ..> TYPEDEF_LEGACY_STRING_T : <<declares>>
+TRANSFORMED ..> TYPEDEF_OLD_VALUE : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_LEGACY_NODE : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_OLD_CONFIG : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_POINT3D_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_LEGACY_MODE : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_OLD_ERROR_TYPE : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_LEGACY_HANDLE_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_LEGACY_UINT_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_OLD_CONFIG_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_OLD_POINT_T : <<declares>>
+HEADER_TRANSFORMED ..> TYPEDEF_OLD_VARIANT : <<declares>>
+
+' Uses relationships
+TYPEDEF___ANONYMOUS_STRUCT__ ..> TYPEDEF_OLD_POINT : <<uses>>
+TYPEDEF_LEGACY_DATA ..> TYPEDEF_OLD_POINT : <<uses>>
+TYPEDEF_LEGACY_NODE ..> TYPEDEF_LEGACY_NODE : <<uses>>
+
+@enduml

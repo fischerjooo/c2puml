@@ -557,28 +557,12 @@ class CParser:
 
         for token in tokens:
             if token.type == TokenType.DEFINE:
-                # Extract macro name and parameters only, not the full value
-                # e.g., "#define PI 3.14159" -> "PI"
-                # e.g., "#define MIN(a, b) ((a) < (b) ? (a) : (b))" -> "MIN(a, b)"
-                import re
-
-                # For function-like macros: extract name and parameters
-                func_match = re.search(
-                    r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", token.value
-                )
-                if func_match:
-                    macro_name = func_match.group(1)
-                    if macro_name not in macros:
-                        macros.append(macro_name)
-                else:
-                    # For simple defines: extract only the name
-                    simple_match = re.search(
-                        r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", token.value
-                    )
-                    if simple_match:
-                        macro_name = simple_match.group(1)
-                        if macro_name not in macros:
-                            macros.append(macro_name)
+                # Store the full macro definition for display flexibility
+                # e.g., "#define PI 3.14159" -> "#define PI 3.14159"
+                # e.g., "#define MIN(a, b) ((a) < (b) ? (a) : (b))" -> "#define MIN(a, b) ((a) < (b) ? (a) : (b))"
+                macro_definition = token.value.strip()
+                if macro_definition not in macros:
+                    macros.append(macro_definition)
 
         return macros
 
