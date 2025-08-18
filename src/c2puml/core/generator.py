@@ -367,8 +367,8 @@ class Generator:
         params = self._format_function_parameters(func.parameters)
         param_str_full = ", ".join(params)
 
-        # Remove 'extern' keyword from return type for UML diagrams
-        return_type = func.return_type.replace("extern ", "").strip()
+        # Remove 'extern' and 'LOCAL_INLINE' keywords from return type for UML diagrams
+        return_type = func.return_type.replace("extern ", "").replace("LOCAL_INLINE ", "").strip()
 
         # Build full signature
         full_signature = f"{INDENT}{prefix}{return_type} {func.name}({param_str_full})"
@@ -451,7 +451,7 @@ class Generator:
         if file_model.functions:
             lines.append(f"{INDENT}-- Functions --")
             for func in sorted(file_model.functions, key=lambda x: x.name):
-                if is_declaration_only and func.is_declaration:
+                if is_declaration_only and (func.is_declaration or func.is_inline):
                     lines.append(self._format_function_signature(func, prefix))
                 elif not is_declaration_only and not func.is_declaration:
                     lines.append(self._format_function_signature(func, prefix))
@@ -599,7 +599,7 @@ class Generator:
             private_functions = []
             
             for func in sorted(file_model.functions, key=lambda x: x.name):
-                if is_declaration_only and func.is_declaration:
+                if is_declaration_only and (func.is_declaration or func.is_inline):
                     prefix = "+ "
                     formatted_function = self._format_function_signature(func, prefix)
                     public_functions.append(formatted_function)
