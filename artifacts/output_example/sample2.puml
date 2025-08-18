@@ -3,7 +3,7 @@
 class "sample2" as SAMPLE2 <<source>> #LightBlue
 {
     -- Macros --
-    - #define CALC(x, y) ((x) + (y))
+    - #define CALC(x, y)
     - #define DEBUG_MODE 1U
     - #define MAX_SIZE 100U
     -- Global Variables --
@@ -34,7 +34,7 @@ class "filtered_header" as HEADER_FILTERED_HEADER <<header>> #LightGreen
     -- Macros --
     + #define FILTERED_CONSTANT 42
     + #define FILTERED_HEADER_H
-    + #define FILTERED_MACRO(x) ((x) * 2)
+    + #define FILTERED_MACRO(x)
     -- Global Variables --
     + char[100] filtered_global_string
     + int filtered_global_var
@@ -81,8 +81,8 @@ class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
 class "sample" as HEADER_SAMPLE <<header>> #LightGreen
 {
     -- Macros --
-    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
-    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define MAX(a, b)
+    + #define MIN(a, b)
     + #define PI 3.14159
     + #define SAMPLE_H
     + #define VERSION "1.0.0"

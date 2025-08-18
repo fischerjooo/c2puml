@@ -39,74 +39,18 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
 {
     -- Macros --
     + #define COMPLEX_H
-    + #define COMPLEX_MACRO_FUNC(x, y, z) do { 
-    int temp_var = (x) + (y) * (z); 
-    if (temp_var > 100) { 
-        temp_var = temp_var / 2; 
-    } else { 
-        temp_var = temp_var * 3; 
-    } 
-    (x) = temp_var; 
-} while(0)
-    + #define CREATE_FUNC_NAME(prefix, suffix) prefix##_##suffix
+    + #define COMPLEX_MACRO_FUNC(x, y, z)
+    + #define CREATE_FUNC_NAME(prefix, suffix)
     + #define DEPRECATED
     + #define DEPRECATED __attribute__((deprecated))
-    + #define HANDLE_OPERATION(op_type, data, size, callback) do { 
-    switch ((op_type)) { 
-        case OP_ADD: 
-            for (int i = 0; i < (size); i++) { 
-                (data)[i] = (data)[i] + 1; 
-            } 
-            break; 
-        case OP_SUB: 
-            for (int i = 0; i < (size); i++) { 
-                (data)[i] = (data)[i] - 1; 
-            } 
-            break; 
-        case OP_MUL: 
-            for (int i = 0; i < (size); i++) { 
-                (data)[i] = (data)[i] * 2; 
-            } 
-            break; 
-        case OP_DIV: 
-            for (int i = 0; i < (size); i++) { 
-                (data)[i] = (data)[i] / 2; 
-            } 
-            break; 
-    } 
-    if ((callback) != NULL) { 
-        (callback)((data), (size)); 
-    } 
-} while(0)
-    + #define PROCESS_ARRAY(arr, size, callback) do { 
-    for (int i = 0; i < (size); i++) { 
-        int result = (callback)(&(arr)[i]); 
-        if (result < 0) { 
-            break; 
-        } 
-    } 
-} while(0)
-    + #define STRINGIFY(x) #x
-    + #define TOSTRING(x) STRINGIFY(x)
-    + #define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) 
-{                                                                     
-    (ptr_pau8)[1U] = (uint8)((value_u16));                            
-    (ptr_pau8)[0U] = (uint8)((value_u16) >> 8U);                      
-}
-    + #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) 
-{                                                                     
-    (ptr_pau8)[3U] = (uint8)((value_u32));                            
-    (ptr_pau8)[2U] = (uint8)((value_u32) >> 8U);                      
-    (ptr_pau8)[1U] = (uint8)((value_u32) >> 16U);                     
-    (ptr_pau8)[0U] = (uint8)((value_u32) >> 24U);                     
-}
-    + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8) 
-    (((uint16)((ptr_pau8)[0U]) << 8U) | ((uint16)((ptr_pau8)[1U])))
-    + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8) 
-    (((uint32)((ptr_pau8)[0U]) << 24U) | 
-     ((uint32)((ptr_pau8)[1U]) << 16U) | 
-     ((uint32)((ptr_pau8)[2U]) << 8U) | 
-     ((uint32)((ptr_pau8)[3U])))
+    + #define HANDLE_OPERATION(op_type, data, size, callback)
+    + #define PROCESS_ARRAY(arr, size, callback)
+    + #define STRINGIFY(x)
+    + #define TOSTRING(x)
+    + #define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)
+    + #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)
+    + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
+    + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     -- Functions --
     + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), void ( * free_func ) ( void * ))
     + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), complex_callback_t callback)

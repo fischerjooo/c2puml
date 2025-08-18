@@ -13,7 +13,7 @@ class "application" as APPLICATION <<source>> #LightBlue
 class "common" as HEADER_COMMON <<header>> #LightGreen
 {
     -- Macros --
-    + #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+    + #define ARRAY_SIZE(arr)
     + #define COMMON_H
     + #define DEPRECATED
     + #define DEPRECATED __attribute__((deprecated))
@@ -21,12 +21,12 @@ class "common" as HEADER_COMMON <<header>> #LightGreen
     + #define ERROR_INVALID_PARAM -2
     + #define ERROR_MEMORY -3
     + #define ERROR_TIMEOUT -4
-    + #define MAX(a, b) ((a) > (b) ? (a) : (b))
-    + #define MIN(a, b) ((a) < (b) ? (a) : (b))
+    + #define MAX(a, b)
+    + #define MIN(a, b)
     + #define PACKED
     + #define PACKED __attribute__((packed))
     + #define SUCCESS 0
-    + #define UNUSED(x) (void)(x)
+    + #define UNUSED(x)
     -- Functions --
     + void common_cleanup()
     + const char * common_get_error_string(result_t error)

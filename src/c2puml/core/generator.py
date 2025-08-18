@@ -334,26 +334,28 @@ class Generator:
         # Check if we should hide macro values
         hide_values = getattr(self, "hide_macro_values", False)
         
-        if hide_values:
-            # Extract only macro name and parameters (current behavior)
-            if "(" in macro and ")" in macro:
-                # Function-like macro: extract name and parameters only
-                match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", macro)
-                if match:
-                    macro_name_with_params = match.group(1)
-                    return f"{INDENT}{prefix}#define {macro_name_with_params}"
-            else:
-                # Simple macro: extract name only
+        # Check if this is a function-like macro (has parameters)
+        is_function_like = "(" in macro and ")" in macro
+        
+        if is_function_like:
+            # Function-like macros: ALWAYS show only name and parameters (never show definition)
+            match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))", macro)
+            if match:
+                macro_name_with_params = match.group(1)
+                return f"{INDENT}{prefix}#define {macro_name_with_params}"
+        else:
+            # Simple macros: respect the hide_macro_values setting
+            if hide_values:
+                # Extract name only
                 match = re.search(r"#define\s+([A-Za-z_][A-Za-z0-9_]*)", macro)
                 if match:
                     macro_name = match.group(1)
                     return f"{INDENT}{prefix}#define {macro_name}"
-        else:
-            # Show full macro definition including values
-            # Clean up the macro definition and add proper prefix
-            clean_macro = macro.strip()
-            if clean_macro.startswith("#define"):
-                return f"{INDENT}{prefix}{clean_macro}"
+            else:
+                # Show full macro definition including values
+                clean_macro = macro.strip()
+                if clean_macro.startswith("#define"):
+                    return f"{INDENT}{prefix}{clean_macro}"
         
         # Fallback: return as-is with prefix
         return f"{INDENT}{prefix}{macro}"

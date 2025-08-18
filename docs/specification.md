@@ -795,3 +795,32 @@ Configuration (in `config.json`):
 Example behavior:
 - With `max_function_signature_chars: 60`, a signature like `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void (* pre_process)(int*, int), void (* post_process)(int*, int))` may become `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, ...)` depending on the exact threshold.
 
+
+
+#### 5.5.6 Macro Value Display (Configurable)
+
+The display of macro values in PlantUML diagrams can be controlled with different behaviors for simple macros and function-like macros:
+
+**Function-like macros (with parameters)**: Always show only the macro name and parameters, never the definition:
+- `#define MIN(a, b) ((a) < (b) ? (a) : (b))` → `+ #define MIN(a, b)`
+- `#define MAX(x, y) ((x) > (y) ? (x) : (y))` → `+ #define MAX(x, y)`
+
+**Simple macros (no parameters)**: Behavior controlled by `hide_macro_values` configuration:
+
+Configuration (in `config.json`):
+
+```json
+{
+  "hide_macro_values": false
+}
+```
+
+- `hide_macro_values`: Boolean; controls whether simple macro values are displayed (default: false)
+  - `false` (default): Show macro values: `+ #define PI 3.14159`, `+ #define VERSION "1.0.0"`
+  - `true`: Hide macro values: `+ #define PI`, `+ #define VERSION`
+
+**Behavior Summary**:
+- **Function-like macros**: Always hide definitions (show only name and parameters)
+- **Simple macros with values**: Controlled by `hide_macro_values` flag
+- **Simple macros without values**: Always show as-is (`+ #define DEBUG_FLAG`)
+
