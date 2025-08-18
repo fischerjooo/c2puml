@@ -91,7 +91,7 @@ jobs:
           # Stage all changes
           git add .
 
-      - name: "10.07 Update version in pyproject.toml"
+      - name: "10.07 Update version in pyproject.toml and __init__.py"
         run: |
           # Generate version in format YYYY.M.D (e.g., 2025.8.2)
           VERSION=$(date +%Y.%-m.%-d)
@@ -103,7 +103,17 @@ jobs:
           echo "📄 Updated pyproject.toml version:"
           grep "^version = " pyproject.toml
           
-          # Stage the updated file
+          # Also update __version__ in src/c2puml/__init__.py
+          if [ -f src/c2puml/__init__.py ]; then
+            sed -i "s/^__version__ = \".*\"/__version__ = \"$VERSION\"/" src/c2puml/__init__.py
+            echo "📄 Updated src/c2puml/__init__.py version:"
+            grep "^__version__ = " src/c2puml/__init__.py || true
+            git add src/c2puml/__init__.py
+          else
+            echo "⚠️ src/c2puml/__init__.py not found; skipping __version__ update"
+          fi
+          
+          # Stage the updated pyproject file
           git add pyproject.toml
 
       - name: "10.08 Generate release notes file"
