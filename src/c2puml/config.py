@@ -26,6 +26,7 @@ class Config:
     include_depth: int = 1
     include_filter_local_only: bool = False
     always_show_includes: bool = False
+    convert_empty_class_to_artifact: bool = False
 
     # Generator formatting options
     max_function_signature_chars: int = 0  # 0 or less means unlimited (no truncation)
@@ -67,6 +68,8 @@ class Config:
             self.include_filter_local_only = False
         if not hasattr(self, "always_show_includes"):
             self.always_show_includes = False
+        if not hasattr(self, "convert_empty_class_to_artifact"):
+            self.convert_empty_class_to_artifact = False
         if not hasattr(self, "max_function_signature_chars"):
             self.max_function_signature_chars = 0
         if not hasattr(self, "hide_macro_values"):
@@ -184,6 +187,7 @@ class Config:
             "include_depth": self.include_depth,
             "include_filter_local_only": self.include_filter_local_only,
             "always_show_includes": self.always_show_includes,
+            "convert_empty_class_to_artifact": self.convert_empty_class_to_artifact,
             "max_function_signature_chars": self.max_function_signature_chars,
             "hide_macro_values": self.hide_macro_values,
             "file_filters": self.file_filters,
@@ -244,6 +248,7 @@ class Config:
             and self.include_depth == other.include_depth
             and self.include_filter_local_only == other.include_filter_local_only
             and self.always_show_includes == other.always_show_includes
+            and self.convert_empty_class_to_artifact == other.convert_empty_class_to_artifact
             and self.hide_macro_values == other.hide_macro_values
             and self.file_filters == other.file_filters
             and self.file_specific == other.file_specific

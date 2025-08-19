@@ -715,7 +715,7 @@ class Generator:
 
     def _is_function_pointer_type(self, type_str: str) -> bool:
         """Heuristically detect C function pointer type patterns with optional whitespace.
-        Examples: int (*name)(...), int ( * name ) ( ... ), int (*(*name)(...))(...)
+        Examples: int (*name)(...), int ( * name ) ( ... ), int (*(*name)(...))(...) 
         """
         pattern = re.compile(r"\(\s*\*\s*\w+\s*\)\s*\(")
         if pattern.search(type_str):
@@ -943,6 +943,9 @@ class Generator:
                         is_parent_anonymous = typedef_name.startswith("__anonymous_")
                         if self._is_anonymous_structure_in_project(used_type, project_model) and not is_parent_anonymous:
                             continue
+                        # If there is a composition for this pair, do not add a duplicate uses relation
+                        if self._is_anonymous_composition_pair(typedef_name, used_type, project_model):
+                            continue
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
 
     def _generate_anonymous_relationships(
@@ -1002,3 +1005,12 @@ class Generator:
 
         return None
 
+    def _is_anonymous_composition_pair(self, parent_name: str, child_name: str, project_model: ProjectModel) -> bool:
+        """Return True if a given parent->child anonymous composition exists in the project model."""
+        for file_model in project_model.files.values():
+            rels = getattr(file_model, "anonymous_relationships", None)
+            if not rels:
+                continue
+            if parent_name in rels and child_name in rels[parent_name]:
+                return True
+        return False
