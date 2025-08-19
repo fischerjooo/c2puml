@@ -1,8 +1,8 @@
-# Release Notes - v2025-08-18
+# Release Notes - v2025-08-19
 
 ## Release Information
-- **Tag**: v2025-08-18
-- **Date**: 2025-08-18
+- **Tag**: v2025-08-19
+- **Date**: 2025-08-19
 - **Branch**: release
 
 ## Description
