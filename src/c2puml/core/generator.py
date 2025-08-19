@@ -42,6 +42,7 @@ class Generator:
     # Configuration (set by main based on Config)
     max_function_signature_chars: int = 0  # 0 or less = unlimited
     hide_macro_values: bool = False  # Hide macro values in generated PlantUML diagrams
+    convert_empty_class_to_artifact: bool = False  # Render empty headers as artifacts when enabled
 
     def _clear_output_folder(self, output_dir: str) -> None:
         """Clear existing .puml and .png files from the output directory"""
@@ -528,6 +529,13 @@ class Generator:
 
         # If this header is marked as placeholder for this diagram, render as empty class
         if class_type == "header" and Path(filename).name in getattr(self, "_placeholder_headers", set()):
+            # When configured, render empty headers as artifact nodes instead of empty classes
+            if getattr(self, "convert_empty_class_to_artifact", False):
+                # Remove the opening brace and replace the class line with artifact syntax
+                lines.pop()
+                lines[-1] = f'() "{basename}" as {uml_id} <<{class_type}>> {color}'
+                lines.append("")
+                return
             lines.append("}")
             lines.append("")
             return
