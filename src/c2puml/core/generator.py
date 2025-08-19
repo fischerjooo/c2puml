@@ -942,6 +942,9 @@ class Generator:
     ):
         """Add uses relationships for a specific typedef collection"""
         for typedef_name, typedef_data in sorted(typedef_collection.items()):
+            # Skip emitting uses from anonymous parents to reduce duplication/noise in diagrams
+            if isinstance(typedef_name, str) and typedef_name.startswith("__anonymous_"):
+                continue
             typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
             if typedef_uml_id and hasattr(typedef_data, "uses"):
                 for used_type in sorted(typedef_data.uses):

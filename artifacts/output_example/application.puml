@@ -255,10 +255,10 @@ class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #Light
 APPLICATION --> HEADER_COMMON : <<include>>
 APPLICATION --> HEADER_DATABASE : <<include>>
 APPLICATION --> HEADER_NETWORK : <<include>>
-HEADER_DATABASE --> HEADER_COMMON : <<include>>
 HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
 HEADER_DATABASE --> HEADER_MYSQL : <<include>>
 HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
+HEADER_NETWORK --> HEADER_COMMON : <<include>>
 
 ' Declaration relationships
 HEADER_COMMON ..> TYPEDEF_COMMON_STATUS_T : <<declares>>
