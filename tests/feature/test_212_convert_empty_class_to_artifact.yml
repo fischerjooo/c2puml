@@ -1,0 +1,55 @@
+test:
+  name: Convert Empty Header Class To Artifact
+  description: When convert_empty_class_to_artifact is true, headers shown as placeholders (due to include filtering) are rendered as artifact nodes () instead of empty classes.
+  category: feature
+  id: '212'
+---
+source_files:
+  main.c: |
+    #include "keep.h"
+    #include "filtered.h"
+    int main(void) { return keep(); }
+  keep.h: |
+    #ifndef KEEP_H
+    #define KEEP_H
+    int keep(void);
+    #endif
+  filtered.h: |
+    #ifndef FILTERED_H
+    #define FILTERED_H
+    int filtered(void);
+    #endif
+  config.json: |
+    {
+      "project_name": "artifact_option_test",
+      "source_folders": ["."],
+      "output_dir": "./output",
+      "recursive_search": true,
+      "include_depth": 2,
+      "always_show_includes": true,
+      "convert_empty_class_to_artifact": true,
+      "file_specific": {
+        "main.c": {
+          "include_filter": ["^keep\\.h$"]
+        }
+      }
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+      - model.json
+      - model_transformed.json
+      - main.puml
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - 'MAIN --> HEADER_KEEP : <<include>>'
+          - 'MAIN --> HEADER_FILTERED : <<include>>'
+          # filtered.h should be rendered as an artifact node line rather than a class block
+          - '() "filtered" as HEADER_FILTERED <<header>> #LightGreen'
+        not_contains_lines:
+          - 'class "filtered" as HEADER_FILTERED <<header>> #LightGreen\n{\n}'

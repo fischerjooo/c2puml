@@ -42,6 +42,7 @@ class Generator:
     # Configuration (set by main based on Config)
     max_function_signature_chars: int = 0  # 0 or less = unlimited
     hide_macro_values: bool = False  # Hide macro values in generated PlantUML diagrams
+    convert_empty_class_to_artifact: bool = False  # Render empty headers as artifacts when enabled
 
     def _clear_output_folder(self, output_dir: str) -> None:
         """Clear existing .puml and .png files from the output directory"""
@@ -528,6 +529,13 @@ class Generator:
 
         # If this header is marked as placeholder for this diagram, render as empty class
         if class_type == "header" and Path(filename).name in getattr(self, "_placeholder_headers", set()):
+            # When configured, render empty headers as artifact nodes instead of empty classes
+            if getattr(self, "convert_empty_class_to_artifact", False):
+                # Remove the opening brace and replace the class line with artifact syntax
+                lines.pop()
+                lines[-1] = f'() "{basename}" as {uml_id} <<{class_type}>> {color}'
+                lines.append("")
+                return
             lines.append("}")
             lines.append("")
             return
@@ -715,7 +723,7 @@ class Generator:
 
     def _is_function_pointer_type(self, type_str: str) -> bool:
         """Heuristically detect C function pointer type patterns with optional whitespace.
-        Examples: int (*name)(...), int ( * name ) ( ... ), int (*(*name)(...))(...)
+        Examples: int (*name)(...), int ( * name ) ( ... ), int (*(*name)(...))(...) 
         """
         pattern = re.compile(r"\(\s*\*\s*\w+\s*\)\s*\(")
         if pattern.search(type_str):
@@ -934,6 +942,9 @@ class Generator:
     ):
         """Add uses relationships for a specific typedef collection"""
         for typedef_name, typedef_data in sorted(typedef_collection.items()):
+            # Skip emitting uses from anonymous parents to reduce duplication/noise in diagrams
+            if isinstance(typedef_name, str) and typedef_name.startswith("__anonymous_"):
+                continue
             typedef_uml_id = uml_ids.get(f"typedef_{typedef_name}")
             if typedef_uml_id and hasattr(typedef_data, "uses"):
                 for used_type in sorted(typedef_data.uses):
@@ -942,6 +953,9 @@ class Generator:
                         # Allow uses when the parent itself is anonymous; otherwise skip anonymous children (handled via composition)
                         is_parent_anonymous = typedef_name.startswith("__anonymous_")
                         if self._is_anonymous_structure_in_project(used_type, project_model) and not is_parent_anonymous:
+                            continue
+                        # If there is a composition for this pair, do not add a duplicate uses relation
+                        if self._is_anonymous_composition_pair(typedef_name, used_type, project_model):
                             continue
                         lines.append(f"{typedef_uml_id} ..> {used_uml_id} : <<uses>>")
 
@@ -960,9 +974,6 @@ class Generator:
                 
             # Generate relationships for each parent-child pair
             for parent_name, children in file_model.anonymous_relationships.items():
-                # Skip only pure generic placeholders as parents (allow suffixed ones)
-                if parent_name in ("__anonymous_struct__", "__anonymous_union__"):
-                    continue
                 parent_id = self._get_anonymous_uml_id(parent_name, uml_ids)
                 
                 for child_name in children:
@@ -1002,3 +1013,12 @@ class Generator:
 
         return None
 
+    def _is_anonymous_composition_pair(self, parent_name: str, child_name: str, project_model: ProjectModel) -> bool:
+        """Return True if a given parent->child anonymous composition exists in the project model."""
+        for file_model in project_model.files.values():
+            rels = getattr(file_model, "anonymous_relationships", None)
+            if not rels:
+                continue
+            if parent_name in rels and child_name in rels[parent_name]:
+                return True
+        return False
