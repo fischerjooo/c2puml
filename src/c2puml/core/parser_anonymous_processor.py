@@ -416,7 +416,7 @@ class AnonymousTypedefProcessor:
             base_type += " *"
             first_name = first_name[1:]  # Remove leading *
         
-        # Clean up first field name
+        # Clean up first field name - preserve the actual field name
         first_name = re.sub(r'[^\w]', '', first_name)
         if first_name:
             fields.append(Field(first_name, base_type))
@@ -434,8 +434,11 @@ class AnonymousTypedefProcessor:
                     field_type = base_type + " *"
                 part = part[1:]  # Remove leading *
             
-            # Clean up field name
-            field_name = re.sub(r'[^\w]', '', part)
+            # Clean up field name - preserve the actual field name
+            # Remove any leading/trailing whitespace and extract just the identifier
+            field_name = part.strip()
+            # Remove any trailing punctuation or brackets that might be part of the type
+            field_name = re.sub(r'[^\w].*$', '', field_name)
             if field_name:
                 fields.append(Field(field_name, field_type))
         

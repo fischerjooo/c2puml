@@ -1161,7 +1161,7 @@
               "value": null
             },
             {
-              "name": "inty",
+              "name": "int",
               "type": "int",
               "value": null
             }
@@ -2104,7 +2104,7 @@
               "value": null
             },
             {
-              "name": "floatfloat_config",
+              "name": "float",
               "type": "int",
               "value": null
             }
