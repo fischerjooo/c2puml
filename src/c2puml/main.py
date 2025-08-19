@@ -156,6 +156,7 @@ Usage:
             # Apply config for signature truncation and macro display
             Generator.max_function_signature_chars = getattr(config, "max_function_signature_chars", 0)
             Generator.hide_macro_values = getattr(config, "hide_macro_values", False)
+            Generator.convert_empty_class_to_artifact = getattr(config, "convert_empty_class_to_artifact", False)
             # Prefer transformed model, else fallback to model.json
             if os.path.exists(transformed_model_file):
                 model_to_use = transformed_model_file
@@ -204,6 +205,7 @@ Usage:
         # Apply config for signature truncation and macro display
         Generator.max_function_signature_chars = getattr(config, "max_function_signature_chars", 0)
         Generator.hide_macro_values = getattr(config, "hide_macro_values", False)
+        Generator.convert_empty_class_to_artifact = getattr(config, "convert_empty_class_to_artifact", False)
         generator.generate(
             model_file=transformed_model_file,
             output_dir=output_folder,
