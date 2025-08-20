@@ -91,7 +91,7 @@ class "array_of_anon_structs_t_items" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS <
 class "array_of_anon_structs_t_items_point_data" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_POINT_DATA <<struct>> #LightYellow
 {
     + int x
-    + int inty
+    + int int
 }
 
 class "callback_with_anon_struct_t_config_param" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM <<struct>> #LightYellow
@@ -481,7 +481,7 @@ class "__anonymous_struct___level3_union" as TYPEDEF___ANONYMOUS_STRUCT___LEVEL3
 class "callback_with_anon_struct_t_config_param_config_value" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE <<union>> #LightYellow
 {
     + int int_config
-    + int floatfloat_config
+    + int float
 }
 
 class "callback_with_anon_struct_t_config_value" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_VALUE <<union>> #LightYellow

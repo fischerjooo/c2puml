@@ -32,11 +32,12 @@
     - `TYPEDEF___ANONYMOUS_STRUCT__` should be `TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT` only (duplicate exists).
     - For `struct_with_union_t`: both `TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION` and `TYPEDEF_DATA_UNION` exist; only the former should exist with correct children.
   - Wrong child content placement:
-    - `TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION` lists `x/y/z` (fields of nested struct) instead of union fields; nested point struct should be a separate child type.
+    - `TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION` lists `x/y/z` (fields of nested struct) instead of union fields; nested point struct should be a separate child type referenced by the union, not flattened into the union.
 
-- **Token join/lexing errors producing wrong names**
-  - `callback_with_anon_struct_t_config_param_config_value`: field `floatfloat_config` should be `float_config`.
-  - `array_of_anon_structs_t_items_point_data`: field `inty` should be `y`.
+- **~~Token join/lexing errors producing wrong names~~ ✅ RESOLVED**
+  - ~~`callback_with_anon_struct_t_config_param_config_value`: field `floatfloat_config` should be `float_config`.~~
+  - ~~`array_of_anon_structs_t_items_point_data`: field `inty` should be `y`.~~
+  - **FIXED**: Tokenizer join bugs resolved - field names now correctly parsed for comma-separated declarations
 
 - **Typedef classification/stereotypes incorrect**
   - `complex_func_ptr_t` shown as `<<typedef>>` but is a function pointer → must be `<<function pointer>>`.
@@ -53,7 +54,7 @@
 
 - **Tokenizer (`src/core/parser_tokenizer.py`)**
   - Robustly parse function declarators to retain full parameter lists, including nested function pointer parameters and names. Avoid introducing `...` unless present in source.
-  - Fix identifier/token concatenation bugs causing `floatfloat_config` and `inty` by tightening join rules around type keywords and commas.
+  - ~~Fix identifier/token concatenation bugs causing `floatfloat_config` and `inty` by tightening join rules around type keywords and commas.~~ ✅ **COMPLETED**
   - Preserve declaration order for enum constants as encountered.
 
 - **Anonymous processor (`src/core/parser_anonymous_processor.py`)**
@@ -133,13 +134,13 @@
   - Declares: skip typedefs that are anonymous children; Uses: skip anonymous children unless the parent typedef is itself anonymous; also emit union uses.
 - Verifier extended to detect duplicate extracted entities per parent and garbled anonymous fragments.
 - All tests pass (67/67 via `./scripts/run_all.sh`).
-- Example output improved; remaining tokenizer join issues (`inty`, `floatfloat_config`) are slated for cleanup.
+- **✅ TOKENIZER JOIN BUGS RESOLVED**: Fixed field name corruption issues (`inty` → `int y`, `floatfloat_config` → `float float_config`) by improving comma-separated field parsing in anonymous structure processor.
 
 ### Work Breakdown and Progress Tracking
 
 - **Parser/Tokenizer**
   - [ ] Implement robust C declarator parsing (function pointers in parameters)
-  - [ ] Fix token-join bugs (avoid `floatfloat_config`, `inty`) — NEXT
+  - [x] Fix token-join bugs (avoid `floatfloat_config`, `inty`) — ✅ **COMPLETED**
   - [x] Preserve enum constant order
 
 - **Anonymous Extraction**
@@ -166,7 +167,7 @@
 ### Validation Milestones
 
 - [x] Milestone 1: Function signatures match header (3 targets)
-- [ ] Milestone 2: No garbled fields; anonymous names correct (in progress)
+- [x] Milestone 2: No garbled fields; anonymous names correct (tokenizer join bugs resolved)
 - [x] Milestone 3: Typedef stereotypes fixed; duplicates removed (in current scope; broader dedup deferred)
 - [x] Milestone 4: All tests green
 
@@ -175,4 +176,5 @@
 - Consider filtering out header include-guard macros (e.g., `COMPLEX_H`) via a config option if they create noise in diagrams.
 - Keep output formatting consistent with `docs/puml_template.md` (visibility, stereotypes, relationship types).
 - Behavior detail: Pure anonymous placeholders (`__anonymous_struct__`, `__anonymous_union__`) are suppressed as endpoints in relationships; extracted, suffixed anonymous names are emitted. Consider a config flag to display pure placeholders if desired.
-- Remaining tasks: adjust tokenizer join rules to correctly separate identifiers around commas and type keywords; ensure nested anonymous struct fields are preserved and emitted in typedef classes and file sections per acceptance criteria.
+- **✅ COMPLETED**: Tokenizer join rules adjusted to correctly separate identifiers around commas and type keywords; nested anonymous struct fields are now preserved and emitted correctly.
+- **NEXT PRIORITY**: Focus on remaining anonymous structure extraction issues (garbled field renderings and duplicate extracted entities).

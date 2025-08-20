@@ -258,7 +258,6 @@ APPLICATION --> HEADER_NETWORK : <<include>>
 HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
 HEADER_DATABASE --> HEADER_MYSQL : <<include>>
 HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
-HEADER_NETWORK --> HEADER_COMMON : <<include>>
 
 ' Declaration relationships
 HEADER_COMMON ..> TYPEDEF_COMMON_STATUS_T : <<declares>>
