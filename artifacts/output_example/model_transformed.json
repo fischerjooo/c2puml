@@ -65,11 +65,6 @@
         },
         {
           "depth": 2,
-          "included_file": "common.h",
-          "source_file": "database.h"
-        },
-        {
-          "depth": 2,
           "included_file": "libpq-fe.h",
           "source_file": "database.h"
         },
@@ -5402,6 +5397,16 @@
       "include_relations": [
         {
           "depth": 2,
+          "included_file": "math_utils.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
         },
@@ -5433,16 +5438,6 @@
         {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
           "source_file": "sample.h"
         }
       ],
@@ -5764,6 +5759,16 @@
       "include_relations": [
         {
           "depth": 2,
+          "included_file": "math_utils.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "sample.h",
+          "source_file": "geometry.h"
+        },
+        {
+          "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
         },
@@ -5775,16 +5780,6 @@
         {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "geometry.h",
-          "source_file": "sample.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
           "source_file": "sample.h"
         },
         {
@@ -6728,6 +6723,16 @@
           "source_file": "logger.h"
         },
         {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "math_utils.h"
+        },
+        {
+          "depth": 3,
+          "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
           "depth": 1,
           "included_file": "complex_example.h",
           "source_file": "typedef_test.c"
@@ -6750,11 +6755,6 @@
         {
           "depth": 2,
           "included_file": "config.h",
-          "source_file": "typedef_test.h"
-        },
-        {
-          "depth": 2,
-          "included_file": "logger.h",
           "source_file": "typedef_test.h"
         },
         {
