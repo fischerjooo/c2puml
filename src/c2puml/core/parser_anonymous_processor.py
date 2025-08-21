@@ -612,6 +612,40 @@ class AnonymousTypedefProcessor:
                 # Update the field type to reference the named structure
                 field.type = anon_name
         
+        # Handle malformed anonymous structure patterns like "struct { ... } field_name" 
+        # where the field name is incorrectly embedded in the type
+        elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+$', field.type):
+            match = re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+(\w+)$', field.type)
+            if match:
+                struct_type = match.group(1)
+                embedded_name = match.group(2)
+                # This is a malformed field type - the field name is embedded in the type
+                # We need to extract the actual field name and fix the type
+                # The actual field name should be the field.name, not the embedded name
+                actual_field_name = field.name
+                
+                # Create a proper anonymous structure name
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, actual_field_name)
+                
+                # Create the anonymous structure if it doesn't exist
+                if struct_type == "struct":
+                    if anon_name not in file_model.structs:
+                        anon_struct = Struct(anon_name, [], tag_name="")
+                        file_model.structs[anon_name] = anon_struct
+                elif struct_type == "union":
+                    if anon_name not in file_model.unions:
+                        anon_union = Union(anon_name, [], tag_name="")
+                        file_model.unions[anon_name] = anon_union
+                
+                # Track the relationship
+                if parent_name not in file_model.anonymous_relationships:
+                    file_model.anonymous_relationships[parent_name] = []
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                
+                # Update the field type to reference the named structure
+                field.type = anon_name
+        
         # Handle actual anonymous struct/union patterns with balanced brace matching
         elif self._has_balanced_anonymous_pattern(field.type):
             # Extract the anonymous struct content and field name using balanced braces
