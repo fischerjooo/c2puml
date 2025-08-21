@@ -719,6 +719,7 @@ class AnonymousTypedefProcessor:
         
         # Special handling: Check if there are flattened fields that should be replaced with references
         self._fix_flattened_fields_with_references(file_model)
+        self._fix_malformed_field_types(file_model) # Call the new method here
 
         # De-duplicate anonymous relationships to prevent inflated relationship counts
         if file_model.anonymous_relationships:
@@ -797,6 +798,101 @@ class AnonymousTypedefProcessor:
                     file_model.anonymous_relationships[target_struct_name] = []
                 if "level3_union" not in file_model.anonymous_relationships[target_struct_name]:
                     file_model.anonymous_relationships[target_struct_name].append("level3_union")
+
+    def _fix_malformed_field_types(self, file_model: FileModel) -> None:
+        """Fix malformed field types that contain content from previous fields."""
+        for struct_name, struct_data in file_model.structs.items():
+            for field in struct_data.fields:
+                # Look for malformed field types that contain content from previous fields
+                # Pattern: "} previous_field_name; struct { int" or similar
+                if self._is_malformed_field_type(field.type):
+                    # Extract the actual anonymous structure content and field name
+                    fixed_type, extracted_struct_name = self._extract_from_malformed_type(
+                        field.type, field.name, struct_name, file_model
+                    )
+                    if fixed_type and extracted_struct_name:
+                        # Update the field type
+                        field.type = fixed_type
+                        
+                        # Track the relationship
+                        if struct_name not in file_model.anonymous_relationships:
+                            file_model.anonymous_relationships[struct_name] = []
+                        if extracted_struct_name not in file_model.anonymous_relationships[struct_name]:
+                            file_model.anonymous_relationships[struct_name].append(extracted_struct_name)
+
+    def _is_malformed_field_type(self, field_type: str) -> bool:
+        """Check if a field type is malformed (contains content from previous fields)."""
+        # Look for patterns like "} field_name; struct { int" or similar
+        # This indicates that the field boundary detection failed
+        malformed_patterns = [
+            r'^\}\s+\w+\s*;\s*struct\s*\{',  # } field_name; struct {
+            r'^\}\s+\w+\s*;\s*union\s*\{',   # } field_name; union {
+            r'^\}\s+\w+\s*struct\s*\{',      # } field_name struct {
+            r'^\}\s+\w+\s*union\s*\{',       # } field_name union {
+            r'^\}\s+\w+\s*;\s*struct\s*\{',  # } field_name; struct { (with semicolon)
+            r'^\}\s+\w+\s*;\s*union\s*\{',   # } field_name; union { (with semicolon)
+        ]
+        
+        for pattern in malformed_patterns:
+            if re.match(pattern, field_type):
+                return True
+        
+        return False
+
+    def _extract_from_malformed_type(self, malformed_type: str, field_name: str, parent_name: str, file_model: FileModel) -> Tuple[Optional[str], Optional[str]]:
+        """Extract proper anonymous structure from malformed field type."""
+        # Look for the pattern: "} previous_field; struct { ... }" or similar
+        # We want to extract the "struct { ... }" part and create a proper anonymous structure
+        
+        # Find the start of the struct/union declaration
+        struct_match = re.search(r'(struct|union)\s*\{', malformed_type)
+        if not struct_match:
+            return None, None
+        
+        struct_type = struct_match.group(1)
+        struct_start = struct_match.start()
+        
+        # Find the matching closing brace
+        brace_count = 0
+        brace_start = malformed_type.find('{', struct_start)
+        if brace_start == -1:
+            return None, None
+        
+        brace_count = 1
+        pos = brace_start + 1
+        
+        while pos < len(malformed_type):
+            if malformed_type[pos] == '{':
+                brace_count += 1
+            elif malformed_type[pos] == '}':
+                brace_count -= 1
+                if brace_count == 0:
+                    # Found the matching closing brace
+                    break
+            pos += 1
+        
+        if brace_count != 0:
+            # Unbalanced braces, can't fix
+            return None, None
+        
+        # Extract the struct/union content
+        struct_content = malformed_type[struct_start:pos + 1]
+        
+        # Create a proper anonymous structure name
+        anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
+        
+        # Create the anonymous structure if it doesn't exist
+        if struct_type == "struct":
+            if anon_name not in file_model.structs:
+                anon_struct = Struct(anon_name, [], tag_name="")
+                file_model.structs[anon_name] = anon_struct
+        elif struct_type == "union":
+            if anon_name not in file_model.unions:
+                anon_union = Union(anon_name, [], tag_name="")
+                file_model.unions[anon_name] = anon_union
+        
+        # Return the fixed type and the extracted structure name
+        return anon_name, anon_name
 
     def _update_entity_field_references(self, file_model: FileModel, entity_name: str, entity_data) -> None:
         """Update field references in an entity to point to extracted entities."""

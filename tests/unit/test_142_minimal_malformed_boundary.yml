@@ -1,0 +1,84 @@
+test:
+  name: Minimal Malformed Field Boundary
+  description: Minimal test case to reproduce the malformed field boundary issue
+  category: unit
+  id: '142'
+---
+source_files:
+  minimal_malformed.c: |
+    typedef struct {
+        struct {
+            int nested_a1;
+        } nested_struct_a;
+        struct {
+            int nested_a2;
+        } nested_struct_a2;
+    } first_struct;
+    
+    typedef struct {
+        struct {
+            int level3_field;
+        } level3_struct_2;
+    } level2_struct_1;
+} test_t;
+---
+config.json: |
+  {
+    "project_name": "minimal_malformed",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 1
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - minimal_malformed.puml
+  model:
+    validate_structure: true
+    project_name: minimal_malformed
+    expected_files:
+    - minimal_malformed.c
+    files:
+      minimal_malformed.c:
+        structs_exist:
+        - test_t
+        - test_t_first_struct
+        - test_t_first_struct_nested_struct_a
+        - test_t_first_struct_nested_struct_a2
+        - test_t_level2_struct_1
+        - test_t_level2_struct_1_level3_struct_2
+    struct_fields:
+      test_t_first_struct:
+        - name: nested_struct_a
+          type: test_t_first_struct_nested_struct_a
+        - name: nested_struct_a2
+          type: test_t_first_struct_nested_struct_a2
+      test_t_first_struct_nested_struct_a2:
+        - name: nested_a2
+          type: int
+      test_t_level2_struct_1_level3_struct_2:
+        - name: level3_field
+          type: int
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements:
+    - test_t
+    - test_t_first_struct
+    - test_t_first_struct_nested_struct_a2
+    - test_t_level2_struct_1_level3_struct_2
+    files:
+      minimal_malformed.puml:
+        syntax_valid: true
+        contains_lines:
+        - class "test_t" as TYPEDEF_TEST_T
+        - class "test_t_first_struct" as TYPEDEF_TEST_T_FIRST_STRUCT
+        - class "test_t_first_struct_nested_struct_a2" as TYPEDEF_TEST_T_FIRST_STRUCT_NESTED_STRUCT_A2
+        - class "test_t_level2_struct_1_level3_struct_2" as TYPEDEF_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_2
+        - "+ int nested_a2"
+        - "+ int level3_field"

@@ -65,6 +65,11 @@
         },
         {
           "depth": 2,
+          "included_file": "common.h",
+          "source_file": "database.h"
+        },
+        {
+          "depth": 2,
           "included_file": "libpq-fe.h",
           "source_file": "database.h"
         },
@@ -1670,17 +1675,17 @@
             },
             {
               "name": "init_func",
-              "type": "void ( * ) ( void )",
+              "type": "void ( * init_func ) ( void )",
               "value": null
             },
             {
               "name": "process_func",
-              "type": "int ( * ) ( int , int )",
+              "type": "int ( * process_func ) ( int , int )",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * ) ( void )",
+              "type": "void ( * cleanup_func ) ( void )",
               "value": null
             }
           ],
@@ -1905,7 +1910,7 @@
             },
             {
               "name": "callbacks",
-              "type": "void(* callbacks[3])(int , char *)",
+              "type": "void ( *[3]",
               "value": null
             }
           ],
@@ -1930,7 +1935,7 @@
             },
             {
               "name": "nested_func",
-              "type": "void ( * ) ( int )",
+              "type": "void ( * nested_func ) ( int )",
               "value": null
             }
           ],
@@ -1953,12 +1958,12 @@
             },
             {
               "name": "process_func",
-              "type": "int ( * ) ( int , char * )",
+              "type": "int ( * process_func ) ( int , char * )",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * ) ( void * )",
+              "type": "void ( * cleanup_func ) ( void * )",
               "value": null
             }
           ],
@@ -2352,12 +2357,12 @@
             },
             {
               "name": "void_func",
-              "type": "void ( * ) ( void )",
+              "type": "void ( * void_func ) ( void )",
               "value": null
             },
             {
               "name": "int_func",
-              "type": "int ( * ) ( int )",
+              "type": "int ( * int_func ) ( int )",
               "value": null
             }
           ],
@@ -5402,11 +5407,6 @@
         },
         {
           "depth": 2,
-          "included_file": "sample.h",
-          "source_file": "geometry.h"
-        },
-        {
-          "depth": 2,
           "included_file": "config.h",
           "source_file": "logger.h"
         },
@@ -5438,6 +5438,16 @@
         {
           "depth": 2,
           "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
           "source_file": "sample.h"
         }
       ],
@@ -5759,12 +5769,12 @@
       "include_relations": [
         {
           "depth": 2,
-          "included_file": "math_utils.h",
-          "source_file": "geometry.h"
+          "included_file": "filtered_header.h",
+          "source_file": "first_level.h"
         },
         {
           "depth": 2,
-          "included_file": "sample.h",
+          "included_file": "math_utils.h",
           "source_file": "geometry.h"
         },
         {
@@ -5780,6 +5790,16 @@
         {
           "depth": 2,
           "included_file": "config.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "geometry.h",
+          "source_file": "sample.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
           "source_file": "sample.h"
         },
         {
@@ -6386,13 +6406,13 @@
         "__anonymous_struct__": {
           "fields": [
             {
-              "name": ")",
-              "type": "struct old_point * point = malloc ( sizeof ( struct old_point )",
+              "name": "old_point",
+              "type": "old_point",
               "value": null
             },
             {
               "name": "point",
-              "type": "if ( point ) { point -> x = x ; point -> y = y ; } return",
+              "type": "if ( ) { -> x = x ; -> y = y ; } return",
               "value": null
             }
           ],
@@ -6723,16 +6743,6 @@
           "source_file": "logger.h"
         },
         {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "math_utils.h"
-        },
-        {
-          "depth": 3,
-          "included_file": "config.h",
-          "source_file": "sample.h"
-        },
-        {
           "depth": 1,
           "included_file": "complex_example.h",
           "source_file": "typedef_test.c"
@@ -6755,6 +6765,11 @@
         {
           "depth": 2,
           "included_file": "config.h",
+          "source_file": "typedef_test.h"
+        },
+        {
+          "depth": 2,
+          "included_file": "logger.h",
           "source_file": "typedef_test.h"
         },
         {

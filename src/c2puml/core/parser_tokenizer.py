@@ -846,28 +846,61 @@ class StructureFinder:
 
     def _parse_typedef_enum(self) -> Optional[Tuple[int, int, str]]:
         """Parse typedef enum definition"""
-        start_pos = self.pos
-
-        # Consume 'typedef'
         if not self._current_token_is(TokenType.TYPEDEF):
             return None
-        self._advance()
 
-        # Look for 'enum'
+        start_pos = self.pos
+        self._advance()  # Consumes 'typedef'
+
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(
+            TokenType.WHITESPACE
+        ):
+            self.pos += 1
+
+        # Check if next token is 'enum'
         if not self._current_token_is(TokenType.ENUM):
-            # Not a typedef enum, reset position
-            self.pos = start_pos + 1
             return None
 
-        # Parse the enum part - this will return the tag name (e.g., StatusEnum_tag)
-        enum_info = self._parse_enum()
-        if not enum_info:
-            self.pos = start_pos + 1
+        self._advance()  # Consumes 'enum'
+
+        # Skip whitespace
+        while self.pos < len(self.tokens) and self._current_token_is(
+            TokenType.WHITESPACE
+        ):
+            self.pos += 1
+
+        # Get enum tag name (optional)
+        enum_tag = ""
+        if self._current_token_is(TokenType.IDENTIFIER):
+            enum_tag = self._advance().value
+
+        # Find opening brace
+        while self.pos < len(self.tokens) and not self._current_token_is(
+            TokenType.LBRACE
+        ):
+            self.pos += 1
+
+        if self.pos >= len(self.tokens):
             return None
 
-        # For typedef enums, we want to return the tag name, not the typedef name
-        # The typedef name will be handled separately in the parser
-        return enum_info
+        # Find matching closing brace
+        end_pos = self._find_matching_brace(self.pos)
+        if end_pos is None:
+            return None
+
+        # Look for typedef name after closing brace
+        typedef_name = ""
+        self.pos = end_pos + 1
+        while self.pos < len(self.tokens) and not self._current_token_is(
+            TokenType.SEMICOLON
+        ):
+            if self._current_token_is(TokenType.IDENTIFIER):
+                typedef_name = self._advance().value
+                break
+            self.pos += 1
+
+        return (start_pos, end_pos, typedef_name)
 
     def _parse_function(self) -> Optional[Tuple[int, int, str, str, bool, bool]]:
         """Parse function declaration/definition
@@ -1192,394 +1225,281 @@ def find_struct_fields(
                 break
         closing_brace_pos += 1
 
-    # Only parse fields up to the closing brace
-    while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
-        field_tokens = []
-        # Collect tokens until we find the semicolon that ends this field
-        # For nested structures, we need to handle braces properly
-        brace_count = 0
-        field_start_pos = pos
-        
-        # First pass: collect tokens until we find the semicolon outside of braces
-        while pos < closing_brace_pos:
-            if tokens[pos].type == TokenType.LBRACE:
-                brace_count += 1
-            elif tokens[pos].type == TokenType.RBRACE:
-                brace_count -= 1
-                # Only stop if we're at the main closing brace
-                if pos == closing_brace_pos:
-                    break
-            elif tokens[pos].type == TokenType.SEMICOLON and brace_count == 0:
-                # This is the semicolon that ends the field
-                break
-            
-            if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
-                field_tokens.append(tokens[pos])
+    # Parse fields using a more robust approach
+    while pos < closing_brace_pos:
+        # Skip whitespace and comments
+        while pos < closing_brace_pos and tokens[pos].type in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
             pos += 1
         
-        # For nested structures, we need to continue collecting tokens until we find the field name
-        # and the semicolon that ends the entire field
-        if (len(field_tokens) >= 3 and 
-            field_tokens[0].type in [TokenType.STRUCT, TokenType.UNION] and 
-            field_tokens[1].type == TokenType.LBRACE):
-            # This might be a nested structure, continue collecting until we find the field name
-            temp_pos = pos
-            brace_count = 0  # Track nested braces to find the correct field boundary
-            while temp_pos < len(tokens):
-                if tokens[temp_pos].type == TokenType.LBRACE:
-                    brace_count += 1
-                elif tokens[temp_pos].type == TokenType.RBRACE:
-                    brace_count -= 1
-                elif tokens[temp_pos].type == TokenType.SEMICOLON and brace_count == 0:
-                    # Found the semicolon that ends the field (not inside nested braces)
-                    break
-                
-                if tokens[temp_pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
-                    field_tokens.append(tokens[temp_pos])
-                temp_pos += 1
-            pos = temp_pos
-
-        # Parse field from collected tokens
+        if pos >= closing_brace_pos:
+            break
+        
+        # Start of a new field
+        field_start = pos
+        field_tokens = []
+        brace_count = 0
+        paren_count = 0
+        bracket_count = 0
+        
+        # Collect tokens for this field until we find the semicolon that ends it
+        while pos < closing_brace_pos:
+            token = tokens[pos]
+            
+            # Track nesting levels
+            if token.type == TokenType.LBRACE:
+                brace_count += 1
+            elif token.type == TokenType.RBRACE:
+                brace_count -= 1
+            elif token.type == TokenType.LPAREN:
+                paren_count += 1
+            elif token.type == TokenType.RPAREN:
+                paren_count -= 1
+            elif token.type == TokenType.LBRACKET:
+                bracket_count += 1
+            elif token.type == TokenType.RBRACKET:
+                bracket_count -= 1
+            elif token.type == TokenType.SEMICOLON and brace_count == 0 and paren_count == 0 and bracket_count == 0:
+                # This semicolon ends the field (not inside nested structures)
+                break
+            
+            # Add non-whitespace tokens to field
+            if token.type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
+                field_tokens.append(token)
+            
+            pos += 1
+        
+        # Parse the field from collected tokens
         if len(field_tokens) >= 2:
-            # Check if this is a nested struct field
-            if (
-                len(field_tokens) >= 3
-                and field_tokens[0].type == TokenType.STRUCT
-                and field_tokens[1].type == TokenType.LBRACE
-            ):
-                # This is a nested struct - find the field name after the closing brace
-                # Look for the pattern: struct { ... } field_name;
-                field_name = None
-                # Find the LAST closing brace and then the field name
-                # This handles deeply nested structures correctly
-                for i in range(len(field_tokens) - 1, -1, -1):
-                    if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
-                        # The field name should be the next identifier after the closing brace
-                        for j in range(i + 1, len(field_tokens)):
-                            if field_tokens[j].type == TokenType.IDENTIFIER:
-                                field_name = field_tokens[j].value
-                                break
-                        if field_name:
-                            break
-                
-                if field_name:
-                    # Extract the content between braces for anonymous processor using special format
-                    content = _extract_brace_content(field_tokens)
-                    if content:
-                        # Preserve content for anonymous processor using special format
-                        import base64
-                        encoded_content = base64.b64encode(content.encode()).decode()
-                        field_type = f"struct {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
-                    else:
-                        field_type = "struct { ... }"
-                    
-                    if field_name not in ["[", "]", ";", "}"]:
-                        fields.append((field_name, field_type))
-                        # Skip parsing the nested struct's fields as separate fields
-                        # Let the normal flow handle semicolon advancement
-                else:
-                    # Anonymous nested struct without a field name
-                    content = _extract_brace_content(field_tokens)
-                    if content:
-                        import base64
-                        encoded_content = base64.b64encode(content.encode()).decode()
-                        # Use generic field name for anonymous struct
-                        generic_name = "__anonymous_struct__"
-                        field_type = f"struct {{ /*ANON:{encoded_content}:{generic_name}*/ ... }}"
-                    else:
-                        generic_name = "__anonymous_struct__"
-                        field_type = "struct { ... }"
-                    fields.append((generic_name, field_type))
-            # Check if this is a nested union field
-            elif (
-                len(field_tokens) >= 3
-                and field_tokens[0].type == TokenType.UNION
-                and field_tokens[1].type == TokenType.LBRACE
-            ):
-                # This is a nested union - find the field name after the closing brace
-                # Look for the pattern: union { ... } field_name;
-                field_name = None
-                # Find the LAST closing brace and then the field name
-                # This handles deeply nested structures correctly
-                for i in range(len(field_tokens) - 1, -1, -1):
-                    if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
-                        # The field name should be the next identifier after the closing brace
-                        for j in range(i + 1, len(field_tokens)):
-                            if field_tokens[j].type == TokenType.IDENTIFIER:
-                                field_name = field_tokens[j].value
-                                break
-                        if field_name:
-                            break
-                
-                if field_name:
-                    # Extract the content between braces for anonymous processor
-                    content = _extract_brace_content(field_tokens)
-                    if content:
-                        # Preserve content for anonymous processor using special format
-                        import base64
-                        encoded_content = base64.b64encode(content.encode()).decode()
-                        field_type = f"union {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
-                    else:
-                        field_type = "union { ... }"
-                    
-                    if field_name not in ["[", "]", ";", "}"]:
-                        fields.append((field_name, field_type))
-                        # Skip parsing the nested union's fields as separate fields
-                        # Let the normal flow handle semicolon advancement
-                else:
-                    # Anonymous nested union without a field name
-                    content = _extract_brace_content(field_tokens)
-                    if content:
-                        import base64
-                        encoded_content = base64.b64encode(content.encode()).decode()
-                        generic_name = "__anonymous_union__"
-                        field_type = f"union {{ /*ANON:{encoded_content}:{generic_name}*/ ... }}"
-                    else:
-                        generic_name = "__anonymous_union__"
-                        field_type = "union { ... }"
-                    fields.append((generic_name, field_type))
-            # Function pointer array field: type (*name[size])(params)
-            elif (
-                len(field_tokens) >= 8
-                and field_tokens[1].type == TokenType.LPAREN
-                and field_tokens[2].type == TokenType.ASTERISK
-                and any(t.type == TokenType.LBRACKET for t in field_tokens)
-                and any(t.type == TokenType.RBRACKET for t in field_tokens)
-            ):
-                # Find the function pointer name (between * and [)
-                # Look for the identifier between * and [
-                name_start = 3  # After the *
-                name_end = None
-                for i in range(name_start, len(field_tokens)):
-                    if field_tokens[i].type == TokenType.LBRACKET:
-                        name_end = i
-                        break
-
-                if name_end is not None:
-                    field_name = " ".join(
-                        t.value for t in field_tokens[name_start:name_end]
-                    )
-
-                    # Format the type properly - preserve spaces between tokens but not around brackets/parentheses
-                    formatted_tokens = []
-                    for j, token in enumerate(field_tokens):
-                        if token.type in [
-                            TokenType.LPAREN,
-                            TokenType.RPAREN,
-                            TokenType.LBRACKET,
-                            TokenType.RBRACKET,
-                        ]:
-                            # Don't add spaces around brackets/parentheses
-                            formatted_tokens.append(token.value)
-                        elif j > 0 and field_tokens[j - 1].type not in [
-                            TokenType.LPAREN,
-                            TokenType.RPAREN,
-                            TokenType.LBRACKET,
-                            TokenType.RBRACKET,
-                        ]:
-                            # Add space before token if previous token wasn't a bracket/parenthesis
-                            formatted_tokens.append(" " + token.value)
-                        else:
-                            # No space before token
-                            formatted_tokens.append(token.value)
-                    field_type = "".join(formatted_tokens)
-
-                    # Validate and add the field
-                    if (
-                        field_name
-                        and field_name.strip()
-                        and field_type.strip()
-                        and field_name not in ["[", "]", ";", "}"]
-                    ):
-                        stripped_name = field_name.strip()
-                        stripped_type = field_type.strip()
-                        if stripped_name and stripped_type:
-                            fields.append((stripped_name, stripped_type))
-            # Function pointer field: type (*name)(params) or type (*name[size])(params)
-            elif (
-                len(field_tokens) >= 5
-                and field_tokens[1].type == TokenType.LPAREN and field_tokens[2].type == TokenType.ASTERISK
-            ):
-                # Find the opening parenthesis and asterisk pattern
-                func_ptr_start = None
-                for i in range(len(field_tokens) - 1):
-                    if field_tokens[i].type == TokenType.LPAREN and field_tokens[i + 1].type == TokenType.ASTERISK:
-                        func_ptr_start = i
-                        break
-                
-                if func_ptr_start is not None:
-                    # Extract the type (everything before the opening parenthesis)
-                    type_tokens = field_tokens[:func_ptr_start]
-                    field_type = " ".join(t.value for t in type_tokens)
-                    
-                    # Find the closing parenthesis after the function name
-                    paren_count = 0
-                    name_end = None
-                    for i in range(func_ptr_start, len(field_tokens)):
-                        if field_tokens[i].type == TokenType.LPAREN:
-                            paren_count += 1
-                        elif field_tokens[i].type == TokenType.RPAREN:
-                            paren_count -= 1
-                            if paren_count == 0 and i > func_ptr_start + 1:
-                                name_end = i
-                                break
-                    
-                    if name_end is not None:
-                        # Extract function name (between * and closing parenthesis)
-                        name_tokens = field_tokens[func_ptr_start + 2:name_end]
-                        field_name = " ".join(t.value for t in name_tokens)
-                        
-                        # Extract the parameter list as part of the type
-                        param_tokens = field_tokens[name_end + 1:]
-                        param_type = " ".join(t.value for t in param_tokens)
-                        
-                        # Combine type and parameter list (without the function name in the type)
-                        # The function name is already extracted as field_name, so we don't include it in the type
-                        func_ptr_start_tokens = field_tokens[func_ptr_start:func_ptr_start + 2]  # ( *
-                        func_ptr_end_tokens = field_tokens[name_end:name_end + 1]  # )
-                        full_type = field_type + " " + " ".join(t.value for t in func_ptr_start_tokens) + " " + " ".join(t.value for t in func_ptr_end_tokens) + " " + param_type
-                        
-                        if (
-                            field_name
-                            and field_name.strip()
-                            and full_type.strip()
-                            and field_name not in ["[", "]", ";", "}"]
-                        ):
-                            stripped_name = field_name.strip()
-                            stripped_type = full_type.strip()
-                            if stripped_name and stripped_type:
-                                fields.append((stripped_name, stripped_type))
-            # Array field: type name [ size ]
-            elif (
-                len(field_tokens) >= 4
-                and field_tokens[-3].type == TokenType.LBRACKET
-                and field_tokens[-1].type == TokenType.RBRACKET
-            ):
-                field_name = field_tokens[-4].value
-                # Fix: Properly format array type - preserve spaces between tokens
-                type_tokens = field_tokens[:-4]
-                field_type = " ".join(t.value for t in type_tokens) + "[" + field_tokens[-2].value + "]"
-                if (
-                    field_name
-                    and field_name.strip()
-                    and field_type.strip()
-                    and field_name not in ["[", "]", ";", "}"]
-                ):
-                    # Additional validation to ensure we don't have empty strings
-                    stripped_name = field_name.strip()
-                    stripped_type = field_type.strip()
-                    if stripped_name and stripped_type:
-                        fields.append((stripped_name, stripped_type))
-            else:
-                # Regular field: type name
-                # Check if this field declaration contains commas (multiple fields of same type)
-                comma_positions = []
-                paren_count = 0
-                brace_count = 0
-                
-                # Find comma positions that are outside of parentheses and braces
-                for i, token in enumerate(field_tokens):
-                    if token.type == TokenType.LPAREN:
-                        paren_count += 1
-                    elif token.type == TokenType.RPAREN:
-                        paren_count -= 1
-                    elif token.type == TokenType.LBRACE:
-                        brace_count += 1
-                    elif token.type == TokenType.RBRACE:
-                        brace_count -= 1
-                    elif token.type == TokenType.COMMA and paren_count == 0 and brace_count == 0:
-                        comma_positions.append(i)
-                
-                if comma_positions:
-                    # Multiple fields of the same type: "int x, y, z;"
-                    # Extract the type (everything before the first field name)
-                    first_field_start = None
-                    for i in range(len(field_tokens)):
-                        if field_tokens[i].type == TokenType.IDENTIFIER:
-                            first_field_start = i
-                            break
-                    
-                    if first_field_start is not None:
-                        type_tokens = field_tokens[:first_field_start]
-                        field_type = " ".join(t.value for t in type_tokens)
-                        
-                        # Split fields on commas
-                        field_starts = [first_field_start] + [pos + 1 for pos in comma_positions]
-                        field_ends = comma_positions + [len(field_tokens)]
-                        
-                        for start, end in zip(field_starts, field_ends):
-                            if start < end:
-                                field_name_tokens = field_tokens[start:end]
-                                field_name = " ".join(t.value for t in field_name_tokens)
-                                
-                                if (
-                                    field_name
-                                    and field_name.strip()
-                                    and field_type.strip()
-                                    and field_name not in ["[", "]", ";", "}"]
-                                ):
-                                    stripped_name = field_name.strip()
-                                    stripped_type = field_type.strip()
-                                    if stripped_name and stripped_type:
-                                        fields.append((stripped_name, stripped_type))
-                else:
-                    # Single field: type name
-                    field_name = field_tokens[-1].value
-                    field_type = " ".join(t.value for t in field_tokens[:-1])
-                    if (
-                        field_name not in ["[", "]", ";", "}"]
-                        and field_name
-                        and field_name.strip()
-                        and field_type.strip()
-                    ):
-                        # Additional validation to ensure we don't have empty strings
-                        stripped_name = field_name.strip()
-                        stripped_type = field_type.strip()
-                        if stripped_name and stripped_type:
-                            fields.append((stripped_name, stripped_type))
+            field_info = _parse_field_from_tokens(field_tokens)
+            if field_info:
+                field_name, field_type = field_info
+                fields.append((field_name, field_type))
+        
+        # Move past the semicolon
         if pos < closing_brace_pos:
-            pos += 1  # Skip semicolon
+            pos += 1
+
     return fields
 
 
-def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> List[str]:
-    """Extract enum values from enum token range"""
-    values = []
-    pos = enum_start
-    while pos <= enum_end and tokens[pos].type != TokenType.LBRACE:
-        pos += 1
-    if pos > enum_end:
-        return values
-    pos += 1  # Skip opening brace
-    current_value = []
-    while pos <= enum_end and tokens[pos].type != TokenType.RBRACE:
-        token = tokens[pos]
-        if token.type == TokenType.COMMA:
-            if current_value:
-                filtered_value = [
-                    t
-                    for t in current_value
-                    if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
-                ]
-                if filtered_value:
-                    value_str = " ".join(t.value for t in filtered_value).strip()
-                    if value_str:
-                        values.append(value_str)
-                current_value = []
-        elif token.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
-            current_value.append(token)
-        pos += 1
-    if current_value:
-        filtered_value = [
-            t
-            for t in current_value
-            if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
-        ]
-        if filtered_value:
-            value_str = " ".join(t.value for t in filtered_value).strip()
-            if value_str:
-                values.append(value_str)
-    return values
+def _parse_field_from_tokens(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse a single field from its tokens."""
+    if len(field_tokens) < 2:
+        return None
+    
+    # Check if this is a nested struct field
+    if (len(field_tokens) >= 3 and 
+        field_tokens[0].type == TokenType.STRUCT and 
+        field_tokens[1].type == TokenType.LBRACE):
+        return _parse_nested_struct_field(field_tokens)
+    
+    # Check if this is a nested union field
+    if (len(field_tokens) >= 3 and 
+        field_tokens[0].type == TokenType.UNION and 
+        field_tokens[1].type == TokenType.LBRACE):
+        return _parse_nested_union_field(field_tokens)
+    
+    # Check if this is a function pointer field
+    if _is_function_pointer_field(field_tokens):
+        return _parse_function_pointer_field(field_tokens)
+    
+    # Check if this is an array field
+    if _is_array_field(field_tokens):
+        return _parse_array_field(field_tokens)
+    
+    # Regular field: type name
+    return _parse_regular_field(field_tokens)
+
+
+def _parse_nested_struct_field(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse a nested struct field."""
+    # Find the field name after the closing brace
+    field_name = None
+    for i in range(len(field_tokens) - 1, -1, -1):
+        if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
+            # Look for the field name after the closing brace
+            for j in range(i + 1, len(field_tokens)):
+                if field_tokens[j].type == TokenType.IDENTIFIER:
+                    field_name = field_tokens[j].value
+                    break
+            if field_name:
+                break
+    
+    if field_name:
+        # Extract the struct content for anonymous processor
+        content = _extract_brace_content(field_tokens)
+        if content:
+            # Use special format for anonymous processor
+            import base64
+            encoded_content = base64.b64encode(content.encode()).decode()
+            field_type = f"struct {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
+        else:
+            field_type = "struct { ... }"
+        
+        return field_name, field_type
+    
+    return None
+
+
+def _parse_nested_union_field(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse a nested union field."""
+    # Find the field name after the closing brace
+    field_name = None
+    for i in range(len(field_tokens) - 1, -1, -1):
+        if field_tokens[i].type == TokenType.RBRACE and i + 1 < len(field_tokens):
+            # Look for the field name after the closing brace
+            for j in range(i + 1, len(field_tokens)):
+                if field_tokens[j].type == TokenType.IDENTIFIER:
+                    field_name = field_tokens[j].value
+                    break
+            if field_name:
+                break
+    
+    if field_name:
+        # Extract the union content for anonymous processor
+        content = _extract_brace_content(field_tokens)
+        if content:
+            # Use special format for anonymous processor
+            import base64
+            encoded_content = base64.b64encode(content.encode()).decode()
+            field_type = f"union {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
+        else:
+            field_type = "union { ... }"
+        
+        return field_name, field_type
+    
+    return None
+
+
+def _is_function_pointer_field(field_tokens: List[Token]) -> bool:
+    """Check if tokens represent a function pointer field."""
+    if len(field_tokens) < 5:
+        return False
+    
+    # Look for pattern: type (*name)(params)
+    for i in range(len(field_tokens) - 4):
+        if (field_tokens[i].type == TokenType.LPAREN and
+            field_tokens[i + 1].type == TokenType.ASTERISK and
+            field_tokens[i + 2].type == TokenType.IDENTIFIER and
+            field_tokens[i + 3].type == TokenType.RPAREN):
+            return True
+    
+    return False
+
+
+def _parse_function_pointer_field(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse a function pointer field."""
+    # Find the function pointer name
+    for i in range(len(field_tokens) - 4):
+        if (field_tokens[i].type == TokenType.LPAREN and
+            field_tokens[i + 1].type == TokenType.ASTERISK and
+            field_tokens[i + 2].type == TokenType.IDENTIFIER and
+            field_tokens[i + 3].type == TokenType.RPAREN):
+            field_name = field_tokens[i + 2].value
+            field_type = " ".join(t.value for t in field_tokens)
+            return field_name, field_type
+    
+    return None
+
+
+def _is_array_field(field_tokens: List[Token]) -> bool:
+    """Check if tokens represent an array field."""
+    if len(field_tokens) < 4:
+        return False
+    
+    # Look for pattern: type name[size]
+    for i in range(len(field_tokens) - 3):
+        if (field_tokens[i + 1].type == TokenType.LBRACKET and
+            field_tokens[i + 3].type == TokenType.RBRACKET):
+            return True
+    
+    return False
+
+
+def _parse_array_field(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse an array field."""
+    # Find the array pattern
+    for i in range(len(field_tokens) - 3):
+        if (field_tokens[i + 1].type == TokenType.LBRACKET and
+            field_tokens[i + 3].type == TokenType.RBRACKET):
+            field_name = field_tokens[i].value
+            # Extract type (everything before the field name)
+            type_tokens = field_tokens[:i]
+            field_type = " ".join(t.value for t in type_tokens) + "[" + field_tokens[i + 2].value + "]"
+            return field_name, field_type
+    
+    return None
+
+
+def _parse_regular_field(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse a regular field (type name)."""
+    # Check for comma-separated fields
+    comma_positions = []
+    paren_count = 0
+    brace_count = 0
+    
+    for i, token in enumerate(field_tokens):
+        if token.type == TokenType.LPAREN:
+            paren_count += 1
+        elif token.type == TokenType.RPAREN:
+            paren_count -= 1
+        elif token.type == TokenType.LBRACE:
+            brace_count += 1
+        elif token.type == TokenType.RBRACE:
+            brace_count -= 1
+        elif token.type == TokenType.COMMA and paren_count == 0 and brace_count == 0:
+            comma_positions.append(i)
+    
+    if comma_positions:
+        # Multiple fields of the same type
+        return _parse_comma_separated_fields(field_tokens, comma_positions)
+    else:
+        # Single field
+        return _parse_single_field(field_tokens)
+
+
+def _parse_comma_separated_fields(field_tokens: List[Token], comma_positions: List[int]) -> Optional[Tuple[str, str]]:
+    """Parse comma-separated fields."""
+    # Find the first field name to determine the type
+    first_field_start = None
+    for i, token in enumerate(field_tokens):
+        if token.type == TokenType.IDENTIFIER:
+            first_field_start = i
+            break
+    
+    if first_field_start is None:
+        return None
+    
+    # Extract the type (everything before the first field name)
+    type_tokens = field_tokens[:first_field_start]
+    field_type = " ".join(t.value for t in type_tokens)
+    
+    # For now, just return the first field
+    # TODO: Handle multiple fields properly
+    field_name = field_tokens[first_field_start].value
+    return field_name, field_type
+
+
+def _parse_single_field(field_tokens: List[Token]) -> Optional[Tuple[str, str]]:
+    """Parse a single field."""
+    # Find the last identifier as the field name
+    field_name = None
+    for i in range(len(field_tokens) - 1, -1, -1):
+        if field_tokens[i].type == TokenType.IDENTIFIER:
+            field_name = field_tokens[i].value
+            break
+    
+    if field_name is None:
+        return None
+    
+    # The field type is everything except the field name
+    type_tokens = [t for t in field_tokens if t.value != field_name]
+    field_type = " ".join(t.value for t in type_tokens)
+    
+    if field_type.strip():
+        return field_name, field_type.strip()
+    
+    return None
 
 
 def _extract_brace_content(field_tokens: List[Token]) -> str:
@@ -1628,3 +1548,43 @@ def _extract_brace_content(field_tokens: List[Token]) -> str:
                 result += " "
         return result
     return ""
+
+
+def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> List[str]:
+    """Extract enum values from enum token range"""
+    values = []
+    pos = enum_start
+    while pos <= enum_end and tokens[pos].type != TokenType.LBRACE:
+        pos += 1
+    if pos > enum_end:
+        return values
+    pos += 1  # Skip opening brace
+    current_value = []
+    while pos <= enum_end and tokens[pos].type != TokenType.RBRACE:
+        token = tokens[pos]
+        if token.type == TokenType.COMMA:
+            if current_value:
+                filtered_value = [
+                    t
+                    for t in current_value
+                    if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
+                ]
+                if filtered_value:
+                    value_str = " ".join(t.value for t in filtered_value).strip()
+                    if value_str:
+                        values.append(value_str)
+                current_value = []
+        elif token.type not in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            current_value.append(token)
+        pos += 1
+    if current_value:
+        filtered_value = [
+            t
+            for t in current_value
+            if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
+        ]
+        if filtered_value:
+            value_str = " ".join(t.value for t in filtered_value).strip()
+            if value_str:
+                values.append(value_str)
+    return values

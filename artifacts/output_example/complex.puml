@@ -234,9 +234,9 @@ class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
 {
     + int id
     + char[16] name
-    + void ( * ) ( void ) init_func
-    + int ( * ) ( int , int ) process_func
-    + void ( * ) ( void ) cleanup_func
+    + void ( * init_func ) ( void ) init_func
+    + int ( * process_func ) ( int , int ) process_func
+    + void ( * cleanup_func ) ( void ) cleanup_func
 }
 
 class "item_value_point_data" as TYPEDEF_ITEM_VALUE_POINT_DATA <<struct>> #LightYellow
@@ -307,22 +307,22 @@ class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<struct>> #LightYellow
 {
     + int count
     + math_operation_t[5] operations
-    + void(* callbacks[3])(int , char *) callbacks
+    + void ( *[3] callbacks
 }
 
 class "param4" as TYPEDEF_PARAM4 <<struct>> #LightYellow
 {
     + int nested1
     + char * nested2
-    + void ( * ) ( int ) nested_func
+    + void ( * nested_func ) ( int ) nested_func
 }
 
 class "processor_t" as TYPEDEF_PROCESSOR_T <<struct>> #LightYellow
 {
     + int id
     + char[64] name
-    + int ( * ) ( int , char * ) process_func
-    + void ( * ) ( void * ) cleanup_func
+    + int ( * process_func ) ( int , char * ) process_func
+    + void ( * cleanup_func ) ( void * ) cleanup_func
 }
 
 class "result_generator_t" as TYPEDEF_RESULT_GENERATOR_T <<struct>> #LightYellow
@@ -549,8 +549,8 @@ class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
 {
     + int int_val
     + char * str_val
-    + void ( * ) ( void ) void_func
-    + int ( * ) ( int ) int_func
+    + void ( * void_func ) ( void ) void_func
+    + int ( * int_func ) ( int ) int_func
 }
 
 class "multi_anonymous_t_first_anon_union" as TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_UNION <<union>> #LightYellow
