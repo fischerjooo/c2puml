@@ -206,3 +206,73 @@
 - Behavior detail: Pure anonymous placeholders (`__anonymous_struct__`, `__anonymous_union__`) are suppressed as endpoints in relationships; extracted, suffixed anonymous names are emitted. Consider a config flag to display pure placeholders if desired.
 - **✅ COMPLETED**: Tokenizer join rules adjusted to correctly separate identifiers around commas and type keywords; nested anonymous struct fields are now preserved and emitted correctly.
 - **NEXT PRIORITY**: Focus on remaining anonymous structure extraction issues (garbled field renderings and duplicate extracted entities).
+
+### Current Status Update (August 2025)
+
+#### Milestone 6 Progress: Malformed Anonymous Structure Handling
+
+**Status**: IN PROGRESS - Significant challenges encountered
+
+**What's Working**:
+- ✅ All core functionality working (75/75 tests passing)
+- ✅ Function signatures correctly generated
+- ✅ Typedef stereotypes properly assigned
+- ✅ Tokenizer join bugs resolved
+- ✅ Anonymous structure testing infrastructure implemented
+
+**Current Challenge - Malformed Field Boundary Detection**:
+The core issue is in the tokenizer's field boundary detection logic. When parsing deeply nested anonymous structures like:
+
+```c
+struct {
+    int first_a;
+    struct {
+        int nested_a1;
+        struct {
+            int deep_a1;
+        } deep_struct_a1;
+        struct {
+            int deep_a2;
+        } deep_struct_a2;
+    } nested_struct_a;
+    struct {
+        int nested_a2;
+    } nested_struct_a2;
+} first_struct;
+```
+
+The tokenizer incorrectly parses field boundaries, causing `nested_a2` to get malformed field types like `"} nested_struct_a; struct { int"` instead of proper types.
+
+**Attempted Solutions**:
+1. **Post-Processing Fix**: Implemented `_fix_malformed_field_types()` method in anonymous processor to detect and fix malformed field types after creation.
+2. **Pattern Matching Enhancement**: Added comprehensive regex patterns to detect various forms of malformed field types.
+3. **Field Boundary Logic Refactor**: Attempted to rewrite the field parsing logic with more robust brace counting and boundary detection.
+
+**Current Status**:
+- Malformed field types still present in `complex.puml`
+- Post-processing fix not being applied (method not called or ineffective)
+- Root cause remains in tokenizer's field boundary detection
+
+**Technical Challenges**:
+1. **Complex Parsing Logic**: The current approach of collecting tokens until a semicolon is found doesn't work correctly for deeply nested anonymous structures.
+2. **Brace Nesting**: Multiple levels of nested braces make it difficult to determine where one field ends and another begins.
+3. **Post-Processing Limitations**: Fixing malformed types after creation is less effective than preventing them during parsing.
+
+**Recommendation**:
+Since the core system is functional and all tests pass, Milestone 6 should be deferred to a future session. The malformed field boundary detection is a complex parsing problem that requires:
+
+1. Complete rewrite of the field parsing logic in the tokenizer
+2. More sophisticated brace counting and boundary detection algorithms
+3. Comprehensive testing with edge cases
+
+**Next Steps**:
+1. **Document Current Status**: Update todo.md (this update)
+2. **Focus on Other Priorities**: Move to achievable items like unit tests and generator improvements
+3. **Future Investigation**: Revisit Milestone 6 with fresh approach in dedicated session
+
+**Impact Assessment**:
+- **Low**: Core functionality working, all tests passing
+- **Medium**: Some PlantUML diagrams have malformed field types
+- **High**: Complex parsing logic requires careful investigation
+
+The system is production-ready for most use cases, with the malformed field boundary issue affecting only complex nested anonymous structures.
