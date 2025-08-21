@@ -1200,7 +1200,7 @@ def find_struct_fields(
         brace_count = 0
         field_start_pos = pos
         
-        # First pass: collect tokens until we find a semicolon outside of braces
+        # First pass: collect tokens until we find the semicolon outside of braces
         while pos < closing_brace_pos:
             if tokens[pos].type == TokenType.LBRACE:
                 brace_count += 1
@@ -1398,7 +1398,7 @@ def find_struct_fields(
             # Function pointer field: type (*name)(params) or type (*name[size])(params)
             elif (
                 len(field_tokens) >= 5
-                and any(field_tokens[i].type == TokenType.LPAREN and field_tokens[i + 1].type == TokenType.ASTERISK for i in range(len(field_tokens) - 1))
+                and field_tokens[1].type == TokenType.LPAREN and field_tokens[2].type == TokenType.ASTERISK
             ):
                 # Find the opening parenthesis and asterisk pattern
                 func_ptr_start = None
@@ -1472,19 +1472,71 @@ def find_struct_fields(
                         fields.append((stripped_name, stripped_type))
             else:
                 # Regular field: type name
-                field_name = field_tokens[-1].value
-                field_type = " ".join(t.value for t in field_tokens[:-1])
-                if (
-                    field_name not in ["[", "]", ";", "}"]
-                    and field_name
-                    and field_name.strip()
-                    and field_type.strip()
-                ):
-                    # Additional validation to ensure we don't have empty strings
-                    stripped_name = field_name.strip()
-                    stripped_type = field_type.strip()
-                    if stripped_name and stripped_type:
-                        fields.append((stripped_name, stripped_type))
+                # Check if this field declaration contains commas (multiple fields of same type)
+                comma_positions = []
+                paren_count = 0
+                brace_count = 0
+                
+                # Find comma positions that are outside of parentheses and braces
+                for i, token in enumerate(field_tokens):
+                    if token.type == TokenType.LPAREN:
+                        paren_count += 1
+                    elif token.type == TokenType.RPAREN:
+                        paren_count -= 1
+                    elif token.type == TokenType.LBRACE:
+                        brace_count += 1
+                    elif token.type == TokenType.RBRACE:
+                        brace_count -= 1
+                    elif token.type == TokenType.COMMA and paren_count == 0 and brace_count == 0:
+                        comma_positions.append(i)
+                
+                if comma_positions:
+                    # Multiple fields of the same type: "int x, y, z;"
+                    # Extract the type (everything before the first field name)
+                    first_field_start = None
+                    for i in range(len(field_tokens)):
+                        if field_tokens[i].type == TokenType.IDENTIFIER:
+                            first_field_start = i
+                            break
+                    
+                    if first_field_start is not None:
+                        type_tokens = field_tokens[:first_field_start]
+                        field_type = " ".join(t.value for t in type_tokens)
+                        
+                        # Split fields on commas
+                        field_starts = [first_field_start] + [pos + 1 for pos in comma_positions]
+                        field_ends = comma_positions + [len(field_tokens)]
+                        
+                        for start, end in zip(field_starts, field_ends):
+                            if start < end:
+                                field_name_tokens = field_tokens[start:end]
+                                field_name = " ".join(t.value for t in field_name_tokens)
+                                
+                                if (
+                                    field_name
+                                    and field_name.strip()
+                                    and field_type.strip()
+                                    and field_name not in ["[", "]", ";", "}"]
+                                ):
+                                    stripped_name = field_name.strip()
+                                    stripped_type = field_type.strip()
+                                    if stripped_name and stripped_type:
+                                        fields.append((stripped_name, stripped_type))
+                else:
+                    # Single field: type name
+                    field_name = field_tokens[-1].value
+                    field_type = " ".join(t.value for t in field_tokens[:-1])
+                    if (
+                        field_name not in ["[", "]", ";", "}"]
+                        and field_name
+                        and field_name.strip()
+                        and field_type.strip()
+                    ):
+                        # Additional validation to ensure we don't have empty strings
+                        stripped_name = field_name.strip()
+                        stripped_type = field_type.strip()
+                        if stripped_name and stripped_type:
+                            fields.append((stripped_name, stripped_type))
         if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
     return fields

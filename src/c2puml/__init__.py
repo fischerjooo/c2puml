@@ -5,7 +5,7 @@ A Python tool that analyzes C/C++ source code and generates PlantUML class diagr
 with advanced filtering and transformation capabilities.
 """
 
-__version__ = "2025.8.19"
+__version__ = "2025.8.21"
 __author__ = "C2PUML Team"
 
 # Import from main for CLI entry point
