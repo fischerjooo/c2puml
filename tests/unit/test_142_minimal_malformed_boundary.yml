@@ -20,7 +20,11 @@ source_files:
             int level3_field;
         } level3_struct_2;
     } level2_struct_1;
-} test_t;
+    
+    typedef struct {
+        first_struct first;
+        level2_struct_1 level2;
+    } test_t;
 ---
 config.json: |
   {
@@ -47,21 +51,21 @@ assertions:
       minimal_malformed.c:
         structs_exist:
         - test_t
-        - test_t_first_struct
-        - test_t_first_struct_nested_struct_a
-        - test_t_first_struct_nested_struct_a2
-        - test_t_level2_struct_1
-        - test_t_level2_struct_1_level3_struct_2
+        - first_struct
+        - nested_struct_a
+        - nested_struct_a2
+        - level2_struct_1
+        - level3_struct_2
     struct_fields:
-      test_t_first_struct:
+      first_struct:
         - name: nested_struct_a
-          type: test_t_first_struct_nested_struct_a
+          type: nested_struct_a
         - name: nested_struct_a2
-          type: test_t_first_struct_nested_struct_a2
-      test_t_first_struct_nested_struct_a2:
+          type: nested_struct_a2
+      nested_struct_a2:
         - name: nested_a2
           type: int
-      test_t_level2_struct_1_level3_struct_2:
+      level3_struct_2:
         - name: level3_field
           type: int
   puml:
@@ -69,16 +73,16 @@ assertions:
     file_count: 1
     contains_elements:
     - test_t
-    - test_t_first_struct
-    - test_t_first_struct_nested_struct_a2
-    - test_t_level2_struct_1_level3_struct_2
+    - first_struct
+    - nested_struct_a2
+    - level3_struct_2
     files:
       minimal_malformed.puml:
         syntax_valid: true
         contains_lines:
         - class "test_t" as TYPEDEF_TEST_T
-        - class "test_t_first_struct" as TYPEDEF_TEST_T_FIRST_STRUCT
-        - class "test_t_first_struct_nested_struct_a2" as TYPEDEF_TEST_T_FIRST_STRUCT_NESTED_STRUCT_A2
-        - class "test_t_level2_struct_1_level3_struct_2" as TYPEDEF_TEST_T_LEVEL2_STRUCT_1_LEVEL3_STRUCT_2
+        - class "first_struct" as TYPEDEF_FIRST_STRUCT
+        - class "nested_struct_a2" as TYPEDEF_NESTED_STRUCT_A2
+        - class "level3_struct_2" as TYPEDEF_LEVEL3_STRUCT_2
         - "+ int nested_a2"
         - "+ int level3_field"

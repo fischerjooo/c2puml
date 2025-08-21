@@ -1270,10 +1270,49 @@ def find_struct_fields(
         
         # Parse the field from collected tokens
         if len(field_tokens) >= 2:
-            field_info = _parse_field_from_tokens(field_tokens)
-            if field_info:
-                field_name, field_type = field_info
-                fields.append((field_name, field_type))
+            # Check if this field has comma-separated names
+            comma_positions = []
+            paren_count = 0
+            brace_count = 0
+            
+            for i, token in enumerate(field_tokens):
+                if token.type == TokenType.LPAREN:
+                    paren_count += 1
+                elif token.type == TokenType.RPAREN:
+                    paren_count -= 1
+                elif token.type == TokenType.LBRACE:
+                    brace_count += 1
+                elif token.type == TokenType.RBRACE:
+                    brace_count -= 1
+                elif token.type == TokenType.COMMA and paren_count == 0 and brace_count == 0:
+                    comma_positions.append(i)
+            
+            if comma_positions:
+                # Handle comma-separated fields
+                field_info = _parse_comma_separated_fields(field_tokens, comma_positions)
+                if field_info:
+                    field_name, field_type = field_info
+                    fields.append((field_name, field_type))
+                    
+                    # Add additional fields after commas
+                    for comma_pos in comma_positions:
+                        if comma_pos + 1 < len(field_tokens):
+                            # Find the next field name after the comma
+                            next_field_start = None
+                            for j in range(comma_pos + 1, len(field_tokens)):
+                                if field_tokens[j].type == TokenType.IDENTIFIER:
+                                    next_field_start = j
+                                    break
+                            
+                            if next_field_start is not None:
+                                next_field_name = field_tokens[next_field_start].value
+                                fields.append((next_field_name, field_type))
+            else:
+                # Single field
+                field_info = _parse_field_from_tokens(field_tokens)
+                if field_info:
+                    field_name, field_type = field_info
+                    fields.append((field_name, field_type))
         
         # Move past the semicolon
         if pos < closing_brace_pos:
@@ -1330,8 +1369,11 @@ def _parse_nested_struct_field(field_tokens: List[Token]) -> Optional[Tuple[str,
         content = _extract_brace_content(field_tokens)
         if content:
             # Use special format for anonymous processor
+            # Encode the complete struct content, not just the field content
             import base64
-            encoded_content = base64.b64encode(content.encode()).decode()
+            # Create a complete struct definition that can be parsed
+            complete_struct_content = f"struct {{ {content} }}"
+            encoded_content = base64.b64encode(complete_struct_content.encode()).decode()
             field_type = f"struct {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
         else:
             field_type = "struct { ... }"
@@ -1360,8 +1402,11 @@ def _parse_nested_union_field(field_tokens: List[Token]) -> Optional[Tuple[str, 
         content = _extract_brace_content(field_tokens)
         if content:
             # Use special format for anonymous processor
+            # Encode the complete union content, not just the field content
             import base64
-            encoded_content = base64.b64encode(content.encode()).decode()
+            # Create a complete union definition that can be parsed
+            complete_union_content = f"union {{ {content} }}"
+            encoded_content = base64.b64encode(complete_union_content.encode()).decode()
             field_type = f"union {{ /*ANON:{encoded_content}:{field_name}*/ ... }}"
         else:
             field_type = "union { ... }"
@@ -1474,9 +1519,18 @@ def _parse_comma_separated_fields(field_tokens: List[Token], comma_positions: Li
     type_tokens = field_tokens[:first_field_start]
     field_type = " ".join(t.value for t in type_tokens)
     
-    # For now, just return the first field
-    # TODO: Handle multiple fields properly
+    # For comma-separated fields, we need to return multiple field entries
+    # Since this function can only return one field, we'll return the first one
+    # and let the caller handle the rest by calling this function again
+    # with the remaining tokens after the first comma
+    
+    # Find the first comma position
+    first_comma = comma_positions[0] if comma_positions else len(field_tokens)
+    
+    # Extract the first field name
     field_name = field_tokens[first_field_start].value
+    
+    # Return the first field
     return field_name, field_type
 
 

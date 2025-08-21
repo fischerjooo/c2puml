@@ -199,8 +199,8 @@ class AnonymousTypedefProcessor:
             anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
             
             # Check if this structure already exists with the correct name
-            if (struct_type == "struct" and anon_name in file_model.structs) or \
-               (struct_type == "union" and anon_name in file_model.unions):
+            if (struct_type == "struct" and anon_name in file_model.aliases) or \
+               (struct_type == "union" and anon_name in file_model.aliases):
                 return anon_name
             
             # Create new placeholder anonymous structure
@@ -218,25 +218,46 @@ class AnonymousTypedefProcessor:
             existing_name = self._find_existing_anonymous_structure(content, struct_type)
             if existing_name:
                 # Check if the existing structure still exists in the model
-                if (struct_type == "struct" and existing_name in file_model.structs) or \
-                   (struct_type == "union" and existing_name in file_model.unions):
+                if (struct_type == "struct" and existing_name in file_model.aliases) or \
+                   (struct_type == "union" and existing_name in file_model.aliases):
                     return existing_name
             
             # Create a new anonymous structure with the correct naming convention
             anon_name = self._generate_anonymous_name(parent_name, struct_type, field_name)
             
             # Check if this structure already exists with the correct name
-            if (struct_type == "struct" and anon_name in file_model.structs) or \
-               (struct_type == "union" and anon_name in file_model.unions):
+            if (struct_type == "struct" and anon_name in file_model.aliases) or \
+               (struct_type == "union" and anon_name in file_model.aliases):
                 return anon_name
             
             # Create new anonymous structure
             if struct_type == "struct":
                 anon_struct = self._create_anonymous_struct(anon_name, content)
-                file_model.structs[anon_name] = anon_struct
+                # Create as a typedef (alias) instead of a regular struct
+                # This ensures it gets the TYPEDEF_ prefix in the generator
+                from ..models import Alias
+                anon_alias = Alias(anon_name, anon_name, [])  # alias_name, original_type, uses
+                file_model.aliases[anon_name] = anon_alias
+                
+                # Recursively process the fields of this newly created anonymous structure
+                # to extract any nested anonymous structures
+                for field in anon_struct.fields:
+                    if self._field_contains_anonymous_struct(field):
+                        self._extract_anonymous_from_field(file_model, anon_name, field)
+                        
             elif struct_type == "union":
                 anon_union = self._create_anonymous_union(anon_name, content)
-                file_model.unions[anon_name] = anon_union
+                # Create as a typedef (alias) instead of a regular union
+                # This ensures it gets the TYPEDEF_ prefix in the generator
+                from ..models import Alias
+                anon_alias = Alias(anon_name, anon_name, [])  # alias_name, original_type, uses
+                file_model.aliases[anon_name] = anon_alias
+                
+                # Recursively process the fields of this newly created anonymous union
+                # to extract any nested anonymous structures
+                for field in anon_union.fields:
+                    if self._field_contains_anonymous_struct(field):
+                        self._extract_anonymous_from_field(file_model, anon_name, field)
             
             # Register the structure in the global tracking system
             self._register_anonymous_structure(anon_name, content, struct_type)
@@ -245,12 +266,106 @@ class AnonymousTypedefProcessor:
 
     def _create_anonymous_struct(self, name: str, content: str) -> Struct:
         """Create an anonymous struct from content."""
-        fields = self._parse_struct_fields(content)
+        # The content is a complete struct definition like "struct { int nested_a1; }"
+        # We need to extract the fields from within the braces
+        fields = []
+        
+        # Extract content between braces
+        brace_start = content.find('{')
+        brace_end = content.rfind('}')
+        
+        if brace_start != -1 and brace_end != -1:
+            inner_content = content[brace_start + 1:brace_end].strip()
+            
+            if inner_content:
+                # Split by semicolons to get individual field declarations
+                field_declarations = []
+                current_decl = ""
+                brace_count = 0
+                
+                for char in inner_content:
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                    
+                    current_decl += char
+                    
+                    if char == ';' and brace_count == 0:
+                        field_declarations.append(current_decl.strip())
+                        current_decl = ""
+                
+                # Handle any remaining content
+                if current_decl.strip():
+                    field_declarations.append(current_decl.strip())
+                
+                # Parse each field declaration
+                for decl in field_declarations:
+                    if not decl or decl.strip() == ';':
+                        continue
+                    
+                    # Remove trailing semicolon
+                    decl = decl.rstrip(';').strip()
+                    
+                    if not decl:
+                        continue
+                    
+                    # Parse the field normally
+                    parsed_fields = self._parse_comma_separated_fields(decl)
+                    fields.extend(parsed_fields)
+        
         return Struct(name, fields, tag_name="")
 
     def _create_anonymous_union(self, name: str, content: str) -> Union:
         """Create an anonymous union from content."""
-        fields = self._parse_struct_fields(content)
+        # The content is a complete union definition like "union { int nested_a1; }"
+        # We need to extract the fields from within the braces
+        fields = []
+        
+        # Extract content between braces
+        brace_start = content.find('{')
+        brace_end = content.rfind('}')
+        
+        if brace_start != -1 and brace_end != -1:
+            inner_content = content[brace_start + 1:brace_end].strip()
+            
+            if inner_content:
+                # Split by semicolons to get individual field declarations
+                field_declarations = []
+                current_decl = ""
+                brace_count = 0
+                
+                for char in inner_content:
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                    
+                    current_decl += char
+                    
+                    if char == ';' and brace_count == 0:
+                        field_declarations.append(current_decl.strip())
+                        current_decl = ""
+                
+                # Handle any remaining content
+                if current_decl.strip():
+                    field_declarations.append(current_decl.strip())
+                
+                # Parse each field declaration
+                for decl in field_declarations:
+                    if not decl or decl.strip() == ';':
+                        continue
+                    
+                    # Remove trailing semicolon
+                    decl = decl.rstrip(';').strip()
+                    
+                    if not decl:
+                        continue
+                    
+                    # Parse the field normally
+                    parsed_fields = self._parse_comma_separated_fields(decl)
+                    fields.extend(parsed_fields)
+        
         return Union(name, fields, tag_name="")
 
     def _parse_struct_fields(self, content: str) -> List[Field]:
@@ -629,13 +744,13 @@ class AnonymousTypedefProcessor:
                 
                 # Create the anonymous structure if it doesn't exist
                 if struct_type == "struct":
-                    if anon_name not in file_model.structs:
-                        anon_struct = Struct(anon_name, [], tag_name="")
-                        file_model.structs[anon_name] = anon_struct
+                    if anon_name not in file_model.aliases:
+                        anon_struct = Alias(anon_name, anon_name, []) # Changed from Struct to Alias
+                        file_model.aliases[anon_name] = anon_struct
                 elif struct_type == "union":
-                    if anon_name not in file_model.unions:
-                        anon_union = Union(anon_name, [], tag_name="")
-                        file_model.unions[anon_name] = anon_union
+                    if anon_name not in file_model.aliases:
+                        anon_union = Alias(anon_name, anon_name, []) # Changed from Union to Alias
+                        file_model.aliases[anon_name] = anon_union
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
@@ -883,13 +998,13 @@ class AnonymousTypedefProcessor:
         
         # Create the anonymous structure if it doesn't exist
         if struct_type == "struct":
-            if anon_name not in file_model.structs:
-                anon_struct = Struct(anon_name, [], tag_name="")
-                file_model.structs[anon_name] = anon_struct
+            if anon_name not in file_model.aliases:
+                anon_struct = Alias(anon_name, anon_name, []) # Changed from Struct to Alias
+                file_model.aliases[anon_name] = anon_struct
         elif struct_type == "union":
-            if anon_name not in file_model.unions:
-                anon_union = Union(anon_name, [], tag_name="")
-                file_model.unions[anon_name] = anon_union
+            if anon_name not in file_model.aliases:
+                anon_union = Alias(anon_name, anon_name, []) # Changed from Union to Alias
+                file_model.aliases[anon_name] = anon_union
         
         # Return the fixed type and the extracted structure name
         return anon_name, anon_name
