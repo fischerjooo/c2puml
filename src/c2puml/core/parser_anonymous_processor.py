@@ -416,7 +416,7 @@ class AnonymousTypedefProcessor:
             base_type += " *"
             first_name = first_name[1:]  # Remove leading *
         
-        # Clean up first field name
+        # Clean up first field name - preserve the actual field name
         first_name = re.sub(r'[^\w]', '', first_name)
         if first_name:
             fields.append(Field(first_name, base_type))
@@ -434,8 +434,11 @@ class AnonymousTypedefProcessor:
                     field_type = base_type + " *"
                 part = part[1:]  # Remove leading *
             
-            # Clean up field name
-            field_name = re.sub(r'[^\w]', '', part)
+            # Clean up field name - preserve the actual field name
+            # Remove any leading/trailing whitespace and extract just the identifier
+            field_name = part.strip()
+            # Remove any trailing punctuation or brackets that might be part of the type
+            field_name = re.sub(r'[^\w].*$', '', field_name)
             if field_name:
                 fields.append(Field(field_name, field_type))
         
@@ -599,6 +602,40 @@ class AnonymousTypedefProcessor:
                 anon_name = self._get_or_create_anonymous_structure(
                     file_model, field.type, struct_type, parent_name, field_name
                 )
+                
+                # Track the relationship
+                if parent_name not in file_model.anonymous_relationships:
+                    file_model.anonymous_relationships[parent_name] = []
+                if anon_name not in file_model.anonymous_relationships[parent_name]:
+                    file_model.anonymous_relationships[parent_name].append(anon_name)
+                
+                # Update the field type to reference the named structure
+                field.type = anon_name
+        
+        # Handle malformed anonymous structure patterns like "struct { ... } field_name" 
+        # where the field name is incorrectly embedded in the type
+        elif re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+\w+$', field.type):
+            match = re.match(r'^(struct|union)\s*\{\s*\.\.\.\s*\}\s+(\w+)$', field.type)
+            if match:
+                struct_type = match.group(1)
+                embedded_name = match.group(2)
+                # This is a malformed field type - the field name is embedded in the type
+                # We need to extract the actual field name and fix the type
+                # The actual field name should be the field.name, not the embedded name
+                actual_field_name = field.name
+                
+                # Create a proper anonymous structure name
+                anon_name = self._generate_anonymous_name(parent_name, struct_type, actual_field_name)
+                
+                # Create the anonymous structure if it doesn't exist
+                if struct_type == "struct":
+                    if anon_name not in file_model.structs:
+                        anon_struct = Struct(anon_name, [], tag_name="")
+                        file_model.structs[anon_name] = anon_struct
+                elif struct_type == "union":
+                    if anon_name not in file_model.unions:
+                        anon_union = Union(anon_name, [], tag_name="")
+                        file_model.unions[anon_name] = anon_union
                 
                 # Track the relationship
                 if parent_name not in file_model.anonymous_relationships:
