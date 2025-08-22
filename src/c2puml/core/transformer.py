@@ -395,8 +395,10 @@ class Transformer:
             filename = Path(file_model.name).name
             file_map[filename] = file_model
         
-        # Process each C file as a root with its own include structure
-        c_files = [fm for fm in model.files.values() if fm.name.endswith(".c")]
+        # Process each C file as a root with its own include structure (stable order)
+        c_files = sorted([
+            fm for fm in model.files.values() if fm.name.endswith(".c")
+        ], key=lambda fm: fm.name)
         
         for root_file in c_files:
             self._process_root_c_file_includes(
@@ -485,7 +487,8 @@ class Transformer:
                 depth, root_filename, len(current_level)
             )
             
-            for current_file in current_level:
+            # Iterate current level in a stable, sorted order
+            for current_file in sorted(current_level, key=lambda fm: Path(fm.name).name):
                 current_filename = Path(current_file.name).name
                 
                 # Skip if already processed to avoid cycles
@@ -494,7 +497,7 @@ class Transformer:
                 processed_files.add(current_filename)
                 
                 # Process each include in the current file
-                for include_name in current_file.includes:
+                for include_name in sorted(current_file.includes):
                     # Determine if this include is filtered out by patterns
                     filtered_out_by_patterns = False
                     if compiled_filters:
@@ -541,14 +544,6 @@ class Transformer:
                         )
                         continue
                     
-                    # Prevent processing files that would create cycles (already processed)
-                    if include_name in processed_files:
-                        self.logger.debug(
-                            "Skipping already processed file %s to prevent cycle for %s",
-                            include_name, root_filename
-                        )
-                        continue
-                    
                     # Create and add the include relation to the root C file
                     relation = IncludeRelation(
                         source_file=current_filename,
@@ -577,7 +572,8 @@ class Transformer:
                         next_level.append(included_file)
             
             # Move to next level for the next iteration
-            current_level = next_level
+            # Sort next level to keep traversal deterministic
+            current_level = sorted(next_level, key=lambda fm: Path(fm.name).name)
             
             # Break if no more files to process
             if not current_level:
