@@ -19,6 +19,7 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 - [📖 Specification](https://github.com/fischerjooo/c2puml/blob/main/docs/specification.md) - Complete technical specification and architecture documentation
 - [🎨 PlantUML Template](https://github.com/fischerjooo/c2puml/blob/main/docs/puml_template.md) - PlantUML formatting template and diagram structure rules
+- [⚙️ Configuration Guide](https://github.com/fischerjooo/c2puml/blob/main/docs/configuration.md) - Detailed config.json reference and examples
 
 ## Releases
 
@@ -106,29 +107,6 @@ python3 main.py --config tests/example/config.json --verbose
 
 **Note**: Both methods provide identical functionality. Choose the one that best fits your workflow.
 
-### Installation vs Standalone: Which to Choose?
-
-| Feature | Installed Package | Standalone Script |
-|---------|-------------------|-------------------|
-| **Installation** | `pip install -e .` | None required |
-| **Command** | `c2puml` | `python3 main.py` |
-| **Portability** | System dependent | High (copy files) |
-| **Updates** | `pip install --upgrade` | Manual (update source) |
-| **Dependencies** | Automatic via pip | Manual management |
-| **Development** | Good | Excellent |
-| **CI/CD Integration** | Standard | Easy |
-| **Distribution** | Package distribution | Source required |
-
-**Choose installed package if:**
-- You plan to use c2puml regularly
-- You want automatic dependency management
-- You prefer standard Python package workflows
-
-**Choose standalone script if:**
-- You want to try c2puml without installation
-- You're in a restricted environment
-- You need maximum portability
-- You're doing development or testing
 
 ### Generate PNG Images
 
@@ -192,75 +170,43 @@ Files without file-specific configuration will use the global settings. Include 
 
 ### Model Transformations
 
-The transformer supports modifying the parsed model before generating diagrams:
+The transformer supports modifying the parsed model before generating diagrams. Transformations are fully implemented and support multi-stage, containerized configuration with deterministic ordering (alphabetical by container name).
+
+Recommended containerized configuration (use numeric prefixes to control order):
 
 ```json
 {
-  "transformations": {
-    "remove": {
-      "typedef": ["legacy_type", "temp_struct"],
-      "functions": ["debug_func", "internal_*"],
-      "macros": ["DEBUG_*", "TEMP_MACRO"],
-      "globals": ["old_global"],
-      "includes": ["deprecated.h"]
-    },
+  "transformations_01_rename": {
+    "file_selection": [".*main\\.c$"],
     "rename": {
-      "typedef": {"old_name": "new_name"},
-      "functions": {"calculate": "compute"},
-      "macros": {"OLD_MACRO": "NEW_MACRO"},
-      "globals": {"old_var": "new_var"},
-      "includes": {"old.h": "new.h"},
-      "files": {"legacy.c": "modern.c"}
-    },
-    "file_selection": {
-      "selected_files": [".*main\\.c$"]
+      "typedef": {"^old_name$": "new_name"},
+      "functions": {"^calculate$": "compute"},
+      "macros": {"^OLD_MACRO$": "NEW_MACRO"},
+      "globals": {"^old_var$": "new_var"},
+      "includes": {"^old\\.h$": "new\\.h"},
+      "files": {"^legacy\\.c$": "modern\\.c"}
+    }
+  },
+  "transformations_02_cleanup": {
+    "file_selection": [],
+    "remove": {
+      "typedef": ["^legacy_.*"],
+      "functions": ["^debug_.*", "^internal_.*"],
+      "macros": ["^DEBUG_.*", "^TEMP_.*"],
+      "globals": ["^old_global$"],
+      "includes": ["^deprecated\\.h$"]
     }
   }
 }
 ```
 
-**Note:** Transformation functionality provides configuration structure with stub implementations for future development.
-
-```json
-{
-  "source_folders": ["./src"],
-  "project_name": "MyProject",
-  "output_dir": "./output",
-  "recursive_search": true,
-  "include_depth": 2,
-  "file_filters": {
-    "include": [".*\\.c$", ".*\\.h$"],
-    "exclude": [".*test.*"]
-  },
-  "file_specific": {
-    "main.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-      "include_depth": 3
-    },
-    "network.c": {
-      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-      "include_depth": 2
-    }
-  },
-  "transformations": {
-    "remove": {
-      "typedef": [],
-      "functions": [],
-      "macros": [],
-      "globals": [],
-      "includes": []
-    },
-    "rename": {
-      "typedef": {},
-      "functions": {},
-      "macros": {},
-      "globals": {},
-      "includes": {},
-      "files": {}
-    }
-  }
-}
-```
+Notes:
+- Containers are discovered by keys starting with `transformations` and applied in alphabetical order.
+- `file_selection` is a list of regex patterns matched against file paths; omitted or empty applies to all files.
+- Typedef renames automatically update type references in functions, globals, structs, and unions.
+- Removing typedefs cleans up type references across the model.
+- Include/file renames propagate to `includes` and `include_relations`.
+- `add` is reserved for future use.
 
 ## Generated Output
 
@@ -311,12 +257,6 @@ pip install -e .
 
 ### VSCode Configuration
 
-The project includes pre-configured VSCode settings for:
-- Python auto-formatting with Black
-- Import sorting with isort
-- Linting with flake8
-- Auto-save and formatting on save
-
 **VSCode Tasks**: The project includes pre-configured tasks accessible via `Ctrl+Shift+P` → "Tasks: Run Task":
 - **Run Full Workflow** - Complete analysis and diagram generation (parse → transform → generate)
 - **Run Example** - Quick test with example files and comprehensive verification
@@ -324,8 +264,6 @@ The project includes pre-configured VSCode settings for:
 - **Run Tests** - Execute comprehensive test suite with coverage reporting
 - **Install Dependencies** - Set up development environment with all required packages
 - **Format & Lint** - Code quality checks with Black, isort, and flake8
-
-**Current Status**: The project is actively developed with 700+ commits and comprehensive CI/CD pipeline including automated testing, coverage reporting, and artifact generation.
 
 ### Development Commands
 
@@ -385,11 +323,6 @@ python scripts/run_example_with_coverage.py # Example with coverage
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
 
-**Invalid source paths**
-- **Enhanced Error Handling**: The library now provides detailed error messages for invalid source paths instead of crashing
-- **Helpful Context**: Error messages include current working directory, parent directory information, and suggestions
-- **Multiple Source Folders**: Partial failures are handled gracefully when some folders are valid
-- **See**: [Error Handling Guide](docs/error_handling_guide.md) for comprehensive troubleshooting
 
 ### Getting Help
 
