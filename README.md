@@ -280,12 +280,6 @@ pip install -e .
 
 ### VSCode Configuration
 
-The project includes pre-configured VSCode settings for:
-- Python auto-formatting with Black
-- Import sorting with isort
-- Linting with flake8
-- Auto-save and formatting on save
-
 **VSCode Tasks**: The project includes pre-configured tasks accessible via `Ctrl+Shift+P` → "Tasks: Run Task":
 - **Run Full Workflow** - Complete analysis and diagram generation (parse → transform → generate)
 - **Run Example** - Quick test with example files and comprehensive verification
