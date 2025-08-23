@@ -107,29 +107,6 @@ python3 main.py --config tests/example/config.json --verbose
 
 **Note**: Both methods provide identical functionality. Choose the one that best fits your workflow.
 
-### Installation vs Standalone: Which to Choose?
-
-| Feature | Installed Package | Standalone Script |
-|---------|-------------------|-------------------|
-| **Installation** | `pip install -e .` | None required |
-| **Command** | `c2puml` | `python3 main.py` |
-| **Portability** | System dependent | High (copy files) |
-| **Updates** | `pip install --upgrade` | Manual (update source) |
-| **Dependencies** | Automatic via pip | Manual management |
-| **Development** | Good | Excellent |
-| **CI/CD Integration** | Standard | Easy |
-| **Distribution** | Package distribution | Source required |
-
-**Choose installed package if:**
-- You plan to use c2puml regularly
-- You want automatic dependency management
-- You prefer standard Python package workflows
-
-**Choose standalone script if:**
-- You want to try c2puml without installation
-- You're in a restricted environment
-- You need maximum portability
-- You're doing development or testing
 
 ### Generate PNG Images
 
