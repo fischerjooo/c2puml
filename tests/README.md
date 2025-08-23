@@ -365,7 +365,7 @@ assertions:
     functions_exist: ["main"]
     structs_exist: ["Person"]
     enums_exist: ["Status"]
-    functions_not_exist: ["deprecated_function"]
+    functions_not_exist: ["removed_function"]
     element_counts:
       functions: 1
   puml:

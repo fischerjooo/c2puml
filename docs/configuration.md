@@ -125,14 +125,7 @@ The transformer supports a multi-stage, containerized configuration. Containers 
 - `include_filter_local_only`: augments per-file include filters to prefer the matching local header (e.g., `^main\\.h$`).
 - `always_show_includes`: when true, headers excluded by filters are still rendered as placeholders with arrows, without content expansion.
 
-### Legacy compatibility
 
-- If a single `transformations` object is provided, it is wrapped as `transformations_00_default` automatically.
-- Prefer `file_selection` as a list of patterns. The legacy nested `file_selection.selected_files` object is deprecated.
-
-## Backward Compatibility (Input)
-
-- `project_roots` → `source_folders` is supported automatically when loading configuration.
 
 ## Examples
 
@@ -165,16 +158,16 @@ The transformer supports a multi-stage, containerized configuration. Containers 
     "rename": {
       "typedef": {"^old_config_t$": "config_t"},
       "functions": {"^calculate$": "compute"},
-      "files": {"^legacy\\.c$": "modern\\.c"}
+      "files": {"^old_impl\\.c$": "new_impl\\.c"}
     }
   },
   "transformations_02_cleanup": {
     "file_selection": [],
     "remove": {
-      "typedef": ["^legacy_.*"],
+      "typedef": ["^obsolete_.*"],
       "functions": ["^debug_.*"],
       "macros": ["^DEBUG_.*"],
-      "includes": ["^deprecated\\.h$"]
+      "includes": ["^old_header\\.h$"]
     }
   }
 }

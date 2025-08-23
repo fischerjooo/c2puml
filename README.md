@@ -230,7 +230,6 @@ Notes:
 - Removing typedefs cleans up type references across the model.
 - Include/file renames propagate to `includes` and `include_relations`.
 - `add` is reserved for future use.
-- Legacy compatibility: if a single `transformations` object is provided, it is auto-wrapped as `transformations_00_default`. Prefer the containerized format above. The legacy `file_selection.selected_files` object is deprecated; use `file_selection` as a list.
 
 ## Generated Output
 
