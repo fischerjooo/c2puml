@@ -30,21 +30,21 @@ The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source co
 The system includes a comprehensive transformation pipeline that allows for sophisticated code model manipulation:
 
 #### Renaming Transformations
-- **Function Renaming**: Regex-based function name transformation (e.g., `^deprecated_(.*)` → `legacy_\1`)
+- **Function Renaming**: Regex-based function name transformation (e.g., `^old_(.*)` → `new_\\1`)
 - **Typedef Renaming**: Type definition renaming with pattern matching (e.g., `^old_config_t$` → `config_t`)
-- **Macro Renaming**: Preprocessor macro renaming (e.g., `^OLD_(.*)` → `LEGACY_\1`)
+- **Macro Renaming**: Preprocessor macro renaming (e.g., `^OLD_(.*)` → `NEW_\\1`)
 - **Global Variable Renaming**: Global variable name transformation
 - **Struct Renaming**: Structure type renaming with pattern matching
 - **Type Reference Updates**: Automatic updating of type references when typedefs are renamed
 
 #### Cleanup Transformations
-- **Element Removal**: Remove deprecated or unwanted code elements using regex patterns
-- **Function Cleanup**: Remove test functions, debug functions, and deprecated functions
-- **Typedef Cleanup**: Remove legacy type definitions
+- **Element Removal**: Remove unwanted code elements using regex patterns
+- **Function Cleanup**: Remove test and debug functions
+- **Typedef Cleanup**: Remove obsolete type definitions
 - **Macro Cleanup**: Remove deprecated preprocessor macros
 - **Global Variable Cleanup**: Remove old global variables
 - **Include Cleanup**: Remove unwanted include relationships
-- **Struct/Enum/Union Cleanup**: Remove deprecated data structures
+- **Struct/Enum/Union Cleanup**: Remove unused data structures
 
 #### File-Specific Configuration
 - **Include Depth Control**: Set different include depth limits for specific files
@@ -55,7 +55,7 @@ The system includes a comprehensive transformation pipeline that allows for soph
 
 #### Transformation Pipeline
 - **Multi-Stage Processing**: Support for multiple transformation containers applied in order
-- **Backward Compatibility**: Support for legacy transformation format
+
 - **Validation**: Comprehensive validation of transformation patterns and results
 - **Logging**: Detailed logging of transformation operations for debugging
 
@@ -81,7 +81,7 @@ The system has been verified to correctly implement all specified functionality:
 - ✅ **PlantUML Generation**: Diagrams generated with proper UML notation and relationships
 
 #### Transformation Verification
-- **Function Renaming**: `deprecated_print_info` → `legacy_print_info` ✅
+- **Function Renaming**: `old_print_info` → `new_print_info` ✅
 - **Typedef Renaming**: `old_config_t` → `config_t` ✅
 - **Element Cleanup**: Test functions, debug functions, deprecated macros removed ✅
 - **Include Filtering**: File-specific include filters applied correctly ✅
@@ -482,7 +482,7 @@ The system uses a JSON-based configuration file with the following parameters:
 
 - **`transformations`**: Rules for model transformation and file selection
 
-**Note**: The `recursive_search` parameter was renamed from `recursive` in a recent update for better clarity. The system maintains backward compatibility for configuration loading.
+**Note**: The configuration parameter is `recursive_search`.
 
 ### 3.5 Command Interface
 The system provides a simplified CLI with optional step specification:
@@ -700,7 +700,7 @@ Remove specific elements from the model:
 {
   "transformations": {
     "remove": {
-      "typedef": ["unwanted_type", "legacy_type"],
+      "typedef": ["unwanted_type", "obsolete_type"],
       "functions": ["deprecated_func", "internal_helper"],
       "macros": ["DEBUG_MACRO", "TEMP_*"],
       "globals": ["old_global_var"],
@@ -719,7 +719,7 @@ Rename elements in the model:
     "rename": {
       "typedef": {
         "old_struct_name": "new_struct_name",
-        "legacy_type": "modern_type"
+        "old_type": "new_type"
       },
       "functions": {
         "old_func": "new_func",
@@ -735,7 +735,7 @@ Rename elements in the model:
         "old_header.h": "new_header.h"
       },
       "files": {
-        "legacy.c": "modern.c"
+        "old_impl.c": "new_impl.c"
       }
     }
   }
