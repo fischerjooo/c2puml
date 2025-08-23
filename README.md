@@ -19,6 +19,7 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 - [📖 Specification](https://github.com/fischerjooo/c2puml/blob/main/docs/specification.md) - Complete technical specification and architecture documentation
 - [🎨 PlantUML Template](https://github.com/fischerjooo/c2puml/blob/main/docs/puml_template.md) - PlantUML formatting template and diagram structure rules
+- [⚙️ Configuration Guide](https://github.com/fischerjooo/c2puml/blob/main/docs/configuration.md) - Detailed config.json reference and examples
 
 ## Releases
 
@@ -192,75 +193,44 @@ Files without file-specific configuration will use the global settings. Include 
 
 ### Model Transformations
 
-The transformer supports modifying the parsed model before generating diagrams:
+The transformer supports modifying the parsed model before generating diagrams. Transformations are fully implemented and support multi-stage, containerized configuration with deterministic ordering (alphabetical by container name).
+
+Recommended containerized configuration (use numeric prefixes to control order):
 
 ```json
 {
-  "transformations": {
-    "remove": {
-      "typedef": ["legacy_type", "temp_struct"],
-      "functions": ["debug_func", "internal_*"],
-      "macros": ["DEBUG_*", "TEMP_MACRO"],
-      "globals": ["old_global"],
-      "includes": ["deprecated.h"]
-    },
+  "transformations_01_rename": {
+    "file_selection": [".*main\\.c$"],
     "rename": {
-      "typedef": {"old_name": "new_name"},
-      "functions": {"calculate": "compute"},
-      "macros": {"OLD_MACRO": "NEW_MACRO"},
-      "globals": {"old_var": "new_var"},
-      "includes": {"old.h": "new.h"},
-      "files": {"legacy.c": "modern.c"}
-    },
-    "file_selection": {
-      "selected_files": [".*main\\.c$"]
+      "typedef": {"^old_name$": "new_name"},
+      "functions": {"^calculate$": "compute"},
+      "macros": {"^OLD_MACRO$": "NEW_MACRO"},
+      "globals": {"^old_var$": "new_var"},
+      "includes": {"^old\\.h$": "new\\.h"},
+      "files": {"^legacy\\.c$": "modern\\.c"}
+    }
+  },
+  "transformations_02_cleanup": {
+    "file_selection": [],
+    "remove": {
+      "typedef": ["^legacy_.*"],
+      "functions": ["^debug_.*", "^internal_.*"],
+      "macros": ["^DEBUG_.*", "^TEMP_.*"],
+      "globals": ["^old_global$"],
+      "includes": ["^deprecated\\.h$"]
     }
   }
 }
 ```
 
-**Note:** Transformation functionality provides configuration structure with stub implementations for future development.
-
-```json
-{
-  "source_folders": ["./src"],
-  "project_name": "MyProject",
-  "output_dir": "./output",
-  "recursive_search": true,
-  "include_depth": 2,
-  "file_filters": {
-    "include": [".*\\.c$", ".*\\.h$"],
-    "exclude": [".*test.*"]
-  },
-  "file_specific": {
-    "main.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-      "include_depth": 3
-    },
-    "network.c": {
-      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-      "include_depth": 2
-    }
-  },
-  "transformations": {
-    "remove": {
-      "typedef": [],
-      "functions": [],
-      "macros": [],
-      "globals": [],
-      "includes": []
-    },
-    "rename": {
-      "typedef": {},
-      "functions": {},
-      "macros": {},
-      "globals": {},
-      "includes": {},
-      "files": {}
-    }
-  }
-}
-```
+Notes:
+- Containers are discovered by keys starting with `transformations` and applied in alphabetical order.
+- `file_selection` is a list of regex patterns matched against file paths; omitted or empty applies to all files.
+- Typedef renames automatically update type references in functions, globals, structs, and unions.
+- Removing typedefs cleans up type references across the model.
+- Include/file renames propagate to `includes` and `include_relations`.
+- `add` is reserved for future use.
+- Legacy compatibility: if a single `transformations` object is provided, it is auto-wrapped as `transformations_00_default`. Prefer the containerized format above. The legacy `file_selection.selected_files` object is deprecated; use `file_selection` as a list.
 
 ## Generated Output
 
