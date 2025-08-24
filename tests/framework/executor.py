@@ -18,6 +18,7 @@ Key points:
 """
 
 import os
+import sys
 import shutil
 import subprocess
 import time
@@ -50,13 +51,14 @@ class TestExecutor:
         """Initialize the TestExecutor"""
         # Try different ways to run c2puml
         self.c2puml_command = "c2puml"
-        self.python_module_command = ["python", "-m", "c2puml.main"]
+        # Prefer the current interpreter for maximum portability
+        self.python_module_command = [sys.executable, "-m", "c2puml.main"]
 
         # Use absolute path to main.py
         # __file__ is tests/framework/executor.py, so go up 2 levels to workspace root
         workspace_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         main_script_path = os.path.join(workspace_root, "main.py")
-        self.main_script_command = ["python", main_script_path]
+        self.main_script_command = [sys.executable, main_script_path]
 
     def run_full_pipeline(self, config_path: str, working_dir: str = None) -> CLIResult:
         """
