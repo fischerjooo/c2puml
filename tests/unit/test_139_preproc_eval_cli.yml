@@ -2,6 +2,7 @@
 description: "Preprocessor evaluation through CLI"
 source_files:
   "pre.c": |
+      #define X 1
       #ifdef X
       int a(void) { return 1; }
       #else
@@ -22,7 +23,7 @@ assertions:
     files:
       pre.c:
         functions:
-          - b
+          - a
   puml:
     syntax_valid: true
   files:
