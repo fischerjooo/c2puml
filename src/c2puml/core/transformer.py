@@ -426,12 +426,13 @@ class Transformer:
 									"Include %s filtered by patterns at depth %d for %s, but will be shown as placeholder",
 									include_name, depth, root_filename
 								)
+								# Intentionally do not continue here; still add relation and mark placeholder
 							else:
 								self.logger.debug(
 									"Filtered out include %s at depth %d for %s",
 									include_name, depth, root_filename
 								)
-							continue
+								continue
 					
 					if include_name not in file_map:
 						self.logger.debug(
