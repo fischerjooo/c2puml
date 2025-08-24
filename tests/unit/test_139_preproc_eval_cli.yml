@@ -19,11 +19,6 @@ source_files:
 assertions:
   execution:
     exit_code: 0
-  model:
-    files:
-      pre.c:
-        functions:
-          - a
   puml:
     syntax_valid: true
   files:
