@@ -18,6 +18,64 @@ Run:
 c2puml --config config.json
 ```
 
+## Examples
+
+### Full configuration example
+```json
+{
+  "project_name": "Example",
+  "source_folders": ["tests/example/source"],
+  "output_dir": "./output",
+  "model_output_path": "model.json",
+  "recursive_search": true,
+  "include_depth": 2,
+  "include_filter_local_only": false,
+  "always_show_includes": true,
+  "convert_empty_class_to_artifact": false,
+  "max_function_signature_chars": 0,
+  "hide_macro_values": false,
+  "file_filters": {
+    "include": [".*\\.(c|h)$"],
+    "exclude": [".*test.*"]
+  },
+  "file_specific": {
+    "main.c": {
+      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
+      "include_depth": 3
+    }
+  },
+  "transformations_01_rename": {
+    "file_selection": [".*main\\.c$"],
+    "rename": {
+      "typedef": {"^old_config_t$": "config_t"},
+      "functions": {"^calculate$": "compute"},
+      "files": {"^old_impl\\.c$": "new_impl\\.c"}
+    }
+  },
+  "transformations_02_cleanup": {
+    "file_selection": [],
+    "remove": {
+      "typedef": ["^obsolete_.*"],
+      "functions": ["^debug_.*"],
+      "macros": ["^DEBUG_.*"],
+      "includes": ["^old_header\\.h$"]
+    }
+  }
+}
+```
+
+### File-specific include filtering and depth override
+```json
+{
+  "file_specific": {
+    "network.c": {
+      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
+      "include_depth": 2
+    }
+  }
+}
+```
+
 ## Core Parameters
 
 - **project_name** (string, default: "Unknown_Project")
@@ -125,66 +183,8 @@ The transformer supports a multi-stage, containerized configuration. Containers 
 - `include_filter_local_only`: augments per-file include filters to prefer the matching local header (e.g., `^main\\.h$`).
 - `always_show_includes`: when true, headers excluded by filters are still rendered as placeholders with arrows, without content expansion.
 
-
-
-## Examples
-
-### Full configuration example
-```json
-{
-  "project_name": "Example",
-  "source_folders": ["tests/example/source"],
-  "output_dir": "./output",
-  "model_output_path": "model.json",
-  "recursive_search": true,
-  "include_depth": 2,
-  "include_filter_local_only": false,
-  "always_show_includes": true,
-  "convert_empty_class_to_artifact": false,
-  "max_function_signature_chars": 0,
-  "hide_macro_values": false,
-  "file_filters": {
-    "include": [".*\\.(c|h)$"],
-    "exclude": [".*test.*"]
-  },
-  "file_specific": {
-    "main.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-      "include_depth": 3
-    }
-  },
-  "transformations_01_rename": {
-    "file_selection": [".*main\\.c$"],
-    "rename": {
-      "typedef": {"^old_config_t$": "config_t"},
-      "functions": {"^calculate$": "compute"},
-      "files": {"^old_impl\\.c$": "new_impl\\.c"}
-    }
-  },
-  "transformations_02_cleanup": {
-    "file_selection": [],
-    "remove": {
-      "typedef": ["^obsolete_.*"],
-      "functions": ["^debug_.*"],
-      "macros": ["^DEBUG_.*"],
-      "includes": ["^old_header\\.h$"]
-    }
-  }
-}
-```
-
-### File-specific include filtering and depth override
-```json
-{
-  "file_specific": {
-    "network.c": {
-      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-      "include_depth": 2
-    }
-  }
-}
-```
+ 
 
 ## See also
-- Specification: `docs/specification.md`
-- PlantUML Template: `docs/puml_template.md`
+- [Specification](specification.md)
+- [PlantUML Template](puml_template.md)
