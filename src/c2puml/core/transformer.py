@@ -775,59 +775,7 @@ class Transformer:
             self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
             return False
 
-    def _apply_model_transformations(
-        self, model: ProjectModel, transformations: Dict[str, Any]
-    ) -> ProjectModel:
-        """Apply model-level transformations with file selection support"""
-        # Get file selection configuration
-        selected_files = transformations.get("file_selection", [])
-        
-        # Validate that file_selection is a list
-        if not isinstance(selected_files, list):
-            selected_files = []
-            self.logger.warning("Invalid file_selection format, must be a list, defaulting to empty list")
-
-        # Determine which files to apply transformations to
-        # If selected_files is empty or not specified, apply to all files
-        if not selected_files:
-            target_files = set(model.files.keys())
-            self.logger.debug("No file selection specified, applying to all %d files", len(target_files))
-        else:
-            # Apply only to selected files
-            target_files = set()
-            for pattern in selected_files:
-                for file_path in model.files.keys():
-                    if self._matches_pattern(file_path, pattern):
-                        target_files.add(file_path)
-            
-            self.logger.debug(
-                "File selection patterns %s matched %d files: %s",
-                selected_files, len(target_files), list(target_files)
-            )
-
-        self.logger.debug(
-            "Applying transformations to %d files: %s",
-            len(target_files),
-            list(target_files),
-        )
-
-        # Rename elements
-        if "rename" in transformations:
-            model = self._apply_renaming(model, transformations["rename"], target_files)
-
-        # Add elements
-        if "add" in transformations:
-            model = self._apply_additions(model, transformations["add"], target_files)
-
-        # Remove elements
-        if "remove" in transformations:
-            model = self._apply_removals(model, transformations["remove"], target_files)
-            
-            # Clean up type references after typedef removal
-            if "typedef" in transformations["remove"]:
-                self._cleanup_type_references(model, transformations["remove"]["typedef"], target_files)
-
-        return model
+    # Removed unused _apply_model_transformations (legacy API)
 
     def _apply_renaming(
         self, model: ProjectModel, rename_config: Dict[str, Any], target_files: Set[str]
@@ -1776,134 +1724,11 @@ class Transformer:
                 self.logger.warning("Invalid regex pattern '%s': %s", pattern, e)
         return compiled_patterns
 
-    def _filter_dict(self, items: Dict[str, Any], filters: Dict[str, Any]) -> Dict[str, Any]:
-        """Filter a dictionary based on include/exclude patterns"""
-        include_patterns = self._compile_patterns(filters.get("include", []))
-        exclude_patterns = self._compile_patterns(filters.get("exclude", []))
+    # Removed unused _filter_dict (not used in current pipeline)
 
-        filtered = {}
-        for name, item in items.items():
-            # Check include patterns
-            if include_patterns:
-                if not any(pattern.search(name) for pattern in include_patterns):
-                    continue
+    # Removed unused _filter_list (not used in current pipeline)
 
-            # Check exclude patterns
-            if exclude_patterns:
-                if any(pattern.search(name) for pattern in exclude_patterns):
-                    continue
-
-            filtered[name] = item
-
-        return filtered
-
-    def _filter_list(self, items: List[Any], filters: Dict[str, Any], key: Optional[Callable[[Any], str]] = None) -> List[Any]:
-        """Filter a list based on include/exclude patterns"""
-        include_patterns = self._compile_patterns(filters.get("include", []))
-        exclude_patterns = self._compile_patterns(filters.get("exclude", []))
-
-        filtered = []
-        for item in items:
-            item_name = key(item) if key else str(item)
-
-            # Check include patterns
-            if include_patterns:
-                if not any(pattern.search(item_name) for pattern in include_patterns):
-                    continue
-
-            # Check exclude patterns
-            if exclude_patterns:
-                if any(pattern.search(item_name) for pattern in exclude_patterns):
-                    continue
-
-            filtered.append(item)
-
-        return filtered
-
-    def _dict_to_file_model(self, data: Dict[str, Any]) -> FileModel:
-        """Convert dictionary back to FileModel"""
-
-        # Convert structs
-        structs = {}
-        for name, struct_data in data.get("structs", {}).items():
-            fields = [
-                Field(f["name"], f["type"]) for f in struct_data.get("fields", [])
-            ]
-            structs[name] = Struct(
-                name,
-                fields,
-                struct_data.get("methods", []),
-                struct_data.get("tag_name", ""),
-                struct_data.get("uses", []),
-            )
-
-        # Convert enums
-        enums = {}
-        for name, enum_data in data.get("enums", {}).items():
-            values = []
-            for value_data in enum_data.get("values", []):
-                if isinstance(value_data, dict):
-                    values.append(
-                        EnumValue(value_data["name"], value_data.get("value"))
-                    )
-                else:
-                    values.append(EnumValue(value_data))
-            enums[name] = Enum(name, values)
-
-        # Convert unions
-        unions = {}
-        for name, union_data in data.get("unions", {}).items():
-            fields = [Field(f["name"], f["type"]) for f in union_data.get("fields", [])]
-            unions[name] = Union(
-                name, fields, union_data.get("tag_name", ""), union_data.get("uses", [])
-            )
-
-        # Convert aliases
-        aliases = {}
-        for name, alias_data in data.get("aliases", {}).items():
-            if isinstance(alias_data, dict):
-                aliases[name] = Alias(
-                    alias_data.get("name", name),
-                    alias_data.get("original_type", ""),
-                    alias_data.get("uses", []),
-                )
-            else:
-                # Handle legacy format where aliases was Dict[str, str]
-                aliases[name] = Alias(name, alias_data, [])
-
-        # Convert functions
-        functions = []
-        for func_data in data.get("functions", []):
-            parameters = [
-                Field(p["name"], p["type"]) for p in func_data.get("parameters", [])
-            ]
-            functions.append(
-                Function(
-                    func_data["name"],
-                    func_data["return_type"],
-                    parameters,
-                    is_static=func_data.get("is_static", False),
-                    is_declaration=func_data.get("is_declaration", False),
-                )
-            )
-
-        # Convert globals
-        globals_list = []
-        for global_data in data.get("globals", []):
-            globals_list.append(Field(global_data["name"], global_data["type"]))
-
-        return FileModel(
-            file_path=data["file_path"],
-            structs=structs,
-            enums=enums,
-            unions=unions,
-            functions=functions,
-            globals=globals_list,
-            includes=set(data.get("includes", [])),
-            macros=data.get("macros", []),
-            aliases=aliases,
-            anonymous_relationships=data.get("anonymous_relationships", {}),
-        )
+    # Removed unused _dict_to_file_model (no callers in current code)
 
     def _save_model(self, model: ProjectModel, output_file: str) -> None:
         """Save model to JSON file"""
