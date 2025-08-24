@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Unit tests for main CLI error paths: missing config, invalid JSON, missing model on generate
-"""
-
 import json
 import os
 import tempfile

@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Unit tests for PreprocessorEvaluator logical branches and block parsing
-"""
-
 import unittest
 from src.c2puml.core.preprocessor import PreprocessorEvaluator, PreprocessorDirective, PreprocessorBlock
 from src.c2puml.core.parser_tokenizer import Token, TokenType

@@ -1,0 +1,32 @@
+---
+description: "Preprocessor evaluation through CLI"
+source_files:
+  "pre.c": |
+      #ifdef X
+      int a(void) { return 1; }
+      #else
+      int b(void) { return 2; }
+      #endif
+
+  "config.json": |
+    {
+      "project_name": "pre_cli",
+      "source_folders": ["."],
+      "output_dir": "./output"
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    files:
+      pre.c:
+        functions:
+          - b
+  puml:
+    syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+

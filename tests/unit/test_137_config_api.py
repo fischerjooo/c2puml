@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Unit tests for Config API: load, save, has_filters, include-file filtering, equality
-"""
-
 import json
 import os
 import tempfile

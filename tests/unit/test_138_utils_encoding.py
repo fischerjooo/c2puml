@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Unit tests for utils encoding helpers and detect_file_encoding
-"""
-
 import io
 import os
 import tempfile
