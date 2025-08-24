@@ -25,7 +25,6 @@ The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source co
 - **Model Transformation**: Multi-stage renaming, filtering, and addition of elements using configuration-driven rules
 - **File Selection for Transformations**: Apply transformations to all files or selected ones with regex patterns
 
-
 ### Transformation System
 The system includes a comprehensive transformation pipeline that allows for sophisticated code model manipulation:
 
@@ -55,7 +54,6 @@ The system includes a comprehensive transformation pipeline that allows for soph
 
 #### Transformation Pipeline
 - **Multi-Stage Processing**: Support for multiple transformation containers applied in order
-
 - **Validation**: Comprehensive validation of transformation patterns and results
 - **Logging**: Detailed logging of transformation operations for debugging
 
@@ -121,50 +119,6 @@ The system supports C/C++ file formats and language features:
 - **Macro Definitions**: `#define`, `#undef`
 - **Include Directives**: `#include` with angle brackets and quotes
 
-### Configuration Examples
-Functional configuration examples for common use cases:
-
-#### File-Specific Configuration
-```json
-{
-  "file_specific": {
-    "sample.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^sample\\.h$"],
-      "include_depth": 3
-    },
-    "utils.c": {
-      "include_filter": ["^math\\.h$", "^time\\.h$"],
-      "include_depth": 2
-    }
-  }
-}
-```
-
-#### Transformation Configuration
-```json
-{
-  "transformations_01_rename": {
-    "file_selection": [".*transformed\\.(c|h)$"],
-    "rename": {
-      "typedef": {
-        "^old_config_t$": "config_t"
-      },
-      "functions": {
-        "^deprecated_(.*)": "legacy_\\1"
-      }
-    }
-  },
-  "transformations_02_cleanup": {
-    "file_selection": [".*transformed\\.(c|h)$"],
-    "remove": {
-      "typedef": ["^legacy_.*", "^old_.*"],
-      "functions": ["^test_.*", "^debug_.*"],
-      "macros": ["^DEPRECATED_.*", "^LEGACY_.*"]
-    }
-  }
-}
-```
-
 ## 2. High-Level Requirements
 
 ### 2.1 Core Requirements
@@ -181,7 +135,6 @@ Functional configuration examples for common use cases:
 - **R9**: Support regex-based filtering of files and code elements
 - **R10**: Enable model transformation with renaming and element addition capabilities
 - **R11**: Support multi-configuration file loading and merging
-
 - **R13**: Provide robust error handling
 - **R14**: Parse and visualize unions with their fields
 - **R15**: Handle typedefs for struct/enum/union (named and anonymous) with content display
@@ -587,7 +540,7 @@ The PlantUML formatting template and all diagram structure rules are now maintai
 - **Source/Header files**: Show only primitive typedef declarations (e.g., `typedef int MyInt`, `typedef char* String`) - struct/enum/union typedefs are NOT shown in file/header classes
 - **Typedef classes**: Show the actual content:
   - **Struct typedefs**: Show struct field names and types (e.g., `+ int x`, `+ char* name`)
-  - **Enum typedefs**: Show enum value names (e.g., `+ LOG_DEBUG`, `+ LOG_INFO`, `+ STATE_IDLE`, `+ STATE_RUNNING`)
+  - **Enum typedefs**: Show enum value names (e.g., `LOG_DEBUG`, `LOG_INFO`, `STATE_IDLE`, `STATE_RUNNING`)
   - **Union typedefs**: Show union field names and types (e.g., `+ int i`, `+ float f`)
   - **Primitive typedefs**: Show the original type name (e.g., `+ uint32_t`, `+ char*`)
 
@@ -794,8 +747,6 @@ Configuration (in `config.json`):
 
 Example behavior:
 - With `max_function_signature_chars: 60`, a signature like `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void (* pre_process)(int*, int), void (* post_process)(int*, int))` may become `+ int process_with_callbacks(int[] data, int size, math_operation_t[] operations, ...)` depending on the exact threshold.
-
-
 
 #### 5.5.6 Macro Value Display (Configurable)
 

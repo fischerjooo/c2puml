@@ -107,7 +107,6 @@ python3 main.py --config tests/example/config.json --verbose
 
 **Note**: Both methods provide identical functionality. Choose the one that best fits your workflow.
 
-
 ### Generate PNG Images
 
 ```bash
@@ -130,83 +129,21 @@ The scripts automatically:
 
 Create `config.json` for customization. The configuration supports multiple filtering and transformation options:
 
-### Filtering Options
-
-- **file_filters**: Filter files by path patterns
-
-- **file_specific**: Configure file-specific settings including include filters for each root C file
-
-### File-Specific Configuration
-
-The `file_specific` feature allows you to configure file-specific settings for different root `.c` files. Each file can have its own `include_filter` and can override the global `include_depth` used by the transformer:
-
-```json
-"file_specific": {
-  "main.c": {
-    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-    "include_depth": 3
-  },
-  "network.c": {
-    "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-    "include_depth": 2
-  },
-  "database.c": {
-    "include_filter": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"],
-    "include_depth": 4
-  },
-  "simple.c": {
-    "include_depth": 1
-  }
-}
-```
-
-**Available file-specific settings:**
-- **include_filter** (optional): Array of regex patterns to filter includes for this specific file
-- **include_depth** (optional): Override the global include_depth setting for this specific file (applied by transformer)
-
-Files without file-specific configuration will use the global settings. Include relationships are computed in the transformer and stored in `include_relations` on root `.c` files, which the generator consumes. The generator no longer accepts an `include_depth` parameter and falls back to direct includes only when `include_relations` are absent.
-
-- **always_show_includes** (optional, global): When set to `true`, headers filtered out by `include_filter` remain visible in the diagram as empty header classes. Their contents and further includes are not processed, but their include relationships are still drawn from the file that included them.
-
-### Model Transformations
-
-The transformer supports modifying the parsed model before generating diagrams. Transformations are fully implemented and support multi-stage, containerized configuration with deterministic ordering (alphabetical by container name).
-
-Recommended containerized configuration (use numeric prefixes to control order):
+### Basic Configuration
 
 ```json
 {
-  "transformations_01_rename": {
-    "file_selection": [".*main\\.c$"],
-    "rename": {
-      "typedef": {"^old_name$": "new_name"},
-      "functions": {"^calculate$": "compute"},
-      "macros": {"^OLD_MACRO$": "NEW_MACRO"},
-      "globals": {"^old_var$": "new_var"},
-      "includes": {"^old\\.h$": "new\\.h"},
-      "files": {"^legacy\\.c$": "modern\\.c"}
-    }
-  },
-  "transformations_02_cleanup": {
-    "file_selection": [],
-    "remove": {
-      "typedef": ["^legacy_.*"],
-      "functions": ["^debug_.*", "^internal_.*"],
-      "macros": ["^DEBUG_.*", "^TEMP_.*"],
-      "globals": ["^old_global$"],
-      "includes": ["^deprecated\\.h$"]
-    }
-  }
+  "project_name": "my_project",
+  "source_folders": ["./src"],
+  "output_dir": "./output",
+  "recursive_search": true,
+  "include_depth": 2
 }
 ```
 
-Notes:
-- Containers are discovered by keys starting with `transformations` and applied in alphabetical order.
-- `file_selection` is a list of regex patterns matched against file paths; omitted or empty applies to all files.
-- Typedef renames automatically update type references in functions, globals, structs, and unions.
-- Removing typedefs cleans up type references across the model.
-- Include/file renames propagate to `includes` and `include_relations`.
-- `add` is reserved for future use.
+### Advanced Configuration
+
+For detailed configuration options including file filtering, transformations, and file-specific settings, see the [Configuration Guide](docs/configuration.md).
 
 ## Generated Output
 
@@ -217,93 +154,6 @@ The tool creates PlantUML diagrams showing:
 - Typedef relationships with enhanced UML stereotypes
 - Color-coded elements (source, headers, typedefs)
 - Dynamic visibility detection (public/private based on header presence)
-
-## Architecture
-
-**3-step processing pipeline with modular core components:**
-
-1. **Parse** - Advanced C/C++ parsing with tokenization → `model.json`
-2. **Transform** - Model transformation based on configuration → `model_transformed.json`  
-3. **Generate** - PlantUML diagram generation with proper UML notation
-
-### Core Components
-
-- **Parser (`core/parser.py`)** - Main parsing orchestration with CParser implementation
-- **Tokenizer (`core/parser_tokenizer.py`)** - Advanced C/C++ tokenization and lexical analysis
-- **Preprocessor (`core/preprocessor.py`)** - Handles conditional compilation and preprocessor directives
-- **Transformer (`core/transformer.py`)** - Model transformation and filtering engine
-- **Generator (`core/generator.py`)** - PlantUML diagram generation with proper formatting
-- **Verifier (`core/verifier.py`)** - Model validation and sanity checking
-
-## Development Setup
-
-### Manual Setup
-
-```bash
-# Create virtual environment
-python3 -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate  # Linux/macOS
-# or
-venv\Scripts\activate     # Windows
-
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Install package in development mode
-pip install -e .
-```
-
-### VSCode Configuration
-
-**VSCode Tasks**: The project includes pre-configured tasks accessible via `Ctrl+Shift+P` → "Tasks: Run Task":
-- **Run Full Workflow** - Complete analysis and diagram generation (parse → transform → generate)
-- **Run Example** - Quick test with example files and comprehensive verification
-- **Generate Pictures** - Convert PlantUML to PNG images with PlantUML toolchain
-- **Run Tests** - Execute comprehensive test suite with coverage reporting
-- **Install Dependencies** - Set up development environment with all required packages
-- **Format & Lint** - Code quality checks with Black, isort, and flake8
-
-### Development Commands
-
-```bash
-# Run all tests
-./scripts/run_all_tests.sh     # Linux/macOS
-scripts/run_all_tests.bat      # Windows
-python scripts/run_all_tests.py # Cross-platform
-
-# Run tests with coverage
-./scripts/run_tests_with_coverage.sh # Linux/macOS (comprehensive coverage)
-
-# Format and lint code
-scripts/format_lint.bat        # Windows
-
-# Generate PNG images from PlantUML
-./scripts/picgen.sh            # Linux/macOS (comprehensive PlantUML toolchain)
-scripts/picgen.bat             # Windows
-
-# Run full workflow (parse → transform → generate)
-./scripts/run_all.sh           # Linux/macOS
-scripts/run_all.bat            # Windows
-
-# Run example workflow
-./scripts/run_example.sh       # Linux/macOS
-scripts/run_example.bat        # Windows
-# Or use standalone script directly:
-python3 main.py --config tests/example/config.json
-
-# Install dependencies
-scripts/install_dependencies.bat # Windows
-
-# Git management utilities
-scripts/git_manage.bat         # Windows - Interactive git operations
-scripts/git_reset_pull.bat     # Windows - Reset and pull from remote
-
-# Debug and development utilities
-python scripts/debug.py        # Development debugging script
-python scripts/run_example_with_coverage.py # Example with coverage
-```
 
 ## Troubleshooting
 
@@ -323,12 +173,11 @@ python scripts/run_example_with_coverage.py # Example with coverage
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
 
-
 ### Getting Help
 
 - **Quick Test**: Try the standalone script first: `python3 main.py --config tests/example/config.json`
-- **Development**: Use the debug script: `python scripts/debug.py`
 - **Examples**: Run the example workflow: `./scripts/run_example.sh` or `scripts/run_example.bat`
+- **Documentation**: See the [Specification](docs/specification.md) for technical details
 
 ## License
 
