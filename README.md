@@ -19,6 +19,7 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 - [📖 Specification](https://github.com/fischerjooo/c2puml/blob/main/docs/specification.md) - Complete technical specification and architecture documentation
 - [🎨 PlantUML Template](https://github.com/fischerjooo/c2puml/blob/main/docs/puml_template.md) - PlantUML formatting template and diagram structure rules
+- [⚙️ Configuration Guide](https://github.com/fischerjooo/c2puml/blob/main/docs/configuration.md) - Detailed config.json reference and examples
 
 ## Releases
 
@@ -27,12 +28,10 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ## Features
 
-- **Advanced C/C++ Parsing**: Comprehensive tokenization-based parsing with robust preprocessor handling and conditional compilation support
+- **C/C++ Parsing**: Comprehensive tokenization-based parsing with preprocessor handling and conditional compilation support
 - **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning and configurable include depth processing
 - **PlantUML Generation**: Creates organized PlantUML diagrams with proper UML notation and relationship visualization
 - **Configuration System**: Flexible filtering and transformation capabilities with file-specific settings
-- **Model Verification**: Built-in sanity checking and validation of parsed models to ensure accuracy
-- **Cross-Platform**: Works on Linux, macOS, and Windows with platform-specific batch/shell scripts
 - **Enhanced UML Stereotypes**: Uses specific stereotypes for different typedef types (<<enumeration>>, <<struct>>, <<union>>, <<typedef>>)
 - **Smart Visibility Detection**: Automatically determines public/private visibility based on header file declarations
 
@@ -106,29 +105,6 @@ python3 main.py --config tests/example/config.json --verbose
 
 **Note**: Both methods provide identical functionality. Choose the one that best fits your workflow.
 
-### Installation vs Standalone: Which to Choose?
-
-| Feature | Installed Package | Standalone Script |
-|---------|-------------------|-------------------|
-| **Installation** | `pip install -e .` | None required |
-| **Command** | `c2puml` | `python3 main.py` |
-| **Portability** | System dependent | High (copy files) |
-| **Updates** | `pip install --upgrade` | Manual (update source) |
-| **Dependencies** | Automatic via pip | Manual management |
-| **Development** | Good | Excellent |
-| **CI/CD Integration** | Standard | Easy |
-| **Distribution** | Package distribution | Source required |
-
-**Choose installed package if:**
-- You plan to use c2puml regularly
-- You want automatic dependency management
-- You prefer standard Python package workflows
-
-**Choose standalone script if:**
-- You want to try c2puml without installation
-- You're in a restricted environment
-- You need maximum portability
-- You're doing development or testing
 
 ### Generate PNG Images
 
@@ -150,117 +126,25 @@ The scripts automatically:
 
 ## Configuration
 
-Create `config.json` for customization. The configuration supports multiple filtering and transformation options:
-
-### Filtering Options
-
-- **file_filters**: Filter files by path patterns
-
-- **file_specific**: Configure file-specific settings including include filters for each root C file
-
-### File-Specific Configuration
-
-The `file_specific` feature allows you to configure file-specific settings for different root `.c` files. Each file can have its own `include_filter` and can override the global `include_depth` used by the transformer:
-
-```json
-"file_specific": {
-  "main.c": {
-    "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-    "include_depth": 3
-  },
-  "network.c": {
-    "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-    "include_depth": 2
-  },
-  "database.c": {
-    "include_filter": ["^sqlite3\\.h$", "^mysql\\.h$", "^postgresql/"],
-    "include_depth": 4
-  },
-  "simple.c": {
-    "include_depth": 1
-  }
-}
-```
-
-**Available file-specific settings:**
-- **include_filter** (optional): Array of regex patterns to filter includes for this specific file
-- **include_depth** (optional): Override the global include_depth setting for this specific file (applied by transformer)
-
-Files without file-specific configuration will use the global settings. Include relationships are computed in the transformer and stored in `include_relations` on root `.c` files, which the generator consumes. The generator no longer accepts an `include_depth` parameter and falls back to direct includes only when `include_relations` are absent.
-
-- **always_show_includes** (optional, global): When set to `true`, headers filtered out by `include_filter` remain visible in the diagram as empty header classes. Their contents and further includes are not processed, but their include relationships are still drawn from the file that included them.
-
-### Model Transformations
-
-The transformer supports modifying the parsed model before generating diagrams:
+Create a `config.json` to customize analysis and output. Minimal example:
 
 ```json
 {
-  "transformations": {
-    "remove": {
-      "typedef": ["legacy_type", "temp_struct"],
-      "functions": ["debug_func", "internal_*"],
-      "macros": ["DEBUG_*", "TEMP_MACRO"],
-      "globals": ["old_global"],
-      "includes": ["deprecated.h"]
-    },
-    "rename": {
-      "typedef": {"old_name": "new_name"},
-      "functions": {"calculate": "compute"},
-      "macros": {"OLD_MACRO": "NEW_MACRO"},
-      "globals": {"old_var": "new_var"},
-      "includes": {"old.h": "new.h"},
-      "files": {"legacy.c": "modern.c"}
-    },
-    "file_selection": {
-      "selected_files": [".*main\\.c$"]
-    }
-  }
-}
-```
-
-**Note:** Transformation functionality provides configuration structure with stub implementations for future development.
-
-```json
-{
+  "project_name": "my_project",
   "source_folders": ["./src"],
-  "project_name": "MyProject",
-  "output_dir": "./output",
-  "recursive_search": true,
-  "include_depth": 2,
-  "file_filters": {
-    "include": [".*\\.c$", ".*\\.h$"],
-    "exclude": [".*test.*"]
-  },
-  "file_specific": {
-    "main.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^string\\.h$"],
-      "include_depth": 3
-    },
-    "network.c": {
-      "include_filter": ["^sys/socket\\.h$", "^netinet/", "^arpa/"],
-      "include_depth": 2
-    }
-  },
-  "transformations": {
-    "remove": {
-      "typedef": [],
-      "functions": [],
-      "macros": [],
-      "globals": [],
-      "includes": []
-    },
-    "rename": {
-      "typedef": {},
-      "functions": {},
-      "macros": {},
-      "globals": {},
-      "includes": {},
-      "files": {}
-    }
-  }
+  "output_dir": "./output"
 }
 ```
+
+Run with a config file:
+
+```bash
+c2puml --config config.json
+# or (merges all .json files in the current directory)
+c2puml
+```
+
+For full examples (file-specific include filters, include depth, formatting, and the transformation system), see the Configuration Guide: [docs/configuration.md](docs/configuration.md).
 
 ## Generated Output
 
@@ -271,101 +155,6 @@ The tool creates PlantUML diagrams showing:
 - Typedef relationships with enhanced UML stereotypes
 - Color-coded elements (source, headers, typedefs)
 - Dynamic visibility detection (public/private based on header presence)
-
-## Architecture
-
-**3-step processing pipeline with modular core components:**
-
-1. **Parse** - Advanced C/C++ parsing with tokenization → `model.json`
-2. **Transform** - Model transformation based on configuration → `model_transformed.json`  
-3. **Generate** - PlantUML diagram generation with proper UML notation
-
-### Core Components
-
-- **Parser (`core/parser.py`)** - Main parsing orchestration with CParser implementation
-- **Tokenizer (`core/parser_tokenizer.py`)** - Advanced C/C++ tokenization and lexical analysis
-- **Preprocessor (`core/preprocessor.py`)** - Handles conditional compilation and preprocessor directives
-- **Transformer (`core/transformer.py`)** - Model transformation and filtering engine
-- **Generator (`core/generator.py`)** - PlantUML diagram generation with proper formatting
-- **Verifier (`core/verifier.py`)** - Model validation and sanity checking
-
-## Development Setup
-
-### Manual Setup
-
-```bash
-# Create virtual environment
-python3 -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate  # Linux/macOS
-# or
-venv\Scripts\activate     # Windows
-
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Install package in development mode
-pip install -e .
-```
-
-### VSCode Configuration
-
-The project includes pre-configured VSCode settings for:
-- Python auto-formatting with Black
-- Import sorting with isort
-- Linting with flake8
-- Auto-save and formatting on save
-
-**VSCode Tasks**: The project includes pre-configured tasks accessible via `Ctrl+Shift+P` → "Tasks: Run Task":
-- **Run Full Workflow** - Complete analysis and diagram generation (parse → transform → generate)
-- **Run Example** - Quick test with example files and comprehensive verification
-- **Generate Pictures** - Convert PlantUML to PNG images with PlantUML toolchain
-- **Run Tests** - Execute comprehensive test suite with coverage reporting
-- **Install Dependencies** - Set up development environment with all required packages
-- **Format & Lint** - Code quality checks with Black, isort, and flake8
-
-**Current Status**: The project is actively developed with 700+ commits and comprehensive CI/CD pipeline including automated testing, coverage reporting, and artifact generation.
-
-### Development Commands
-
-```bash
-# Run all tests
-./scripts/run_all_tests.sh     # Linux/macOS
-scripts/run_all_tests.bat      # Windows
-python scripts/run_all_tests.py # Cross-platform
-
-# Run tests with coverage
-./scripts/run_tests_with_coverage.sh # Linux/macOS (comprehensive coverage)
-
-# Format and lint code
-scripts/format_lint.bat        # Windows
-
-# Generate PNG images from PlantUML
-./scripts/picgen.sh            # Linux/macOS (comprehensive PlantUML toolchain)
-scripts/picgen.bat             # Windows
-
-# Run full workflow (parse → transform → generate)
-./scripts/run_all.sh           # Linux/macOS
-scripts/run_all.bat            # Windows
-
-# Run example workflow
-./scripts/run_example.sh       # Linux/macOS
-scripts/run_example.bat        # Windows
-# Or use standalone script directly:
-python3 main.py --config tests/example/config.json
-
-# Install dependencies
-scripts/install_dependencies.bat # Windows
-
-# Git management utilities
-scripts/git_manage.bat         # Windows - Interactive git operations
-scripts/git_reset_pull.bat     # Windows - Reset and pull from remote
-
-# Debug and development utilities
-python scripts/debug.py        # Development debugging script
-python scripts/run_example_with_coverage.py # Example with coverage
-```
 
 ## Troubleshooting
 
@@ -385,12 +174,6 @@ python scripts/run_example_with_coverage.py # Example with coverage
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
 
-**Invalid source paths**
-- **Enhanced Error Handling**: The library now provides detailed error messages for invalid source paths instead of crashing
-- **Helpful Context**: Error messages include current working directory, parent directory information, and suggestions
-- **Multiple Source Folders**: Partial failures are handled gracefully when some folders are valid
-- **See**: [Error Handling Guide](docs/error_handling_guide.md) for comprehensive troubleshooting
-
 ### Getting Help
 
 - **Quick Test**: Try the standalone script first: `python3 main.py --config tests/example/config.json`
@@ -400,5 +183,3 @@ python scripts/run_example_with_coverage.py # Example with coverage
 ## License
 
 MIT License
-
-
