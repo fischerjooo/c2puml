@@ -28,12 +28,10 @@ A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/
 
 ## Features
 
-- **Advanced C/C++ Parsing**: Comprehensive tokenization-based parsing with robust preprocessor handling and conditional compilation support
+- **C/C++ Parsing**: Comprehensive tokenization-based parsing with preprocessor handling and conditional compilation support
 - **Project Analysis**: Analyzes entire C/C++ projects with recursive directory scanning and configurable include depth processing
 - **PlantUML Generation**: Creates organized PlantUML diagrams with proper UML notation and relationship visualization
 - **Configuration System**: Flexible filtering and transformation capabilities with file-specific settings
-- **Model Verification**: Built-in sanity checking and validation of parsed models to ensure accuracy
-- **Cross-Platform**: Works on Linux, macOS, and Windows with platform-specific batch/shell scripts
 - **Enhanced UML Stereotypes**: Uses specific stereotypes for different typedef types (<<enumeration>>, <<struct>>, <<union>>, <<typedef>>)
 - **Smart Visibility Detection**: Automatically determines public/private visibility based on header file declarations
 
@@ -158,10 +156,6 @@ The tool creates PlantUML diagrams showing:
 - Color-coded elements (source, headers, typedefs)
 - Dynamic visibility detection (public/private based on header presence)
 
-## Development
-
-For architecture, component internals, and testing details, see docs/specification.md and tests/README.md.
-
 ## Troubleshooting
 
 ### Common Issues
@@ -180,7 +174,6 @@ For architecture, component internals, and testing details, see docs/specificati
 **"Dot executable does not exist" (PlantUML PNG generation)**
 - **Solution**: Install Graphviz or use the provided scripts: `./scripts/picgen.sh` or `scripts/picgen.bat`
 
-
 ### Getting Help
 
 - **Quick Test**: Try the standalone script first: `python3 main.py --config tests/example/config.json`
@@ -190,5 +183,3 @@ For architecture, component internals, and testing details, see docs/specificati
 ## License
 
 MIT License
-
-
