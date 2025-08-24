@@ -1,12 +1,8 @@
-# C to PlantUML Converter - Component Specification
+# C to PlantUML Converter - Technical Specification
 
-**Current Implementation Status**: ✅ **FULLY IMPLEMENTED AND VERIFIED**  
-**Last Updated**: August 2025  
-**Version**: 3.1.0 (Production Ready with Advanced Tokenization and Transformation)
+This document is for developers and testers. For installation, CLI usage, and configuration walkthroughs, see [README](../README.md) and the [Configuration Guide](configuration.md).
 
-This specification reflects the current implementation with all features fully functional and tested, including advanced tokenization, preprocessor handling, model verification capabilities, and comprehensive transformation system. All functionality has been verified through extensive testing with 376 unit tests and integration tests passing.
-
-## 1. High-Level Functional Specification
+## 1. Functional Overview
 
 The C to PlantUML Converter is a Python-based tool that analyzes C/C++ source code projects and generates comprehensive PlantUML class diagrams. The system provides a complete workflow from source code parsing to structured diagram generation with advanced filtering and transformation capabilities, powered by robust tokenization and preprocessor handling.
 
@@ -122,50 +118,26 @@ The system supports C/C++ file formats and language features:
 - **Include Directives**: `#include` with angle brackets and quotes
 
 ### Configuration Examples
-Functional configuration examples for common use cases:
+For end‑user configuration examples, refer to docs/configuration.md. Below are concise developer‑focused snippets demonstrating structure only.
 
-#### File-Specific Configuration
+File‑specific configuration (structure):
 ```json
 {
   "file_specific": {
-    "sample.c": {
-      "include_filter": ["^stdio\\.h$", "^stdlib\\.h$", "^sample\\.h$"],
-      "include_depth": 3
-    },
-    "utils.c": {
-      "include_filter": ["^math\\.h$", "^time\\.h$"],
-      "include_depth": 2
-    }
+    "sample.c": { "include_filter": ["..."], "include_depth": 3 }
   }
 }
 ```
 
-#### Transformation Configuration
+Transformation containers (structure):
 ```json
 {
-  "transformations_01_rename": {
-    "file_selection": [".*transformed\\.(c|h)$"],
-    "rename": {
-      "typedef": {
-        "^old_config_t$": "config_t"
-      },
-      "functions": {
-        "^deprecated_(.*)": "legacy_\\1"
-      }
-    }
-  },
-  "transformations_02_cleanup": {
-    "file_selection": [".*transformed\\.(c|h)$"],
-    "remove": {
-      "typedef": ["^legacy_.*", "^old_.*"],
-      "functions": ["^test_.*", "^debug_.*"],
-      "macros": ["^DEPRECATED_.*", "^LEGACY_.*"]
-    }
-  }
+  "transformations_01_rename": { "file_selection": ["..."], "rename": { /* ... */ } },
+  "transformations_02_cleanup": { "file_selection": [], "remove": { /* ... */ } }
 }
 ```
 
-## 2. High-Level Requirements
+## 2. Requirements
 
 ### 2.1 Core Requirements
 - **R1**: Parse C/C++ source files and extract structural information (structs, enums, unions, functions, macros, globals, typedefs)
@@ -429,7 +401,7 @@ class Union:
     fields: List[Field]
 ```
 
-### 3.4 Configuration Parameters
+### 3.4 Configuration Parameters (reference)
 
 #### 3.4.1 Core Configuration
 The system uses a JSON-based configuration file with the following parameters:
