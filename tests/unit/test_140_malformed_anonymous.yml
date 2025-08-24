@@ -1,0 +1,203 @@
+test:
+  name: Malformed Anonymous Structure Handling
+  description: Test for current behavior of malformed anonymous structure field types - this test documents the current state and can be updated when the handling is improved
+  category: unit
+  id: '140'
+---
+source_files:
+  malformed_anonymous_test.c: |
+    // Test current behavior of malformed anonymous structure field types
+    // These are field types where the field name is incorrectly embedded in the type
+    
+    // Test 1: Malformed struct field type
+    typedef struct {
+        int normal_field;
+        struct { ... } nested_a2;  // Malformed: field name embedded in type
+    } test_struct_t;
+    
+    // Test 2: Malformed union field type
+    typedef struct {
+        int base_field;
+        union { ... } data_union;  // Malformed: field name embedded in type
+    } test_union_t;
+    
+    // Test 3: Multiple malformed fields
+    typedef struct {
+        int counter;
+        struct { ... } nested_a2;      // Malformed struct field
+        struct { ... } level3_field;   // Malformed struct field
+        union { ... } data_union;      // Malformed union field
+    } multiple_malformed_t;
+    
+    // Test 4: Malformed field with existing structure (should reuse)
+    typedef struct {
+        int id;
+        struct { ... } nested_a2;  // Malformed: should reference existing structure
+    } reuse_test_t;
+    
+    // Test 5: Integration test - similar to complex case from todo
+    typedef struct {
+        int nested_a1;
+        struct {
+            int deep_a1;
+        } deep_struct_a1;
+        struct {
+            int deep_a2;
+        } deep_struct_a2;
+        struct { ... } nested_a2;  // Malformed field that should be extracted
+    } complex_naming_test_t_first_struct;
+    
+    // Global variables
+    test_struct_t global_struct;
+    test_union_t global_union;
+    multiple_malformed_t global_multiple;
+    reuse_test_t global_reuse;
+    complex_naming_test_t_first_struct global_complex;
+    
+    // Functions that use these types
+    void process_struct(test_struct_t* s) {
+        s->normal_field = 42;
+    }
+    
+    void process_union(test_union_t* u) {
+        u->base_field = 100;
+    }
+    
+    void process_multiple(multiple_malformed_t* m) {
+        m->counter = 0;
+    }
+    
+    void process_reuse(reuse_test_t* r) {
+        r->id = 999;
+    }
+    
+    void process_complex(complex_naming_test_t_first_struct* c) {
+        c->nested_a1 = 1;
+        c->deep_struct_a1.deep_a1 = 10;
+        c->deep_struct_a2.deep_a2 = 20;
+    }
+    
+    int main() {
+        process_struct(&global_struct);
+        process_union(&global_union);
+        process_multiple(&global_multiple);
+        process_reuse(&global_reuse);
+        process_complex(&global_complex);
+        return 0;
+    }
+---
+config.json: |
+  {
+    "project_name": "malformed_anonymous_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 1
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - malformed_anonymous_test.puml
+  model:
+    validate_structure: true
+    project_name: malformed_anonymous_test
+    expected_files:
+    - malformed_anonymous_test.c
+    files:
+      malformed_anonymous_test.c:
+        structs_exist:
+        - test_struct_t
+        - test_union_t
+        - multiple_malformed_t
+        - reuse_test_t
+        - complex_naming_test_t_first_struct
+        - complex_naming_test_t_first_struct_deep_struct_a1
+        - complex_naming_test_t_first_struct_deep_struct_a2
+        unions_exist:
+        - mixed_union
+        functions_exist:
+        - process_struct
+        - process_union
+        - process_multiple
+        - process_reuse
+        - process_complex
+        - main
+        globals_exist:
+        - global_struct
+        - global_union
+        - global_multiple
+        - global_reuse
+        - global_complex
+    struct_fields:
+      test_struct_t:
+        - name: normal_field
+          type: int
+        - name: nested_a2
+          type: "struct { ... } nested_a2"  # Current behavior - malformed type
+      test_union_t:
+        - name: base_field
+          type: int
+        - name: data_union
+          type: "union { ... } data_union"  # Current behavior - malformed type
+      multiple_malformed_t:
+        - name: counter
+          type: int
+        - name: nested_a2
+          type: "struct { ... } nested_a2"  # Current behavior - malformed type
+        - name: level3_field
+          type: "struct { ... } level3_field"  # Current behavior - malformed type
+        - name: data_union
+          type: "union { ... } data_union"  # Current behavior - malformed type
+      complex_naming_test_t_first_struct:
+        - name: nested_a1
+          type: int
+        - name: deep_struct_a1
+          type: complex_naming_test_t_first_struct_deep_struct_a1
+        - name: deep_struct_a2
+          type: complex_naming_test_t_first_struct_deep_struct_a2
+        - name: nested_a2
+          type: "struct { ... } nested_a2"  # Current behavior - malformed type
+  puml:
+    syntax_valid: true
+    file_count: 1
+    contains_elements:
+    - test_struct_t
+    - test_union_t
+    - multiple_malformed_t
+    - reuse_test_t
+    - complex_naming_test_t_first_struct
+    - process_struct
+    - process_union
+    - process_multiple
+    - process_reuse
+    - process_complex
+    - main
+    files:
+      malformed_anonymous_test.puml:
+        syntax_valid: true
+        contains_lines:
+        - class "test_struct_t" as TYPEDEF_TEST_STRUCT_T
+        - class "test_union_t" as TYPEDEF_TEST_UNION_T
+        - class "multiple_malformed_t" as TYPEDEF_MULTIPLE_MALFORMED_T
+        - class "reuse_test_t" as TYPEDEF_REUSE_TEST_T
+        - class "complex_naming_test_t_first_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT
+        - class "complex_naming_test_t_first_struct_deep_struct_a1" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT_DEEP_STRUCT_A1
+        - class "complex_naming_test_t_first_struct_deep_struct_a2" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT_DEEP_STRUCT_A2
+        - void process_struct(
+        - void process_union(
+        - void process_multiple(
+        - void process_reuse(
+        - void process_complex(
+        - int main()
+        contains_elements:
+        - test_struct_t
+        - test_union_t
+        - multiple_malformed_t
+        - reuse_test_t
+        - complex_naming_test_t_first_struct
+        - complex_naming_test_t_first_struct_deep_struct_a1
+        - complex_naming_test_t_first_struct_deep_struct_a2
