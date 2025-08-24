@@ -15,5 +15,4 @@ echo PlantUML diagrams generated in: ./artifacts/output_example (see config.json
 
 REM Run assertions to validate the generated PUML files
 echo Running assertions to validate generated PUML files...
-cd tests/example
-python test-example.py
+python tests/example/test_901_basic_example.py
