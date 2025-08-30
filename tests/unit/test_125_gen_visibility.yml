@@ -3,6 +3,7 @@ test:
   description: Validate visibility markers for functions/globals across presence in headers and no-headers cases
   category: unit
   id: '125'
+  steps: ["generate"]
 ---
 source_files:
   model.json: |
