@@ -3,6 +3,7 @@ test:
   description: Validate file UML IDs and typedef/class UML IDs across simple, complex, and edge cases
   category: unit
   id: '123'
+  steps: ["generate"]
 ---
 source_files:
   model.json: |
