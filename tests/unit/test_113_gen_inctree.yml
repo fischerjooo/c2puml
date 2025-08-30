@@ -3,6 +3,7 @@ test:
   name: "generator_include_tree_cli_comprehensive"
   description: "Test comprehensive include tree generation with multiple files and deep includes"
   category: "generator"
+  steps: ["generate"]
   
 ---
 source_files:

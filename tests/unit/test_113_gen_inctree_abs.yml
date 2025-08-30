@@ -3,6 +3,7 @@ test:
   name: "generator_include_tree_cli_absolute_paths"
   description: "Test that include relationships work correctly with absolute paths"
   category: "generator"
+  steps: ["generate"]
   
 ---
 source_files:

@@ -3,6 +3,7 @@ test:
   name: "generator_new_formatting_cli_visibility_logic"
   description: "Test that globals and functions are marked as public if present in headers, private otherwise"
   category: "generator"
+  steps: ["generate"]
   
 ---
 source_files:
