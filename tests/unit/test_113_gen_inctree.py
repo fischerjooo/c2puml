@@ -1,76 +1,29 @@
 #!/usr/bin/env python3
 """
-Test Generator Include Tree Through CLI Interface
+Test Generator Include Tree – simplified using unified framework
 """
 import os
 import sys
 import unittest
 import json
-import shutil
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 from tests.framework import UnifiedTestCase
 
 class TestGeneratorIncludeTreeCLI(UnifiedTestCase):
-    """Test include tree generation through the CLI interface"""
-    
+    """Test include tree generation using the unified simple pattern"""
+
     def test_include_tree_with_absolute_paths(self):
-        """Test that include relationships work correctly with absolute paths"""
-        test_data = self.data_loader.load_test_data("113_gen_inctree_abs")
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, "113_gen_inctree_abs")
-        temp_dir = os.path.dirname(source_dir)
-        output_dir = os.path.join(os.path.dirname(temp_dir), "output")
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Copy model to expected output location for generate_only
-        model_source = os.path.join(source_dir, "model.json")
-        model_target = os.path.join(output_dir, "model.json")
-        shutil.copy2(model_source, model_target)
-        
-        config_filename = os.path.basename(config_path)
-        result = self.executor.run_generate_only(config_filename, temp_dir)
-        self.cli_validator.assert_cli_success(result)
-        
-        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
-        puml_files_dict = {}
-        for puml_file_path in puml_files:
-            filename = os.path.basename(puml_file_path)
-            with open(puml_file_path, 'r') as f:
-                puml_files_dict[filename] = f.read()
-        
-        self.validators_processor.process_assertions(
-            test_data["assertions"], {}, puml_files_dict, result, self
-        )
+        result = self.run_test("113_gen_inctree_abs")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
 
 
 
     def test_include_tree_comprehensive(self):
-        """Test comprehensive include tree generation with multiple files and deep includes"""
-        test_data = self.data_loader.load_test_data("113_gen_inctree")
-        source_dir, config_path = self.data_loader.create_temp_files(test_data, "113_gen_inctree")
-        temp_dir = os.path.dirname(source_dir)
-        output_dir = os.path.join(os.path.dirname(temp_dir), "output")
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Copy model to expected output location for generate_only
-        model_source = os.path.join(source_dir, "model.json")
-        model_target = os.path.join(output_dir, "model.json")
-        shutil.copy2(model_source, model_target)
-        
-        config_filename = os.path.basename(config_path)
-        result = self.executor.run_generate_only(config_filename, temp_dir)
-        self.cli_validator.assert_cli_success(result)
-        
-        puml_files = self.output_validator.assert_puml_files_exist(output_dir)
-        puml_files_dict = {}
-        for puml_file_path in puml_files:
-            filename = os.path.basename(puml_file_path)
-            with open(puml_file_path, 'r') as f:
-                puml_files_dict[filename] = f.read()
-        
-        self.validators_processor.process_assertions(
-            test_data["assertions"], {}, puml_files_dict, result, self
-        )
+        result = self.run_test("113_gen_inctree")
+        self.validate_execution_success(result)
+        self.validate_test_output(result)
 
 if __name__ == "__main__":
     unittest.main()

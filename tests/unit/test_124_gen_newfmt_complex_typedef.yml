@@ -3,6 +3,7 @@ test:
   name: "generator_new_formatting_cli_complex_typedef"
   description: "Test complex combination of struct, enum, union, and typedef in same file"
   category: "generator"
+  steps: ["generate"]
   
 ---
 source_files:
