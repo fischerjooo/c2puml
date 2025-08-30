@@ -3,11 +3,11 @@
 ============================= test session starts ==============================
 platform linux -- Python 3.9.23, pytest-8.4.1, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.9.23/x64/bin/python3
 cachedir: .pytest_cache
-metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'xdist': '3.8.0', 'cov': '6.2.1', 'mock': '3.14.1', 'metadata': '3.1.1', 'html': '4.1.1', 'benchmark': '5.1.0'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
 benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'benchmark': '5.1.0', 'metadata': '3.1.1', 'mock': '3.14.1', 'xdist': '3.8.0', 'html': '4.1.1', 'cov': '6.2.1'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
 rootdir: /home/runner/work/c2puml/c2puml
 configfile: pytest.ini
-plugins: xdist-3.8.0, cov-6.2.1, mock-3.14.1, metadata-3.1.1, html-4.1.1, benchmark-5.1.0
+plugins: benchmark-5.1.0, metadata-3.1.1, mock-3.14.1, xdist-3.8.0, html-4.1.1, cov-6.2.1
 collecting ... collected 79 items
 
 tests/example/test_901_basic_example.py::TestBasicExample::test_basic_example PASSED [  1%]
@@ -90,6 +90,6 @@ tests/unit/test_139_preproc_eval_cli.py::TestPreprocEvalCli::test_preproc_eval_c
 tests/unit/test_140_local_inline_funcs.py::TestLocalInlineFunctions::test_local_inline_functions_detection PASSED [ 98%]
 tests/unit/test_140_malformed_anonymous.py::TestMalformedAnonymousStructures::test_malformed_anonymous_structures_comprehensive PASSED [100%]
 
-============================== 79 passed in 9.01s ==============================
+============================== 79 passed in 8.97s ==============================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:945: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
