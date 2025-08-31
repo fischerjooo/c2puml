@@ -8,7 +8,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
@@ -22,6 +22,7 @@ class TestGeneratorBasicPlantuml(UnifiedTestCase):
         self.validate_test_output(result)
 
     def test_generator_basic_plantuml_truncation(self):
+        """Run the test_generator_basic_plantuml_truncation test through CLI interface."""
         result = self.run_test("101_gen_basic_trunc")
         self.validate_execution_success(result)
         self.validate_test_output(result)

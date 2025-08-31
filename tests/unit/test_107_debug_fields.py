@@ -8,7 +8,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
@@ -23,7 +23,7 @@ class TestDebugFieldParsingComprehensive(UnifiedTestCase):
 
     def test_complex_struct_field_processing(self):
         """Test complex struct field processing through CLI interface."""
-        result = self.run_test("107_debug_fields_struct") 
+        result = self.run_test("107_debug_fields_struct")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
@@ -35,5 +35,4 @@ class TestDebugFieldParsingComprehensive(UnifiedTestCase):
 
 
 if __name__ == "__main__":
-    import unittest
     unittest.main()

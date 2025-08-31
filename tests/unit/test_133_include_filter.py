@@ -9,18 +9,18 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
 class TestIncludeFilteringComprehensive(UnifiedTestCase):
     """Test comprehensive include filtering through the CLI interface"""
-    
+
     def test_include_filtering_comprehensive(self):
         """Test comprehensive include filtering scenarios through the CLI interface"""
         # Run the complete test using high-level methods
         result = self.run_test("133_include_filter")
-        
+
         # Validate results
         self.validate_execution_success(result)
         self.validate_test_output(result)

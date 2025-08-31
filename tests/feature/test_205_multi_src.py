@@ -7,7 +7,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
@@ -15,6 +15,7 @@ class TestMultipleSourceFoldersCLI(UnifiedTestCase):
     """Validate parsing with multiple source folders using CLI"""
 
     def test_multiple_source_folders(self):
+        """Run the multiple source folders scenario"""
         result = self.run_test("205_multi_src")
         self.validate_execution_success(result)
         self.validate_test_output(result)

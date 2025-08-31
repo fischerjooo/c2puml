@@ -10,18 +10,18 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
 class TestParserEncoding(UnifiedTestCase):
     """Test parsing files with various encodings through the CLI interface"""
-    
+
     def test_parser_encoding(self):
         """Test parsing files with various encodings through the CLI interface"""
         # Run the complete test using high-level methods
         result = self.run_test("129_parser_encoding")
-        
+
         # Validate results
         self.validate_execution_success(result)
         self.validate_test_output(result)
