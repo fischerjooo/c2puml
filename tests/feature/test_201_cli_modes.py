@@ -7,7 +7,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
@@ -15,6 +15,7 @@ class TestCLIModesComprehensive(UnifiedTestCase):
     """Test CLI modes functionality through the CLI interface (single scenario)"""
 
     def test_cli_modes_and_features_comprehensive(self):
+        """Run the CLI modes and features comprehensive scenario"""
         result = self.run_test("201_cli_modes")
         self.validate_execution_success(result)
         # Assertions are handled in YAML; only success required here

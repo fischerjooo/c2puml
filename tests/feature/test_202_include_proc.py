@@ -9,22 +9,27 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
 class TestIncludeProcessingConsolidated(UnifiedTestCase):
+    """Test include header processing functionality through the CLI interface"""
+
     def test_include_processing_consolidated(self):
+        """Run the consolidated include processing scenario"""
         result = self.run_test("202_include_proc")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_include_processing_error_handling_consolidated(self):
+        """Run the include processing error handling consolidated scenario"""
         result = self.run_test("202_include_proc_error")
         self.validate_execution_success(result)
         self.validate_test_output(result)
 
     def test_include_processing_basic_consolidated(self):
+        """Run the include processing basic consolidated scenario"""
         result = self.run_test("202_include_proc_basic")
         self.validate_execution_success(result)
         self.validate_test_output(result)

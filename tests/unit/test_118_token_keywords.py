@@ -10,18 +10,18 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
 class TestTokenizerKeywords(UnifiedTestCase):
     """Test tokenizer keyword recognition through the CLI interface"""
-    
+
     def test_tokenizer_keywords(self):
         """Test tokenizer keyword recognition through the CLI interface"""
         # Run the complete test using high-level methods
         result = self.run_test("118_token_keywords")
-        
+
         # Validate results
         self.validate_execution_success(result)
         self.validate_test_output(result)

@@ -10,7 +10,7 @@ import os
 import sys
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase
 
 
@@ -42,6 +42,7 @@ class TestAbsolutePathBugComprehensive(UnifiedTestCase):
         self.validate_test_output(result)
 
     def test_path_resolution_and_include_tree_comprehensive(self):
+        """Test path resolution and include tree building comprehensively through CLI interface."""
         result = self.run_test("103_abs_path_include_tree")
         self.validate_execution_success(result)
         self.validate_test_output(result)

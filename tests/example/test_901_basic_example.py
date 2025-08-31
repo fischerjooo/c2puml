@@ -8,7 +8,7 @@ import sys
 import json
 import unittest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from tests.framework import UnifiedTestCase  # noqa: E402
 
 
@@ -34,15 +34,15 @@ class TestBasicExample(UnifiedTestCase):
         model_file = self.output_validator.assert_model_file_exists(output_dir)
 
         # Load model
-        with open(model_file, 'r') as f:
+        with open(model_file, "r") as f:
             model_data = json.load(f)
 
         # Load all PUML files into a dict {filename: content}
         puml_files = {}
         for entry in os.listdir(output_dir):
-            if entry.endswith('.puml'):
+            if entry.endswith(".puml"):
                 puml_path = os.path.join(output_dir, entry)
-                with open(puml_path, 'r', encoding='utf-8') as pf:
+                with open(puml_path, "r", encoding="utf-8") as pf:
                     puml_files[entry] = pf.read()
 
         # Process YAML assertions
