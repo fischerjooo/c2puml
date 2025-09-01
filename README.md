@@ -1,5 +1,7 @@
-# c2puml - C to PlantUML Converter
-
+<h1 align="center">c2puml - C to PlantUML Converter</h1>
+<p align="center">
+  <img src="docs/c2puml.jpg" alt="C 2 Puml" width="128"/>
+</p>
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
 ## Status
