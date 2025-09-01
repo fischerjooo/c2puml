@@ -90,6 +90,6 @@ tests/unit/test_139_preproc_eval_cli.py::TestPreprocEvalCli::test_preproc_eval_c
 tests/unit/test_140_local_inline_funcs.py::TestLocalInlineFunctions::test_local_inline_functions_detection PASSED [ 98%]
 tests/unit/test_140_malformed_anonymous.py::TestMalformedAnonymousStructures::test_malformed_anonymous_structures_comprehensive PASSED [100%]
 
-============================== 79 passed in 9.60s ==============================
+============================== 79 passed in 9.26s ==============================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:945: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
