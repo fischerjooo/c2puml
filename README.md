@@ -1,4 +1,4 @@
-# c2puml - C to PlantUML Converter
+<h1 align="center">c2puml - C to PlantUML Converter</h1>
 <p align="center">
   <img src="docs/c2puml.jpg" alt="C 2 Puml" width="128"/>
 </p>
