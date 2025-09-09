@@ -449,13 +449,20 @@ class Generator:
         is_declaration_only: bool = False,
     ):
         """Add functions section to lines with given prefix and filter."""
-        if file_model.functions:
+        if not file_model.functions:
+            return
+
+        # Collect matching function lines first to avoid emitting an empty header
+        function_lines: List[str] = []
+        for func in sorted(file_model.functions, key=lambda x: x.name):
+            if is_declaration_only and (func.is_declaration or func.is_inline):
+                function_lines.append(self._format_function_signature(func, prefix))
+            elif not is_declaration_only and not func.is_declaration:
+                function_lines.append(self._format_function_signature(func, prefix))
+
+        if function_lines:
             lines.append(f"{INDENT}-- Functions --")
-            for func in sorted(file_model.functions, key=lambda x: x.name):
-                if is_declaration_only and (func.is_declaration or func.is_inline):
-                    lines.append(self._format_function_signature(func, prefix))
-                elif not is_declaration_only and not func.is_declaration:
-                    lines.append(self._format_function_signature(func, prefix))
+            lines.extend(function_lines)
 
     def _generate_c_file_class(
         self,
@@ -599,35 +606,37 @@ class Generator:
         is_declaration_only: bool = False,
     ):
         """Add functions section with visibility based on header presence, grouped by visibility"""
-        if file_model.functions:
-            lines.append(f"{INDENT}-- Functions --")
-            
-            # Separate functions into public and private groups
-            public_functions = []
-            private_functions = []
-            
-            for func in sorted(file_model.functions, key=lambda x: x.name):
-                if is_declaration_only and (func.is_declaration or func.is_inline):
-                    prefix = "+ "
-                    formatted_function = self._format_function_signature(func, prefix)
+        if not file_model.functions:
+            return
+
+        # Separate functions into public and private groups, collecting first
+        public_functions: List[str] = []
+        private_functions: List[str] = []
+
+        for func in sorted(file_model.functions, key=lambda x: x.name):
+            if is_declaration_only and (func.is_declaration or func.is_inline):
+                prefix = "+ "
+                formatted_function = self._format_function_signature(func, prefix)
+                public_functions.append(formatted_function)
+            elif not is_declaration_only and not func.is_declaration:
+                prefix = "+ " if func.name in header_function_decl_names else "- "
+                formatted_function = self._format_function_signature(func, prefix)
+
+                if prefix == "+ ":
                     public_functions.append(formatted_function)
-                elif not is_declaration_only and not func.is_declaration:
-                    prefix = "+ " if func.name in header_function_decl_names else "- "
-                    formatted_function = self._format_function_signature(func, prefix)
-                    
-                    if prefix == "+ ":
-                        public_functions.append(formatted_function)
-                    else:
-                        private_functions.append(formatted_function)
-            
+                else:
+                    private_functions.append(formatted_function)
+
+        if public_functions or private_functions:
+            lines.append(f"{INDENT}-- Functions --")
             # Add public functions first
             for function_line in public_functions:
                 lines.append(function_line)
-            
+
             # Add empty line between public and private if both exist
             if public_functions and private_functions:
                 lines.append("")
-            
+
             # Add private functions
             for function_line in private_functions:
                 lines.append(function_line)
