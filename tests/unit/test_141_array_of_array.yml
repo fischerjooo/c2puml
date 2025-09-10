@@ -8,7 +8,8 @@ test:
 source_files:
   main.c: |
     #include "typedef_test.h"
-    int main(void) { return 0; }
+    int array_of_array_global[5][6];
+    int main(void) { return array_of_array_global[0][0]; }
   typedef_test.h: |
     #include <stdint.h>
     typedef struct ArrayHolder_tag {
@@ -36,3 +37,5 @@ assertions:
           - 'class "ArrayHolder_t" as TYPEDEF_ARRAYHOLDER_T <<struct>>'
           - '+ int type_tst'
           - '+ int[2][2] array_ofarray_aast'
+          - '-- Global Variables --'
+          - '- int[5][6] array_of_array_global'
