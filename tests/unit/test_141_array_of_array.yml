@@ -1,0 +1,41 @@
+test:
+  name: "Generator – Array of Array formatting"
+  description: Validate that multi-dimensional arrays with U suffix render as type[2][2] name
+  category: unit
+  id: '141'
+  steps: ["parse", "transform", "generate"]
+---
+source_files:
+  main.c: |
+    #include "typedef_test.h"
+    int array_of_array_global[5][6];
+    int main(void) { return array_of_array_global[0][0]; }
+  typedef_test.h: |
+    #include <stdint.h>
+    typedef struct ArrayHolder_tag {
+        int type_tst;
+        int array_ofarray_aast[2U][2U];
+    } ArrayHolder_t;
+---
+config.json: |
+  {
+    "project_name": "array_of_array",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "include_depth": 1,
+    "recursive_search": false
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+    files:
+      main.c.puml:
+        contains_lines:
+          - 'class "ArrayHolder_t" as TYPEDEF_ARRAYHOLDER_T <<struct>>'
+          - '+ int type_tst'
+          - '+ int[2][2] array_ofarray_aast'
+          - '-- Global Variables --'
+          - '- int[5][6] array_of_array_global'
