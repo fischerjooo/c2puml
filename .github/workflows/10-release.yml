@@ -81,6 +81,7 @@ jobs:
           git checkout origin/main -- src/c2puml/
           git checkout origin/main -- main.py
           git checkout origin/main -- README.md
+          git checkout origin/main -- LICENSE
           git checkout origin/main -- pyproject.toml
           
           echo "📁 Release files copied:"
@@ -139,6 +140,7 @@ jobs:
           - `main.py` - Application entry point
           - `README.md` - Project documentation
           - `pyproject.toml` - Python package configuration
+          - `LICENSE` - License file
           - `release-note.md` - This release notes file
 
           ## Download Links
@@ -164,7 +166,7 @@ jobs:
           echo "📁 Contents of src/c2puml:"
           ls -la src/c2puml/ || echo "src/c2puml/ directory not found"
           echo "📄 Main files:"
-          ls -la main.py README.md pyproject.toml release-note.md || echo "Some main files not found"
+          ls -la main.py README.md LICENSE pyproject.toml release-note.md || echo "Some main files not found"
           echo "🔍 Git status after file operations:"
           git status
 
@@ -226,12 +228,14 @@ jobs:
           - Main application entry point (\`main.py\`)
           - Documentation (\`README.md\`)
           - Package configuration (\`pyproject.toml\`)
+          - License file (\`LICENSE\`)
 
           ### Files included:
           - \`src/c2puml/\` - Core C2PlantUML library
           - \`main.py\` - Application entry point
           - \`README.md\` - Project documentation
-          - \`pyproject.toml\` - Python package configuration"
+          - \`pyproject.toml\` - Python package configuration
+          - \`LICENSE\` - License file"
           
           # Add additional notes if provided
           if [ -n "${{ github.event.inputs.release_notes }}" ]; then
