@@ -70,4 +70,10 @@ typedef union NamedUnion_tag {
 /* Typedef for array of pointers */
 typedef MyComplexPtr MyComplexArray[10];
 
+/* Struct with multi-dimensional array sizes using U suffix */
+typedef struct ArrayHolder_tag {
+    int type_tst;
+    int array_ofarray_aast[2U][2U];
+} ArrayHolder_t;
+
 #endif /* TYPEDEF_TEST_H */

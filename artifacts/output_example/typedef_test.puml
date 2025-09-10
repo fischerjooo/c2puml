@@ -162,6 +162,11 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
     STATE_ERROR
 }
 
+class "ArrayHolder_t" as TYPEDEF_ARRAYHOLDER_T <<struct>> #LightYellow
+{
+    + int type_tst
+}
+
 class "MyBuffer" as TYPEDEF_MYBUFFER <<struct>> #LightYellow
 {
     + MyLen length
@@ -276,6 +281,7 @@ HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
 HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
 HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
+HEADER_TYPEDEF_TEST ..> TYPEDEF_ARRAYHOLDER_T : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_MYCOMPLEX : <<declares>>
 HEADER_TYPEDEF_TEST ..> TYPEDEF_NAMEDSTRUCT_T : <<declares>>

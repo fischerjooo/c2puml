@@ -6921,6 +6921,19 @@
       "name": "typedef_test.h",
       "placeholder_headers": [],
       "structs": {
+        "ArrayHolder_t": {
+          "fields": [
+            {
+              "name": "type_tst",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "ArrayHolder_t",
+          "tag_name": "ArrayHolder_tag",
+          "uses": []
+        },
         "MyBuffer": {
           "fields": [
             {

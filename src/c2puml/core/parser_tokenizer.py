@@ -1449,27 +1449,48 @@ def find_struct_fields(
                             stripped_type = full_type.strip()
                             if stripped_name and stripped_type:
                                 fields.append((stripped_name, stripped_type))
-            # Array field: type name [ size ]
+            # Array field(s): support multi-dimensional arrays and normalize numeric suffixes (e.g., 2U -> 2)
             elif (
                 len(field_tokens) >= 4
-                and field_tokens[-3].type == TokenType.LBRACKET
                 and field_tokens[-1].type == TokenType.RBRACKET
+                and any(t.type == TokenType.LBRACKET for t in field_tokens)
             ):
-                field_name = field_tokens[-4].value
-                # Fix: Properly format array type - preserve spaces between tokens
-                type_tokens = field_tokens[:-4]
-                field_type = " ".join(t.value for t in type_tokens) + "[" + field_tokens[-2].value + "]"
-                if (
-                    field_name
-                    and field_name.strip()
-                    and field_type.strip()
-                    and field_name not in ["[", "]", ";", "}"]
-                ):
-                    # Additional validation to ensure we don't have empty strings
-                    stripped_name = field_name.strip()
-                    stripped_type = field_type.strip()
-                    if stripped_name and stripped_type:
-                        fields.append((stripped_name, stripped_type))
+                # Walk from the end to collect trailing [dim] groups
+                i = len(field_tokens) - 1
+                dimensions = []
+                while i >= 2 and field_tokens[i].type == TokenType.RBRACKET and field_tokens[i - 2].type == TokenType.LBRACKET:
+                    dim_token = field_tokens[i - 1].value
+                    # Strip unsigned/long suffixes when the dim is a pure number; keep expressions as-is
+                    m = re.match(r"\s*(\d+)", dim_token)
+                    if m:
+                        dimensions.append(m.group(1))
+                    else:
+                        dimensions.append(dim_token)
+                    i -= 3
+                # Find the field name (identifier) immediately before the first '[' encountered above
+                name_idx = None
+                j = i
+                while j >= 0:
+                    if field_tokens[j].type == TokenType.IDENTIFIER:
+                        name_idx = j
+                        break
+                    j -= 1
+                if name_idx is not None and dimensions:
+                    field_name = field_tokens[name_idx].value
+                    base_type_tokens = field_tokens[:name_idx]
+                    base_type = " ".join(t.value for t in base_type_tokens).strip()
+                    dimensions.reverse()
+                    field_type = base_type + "".join(f"[{d}]" for d in dimensions)
+                    if (
+                        field_name
+                        and field_name.strip()
+                        and field_type.strip()
+                        and field_name not in ["[", "]", ";", "}"]
+                    ):
+                        stripped_name = field_name.strip()
+                        stripped_type = field_type.strip()
+                        if stripped_name and stripped_type:
+                            fields.append((stripped_name, stripped_type))
             else:
                 # Regular field: type name
                 # Check if this field declaration contains commas (multiple fields of same type)
