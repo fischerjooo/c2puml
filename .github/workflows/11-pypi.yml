@@ -19,16 +19,24 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: "11.03 Prepare build environment"
+      - name: "11.03 Download release tarball"
         run: |
-          rm -rf dist build *.egg-info || true
+          mkdir -p release_src
+          curl -L -o release.tar.gz https://github.com/fischerjooo/c2puml/archive/refs/heads/release.tar.gz
+          tar -xzf release.tar.gz -C release_src --strip-components=1
+          echo "📁 Extracted contents:"
+          ls -la release_src
+          echo "📁 Extracted src/:"
+          ls -la release_src/src || true
 
       - name: "11.04 Install build tools"
         run: |
           python -m pip install --upgrade build
 
       - name: "11.05 Build distributions"
+        working-directory: release_src
         run: |
+          rm -rf dist build *.egg-info || true
           python -m build
 
       - name: "11.06 Install Twine"
@@ -36,6 +44,7 @@ jobs:
           python -m pip install --upgrade twine
 
       - name: "11.07 Upload to PyPI"
+        working-directory: release_src
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
