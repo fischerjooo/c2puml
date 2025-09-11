@@ -1,0 +1,72 @@
+test:
+  name: Include Depth Limit 2 – No deeper arrows
+  description: Ensure include_depth=2 limits traversal; deeper includes are not shown when no file-specific include_filter is set.
+  category: unit
+  id: '142'
+---
+source_files:
+  main.c: |
+    #include "a1.h"
+    int main(void) { return 0; }
+  a1.h: |
+    #ifndef A1_H
+    #define A1_H
+    #include "a2.h"
+    #endif
+  a2.h: |
+    #ifndef A2_H
+    #define A2_H
+    #include "a3.h"
+    #endif
+  a3.h: |
+    #ifndef A3_H
+    #define A3_H
+    #include "a4.h"
+    #endif
+  a4.h: |
+    #ifndef A4_H
+    #define A4_H
+    #endif
+---
+config.json: |
+  {
+    "project_name": "include_depth_limit",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 2,
+    "include_filter_local_only": false,
+    "always_show_includes": true,
+    "hide_macro_values": true,
+    "convert_empty_class_to_artifact": true,
+    "max_function_signature_chars": 120
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files: ["model.json", "model_transformed.json", "main.puml"]
+    max_execution_time: 30.0
+  model:
+    validate_structure: true
+    files:
+      main.c:
+        includes: ["a1.h"]
+    includes_exist: ["a1.h", "a2.h"]
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - "MAIN --> HEADER_A1 : <<include>>"
+          - "HEADER_A1 --> HEADER_A2 : <<include>>"
+        not_contains_lines:
+          - "HEADER_A2 --> HEADER_A3 : <<include>>"
+          - "HEADER_A3 --> HEADER_A4 : <<include>>"
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
+      - ./output/main.puml
+
