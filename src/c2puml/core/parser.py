@@ -1216,28 +1216,38 @@ class CParser:
                         break
                 
                 if bracket_idx is not None:
-                    # Array declaration with assignment: find the identifier before the opening bracket
+                    # Array declaration with assignment: find the identifier before the first '['
+                    # First, find the matching '[' for this last bracket
                     for j in range(bracket_idx - 1, start_idx, -1):
                         if collected_tokens[j].type == TokenType.LBRACKET:
-                            # Found opening bracket, look for identifier before it
+                            # Found the first '[' of the trailing bracket groups; now find the identifier before it
                             for k in range(j - 1, start_idx, -1):
                                 if collected_tokens[k].type == TokenType.IDENTIFIER:
                                     var_name = collected_tokens[k].value
                                     type_tokens = collected_tokens[start_idx:k]
-                                    # Format array type properly
+                                    # Format base type preserving spaces
                                     formatted_type = []
                                     for idx, token in enumerate(type_tokens):
                                         if idx > 0:
                                             formatted_type.append(" " + token.value)
                                         else:
                                             formatted_type.append(token.value)
-                                    # Add array brackets without spaces
-                                    array_size = collected_tokens[j + 1].value if j + 1 < bracket_idx else ""
-                                    var_type = "".join(formatted_type) + "[" + array_size + "]"
+                                    base_type = "".join(formatted_type)
+                                    # Collect all trailing [size] groups between name and '='
+                                    dims = []
+                                    idx = k + 1
+                                    while idx + 2 < assign_idx and collected_tokens[idx].type == TokenType.LBRACKET and collected_tokens[idx + 2].type == TokenType.RBRACKET:
+                                        size_val = collected_tokens[idx + 1].value
+                                        # Normalize numeric sizes like 5U/6UL to 5/6
+                                        import re as _re
+                                        m = _re.match(r"\s*(\d+)", size_val)
+                                        size_clean = m.group(1) if m else size_val
+                                        dims.append(size_clean)
+                                        idx += 3
+                                    var_type = base_type + "".join(f"[{d}]" for d in dims)
                                     var_type = self._clean_type_string(var_type)
                                     value_tokens = collected_tokens[assign_idx + 1 :]
                                     var_value = " ".join(t.value for t in value_tokens)
-                                    # Clean the value string to remove excessive whitespace and newlines
                                     var_value = self._clean_value_string(var_value)
                                     return (var_name, var_type, var_value)
                             break
@@ -1254,7 +1264,7 @@ class CParser:
                     var_value = self._clean_value_string(var_value)
                     return (var_name, var_type, var_value)
         else:
-            # No assignment: type name or type name[size]
+            # No assignment: type name or type name[size][size]...
             if len(collected_tokens) > start_idx + 1:
                 # Check if this is an array declaration
                 bracket_idx = None
@@ -1264,24 +1274,33 @@ class CParser:
                         break
 
                 if bracket_idx is not None:
-                    # Array declaration: find the identifier before the opening bracket
+                    # Array declaration: find the identifier before the first '[' and collect all dims
                     for j in range(bracket_idx - 1, start_idx, -1):
                         if collected_tokens[j].type == TokenType.LBRACKET:
-                            # Found opening bracket, look for identifier before it
+                            # Found the first '[' of the trailing bracket groups; look for identifier before it
                             for k in range(j - 1, start_idx, -1):
                                 if collected_tokens[k].type == TokenType.IDENTIFIER:
                                     var_name = collected_tokens[k].value
                                     type_tokens = collected_tokens[start_idx:k]
-                                    # Format array type properly - preserve spaces between tokens but not around brackets
+                                    # Format base type preserving spaces
                                     formatted_type = []
-                                    for idx, token in enumerate(type_tokens):
-                                        if idx > 0:
+                                    for idx2, token in enumerate(type_tokens):
+                                        if idx2 > 0:
                                             formatted_type.append(" " + token.value)
                                         else:
                                             formatted_type.append(token.value)
-                                    # Add array brackets without spaces
-                                    array_size = collected_tokens[j + 1].value if j + 1 < bracket_idx else ""
-                                    var_type = "".join(formatted_type) + "[" + array_size + "]"
+                                    base_type = "".join(formatted_type)
+                                    # Collect all trailing [size] groups after the name
+                                    dims = []
+                                    idx2 = k + 1
+                                    while idx2 + 2 < len(collected_tokens) and collected_tokens[idx2].type == TokenType.LBRACKET and collected_tokens[idx2 + 2].type == TokenType.RBRACKET:
+                                        size_val = collected_tokens[idx2 + 1].value
+                                        import re as _re
+                                        m = _re.match(r"\s*(\d+)", size_val)
+                                        size_clean = m.group(1) if m else size_val
+                                        dims.append(size_clean)
+                                        idx2 += 3
+                                    var_type = base_type + "".join(f"[{d}]" for d in dims)
                                     var_type = self._clean_type_string(var_type)
                                     return (var_name, var_type, None)
                             break

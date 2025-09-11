@@ -1,8 +1,8 @@
-# Release Notes - v2025-09-09
+# Release Notes - v2025-09-11
 
 ## Release Information
-- **Tag**: v2025-09-09
-- **Date**: 2025-09-09
+- **Tag**: v2025-09-11
+- **Date**: 2025-09-11
 - **Branch**: release
 
 ## Description
@@ -17,6 +17,7 @@ This release contains the C2PlantUML converter tool with the following component
 - `main.py` - Application entry point
 - `README.md` - Project documentation
 - `pyproject.toml` - Python package configuration
+- `LICENSE` - License file
 - `release-note.md` - This release notes file
 
 ## Download Links
