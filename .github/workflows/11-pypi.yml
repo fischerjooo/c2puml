@@ -1,0 +1,44 @@
+name: 11. Publish to PyPI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: "11.01 Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "11.02 Set up Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: "11.03 Prepare build environment"
+        run: |
+          rm -rf dist build *.egg-info || true
+
+      - name: "11.04 Install build tools"
+        run: |
+          python -m pip install --upgrade build
+
+      - name: "11.05 Build distributions"
+        run: |
+          python -m build
+
+      - name: "11.06 Install Twine"
+        run: |
+          python -m pip install --upgrade twine
+
+      - name: "11.07 Upload to PyPI"
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          python -m twine upload --repository pypi dist/*
+
