@@ -1,7 +1,7 @@
-# Release Notes - v2025-09-11-test
+# Release Notes - v2025-09-11
 
 ## Release Information
-- **Tag**: v2025-09-11-test
+- **Tag**: v2025-09-11
 - **Date**: 2025-09-11
 - **Branch**: release
 
