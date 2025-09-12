@@ -5,10 +5,10 @@
 A Python tool for converting C/C++ source code to PlantUML diagrams. Analyzes C/C++ projects and generates comprehensive PlantUML class diagrams showing structs, enums, unions, functions, global variables, macros, typedefs, and include relationships.
 
 ## Status
-[![Run Tests](https://github.com/fischerjooo/c2puml/actions/workflows/test.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/test.yml)
-[![Convert PlantUML to PNG](https://github.com/fischerjooo/c2puml/actions/workflows/puml2png.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/puml2png.yml)
-[![Coverage Reports](https://github.com/fischerjooo/c2puml/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/test-coverage.yml)
-[![Deploy Website](https://github.com/fischerjooo/c2puml/actions/workflows/deploy-website.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/deploy-website.yml)
+[![00. Test](https://github.com/fischerjooo/c2puml/actions/workflows/00-test.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/00-test.yml)
+[![02. PlantUML to PNG](https://github.com/fischerjooo/c2puml/actions/workflows/02-puml-to-png.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/02-puml-to-png.yml)
+[![01. Test and Coverage](https://github.com/fischerjooo/c2puml/actions/workflows/01-test-and-coverage.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/01-test-and-coverage.yml)
+[![03. Deploy Website](https://github.com/fischerjooo/c2puml/actions/workflows/03-deploy-website.yml/badge.svg)](https://github.com/fischerjooo/c2puml/actions/workflows/03-deploy-website.yml)
 
 ## Reports
 
