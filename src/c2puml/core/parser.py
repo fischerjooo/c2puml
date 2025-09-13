@@ -17,6 +17,12 @@ from .parser_tokenizer import (
 from .preprocessor import PreprocessorManager
 from .parser_anonymous_processor import AnonymousTypedefProcessor
 from ..utils import detect_file_encoding
+from .parse_utils import (
+    clean_type_string,
+    clean_value_string,
+    fix_array_bracket_spacing,
+    fix_pointer_spacing,
+)
 
 if TYPE_CHECKING:
     from ..config import Config
@@ -1622,54 +1628,19 @@ class CParser:
 
     def _fix_array_bracket_spacing(self, type_str: str) -> str:
         """Fix spacing around array brackets in type strings"""
-        # First clean the type string to remove newlines
-        type_str = self._clean_type_string(type_str)
-        # Replace patterns like "type[ size ]" with "type[size]"
-        import re
-        # Remove spaces around array brackets
-        type_str = re.sub(r'\s*\[\s*', '[', type_str)
-        type_str = re.sub(r'\s*\]\s*', ']', type_str)
-        return type_str
+        return fix_array_bracket_spacing(type_str)
 
     def _fix_pointer_spacing(self, type_str: str) -> str:
         """Fix spacing around pointer asterisks in type strings"""
-        import re
-        # Fix double pointer spacing: "type * *" -> "type **"
-        type_str = re.sub(r'\*\s+\*', '**', type_str)
-        # Fix triple pointer spacing: "type * * *" -> "type ***"
-        type_str = re.sub(r'\*\s+\*\s+\*', '***', type_str)
-        return type_str
+        return fix_pointer_spacing(type_str)
 
     def _clean_type_string(self, type_str: str) -> str:
         """Clean type string by removing newlines and normalizing whitespace"""
-        if not type_str:
-            return type_str
-        # Replace newlines with spaces and normalize whitespace
-        cleaned = type_str.replace('\n', ' ')
-        # Normalize multiple spaces to single space
-        import re
-        cleaned = re.sub(r'\s+', ' ', cleaned)
-        # Strip leading/trailing whitespace
-        cleaned = cleaned.strip()
-        return cleaned
+        return clean_type_string(type_str)
 
     def _clean_value_string(self, value_str: str) -> str:
         """Clean value string by removing excessive whitespace and newlines"""
-        if not value_str:
-            return value_str
-        # Replace newlines with spaces and normalize whitespace
-        cleaned = value_str.replace('\n', ' ')
-        # Normalize multiple spaces to single space
-        import re
-        cleaned = re.sub(r'\s+', ' ', cleaned)
-        # Strip leading/trailing whitespace
-        cleaned = cleaned.strip()
-        # Remove excessive spaces around braces and operators
-        cleaned = re.sub(r'\s*{\s*', '{', cleaned)
-        cleaned = re.sub(r'\s*}\s*', '}', cleaned)
-        cleaned = re.sub(r'\s*,\s*', ', ', cleaned)
-        cleaned = re.sub(r'\s*&\s*', '&', cleaned)
-        return cleaned
+        return clean_value_string(value_str)
 
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""
