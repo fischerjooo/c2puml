@@ -971,7 +971,7 @@ class CParser:
         # Basic typedef: the last token is the typedef name, everything else is the type
         typedef_name = all_tokens[-1].value
         type_tokens = all_tokens[:-1]
-        original_type = " ".join(t.value for t in type_tokens)
+        original_type = format_tokens_compact(type_tokens)
         original_type = self._clean_type_string(original_type)
         original_type = self._fix_array_bracket_spacing(original_type)
         return (typedef_name, original_type)
@@ -1486,7 +1486,7 @@ class CParser:
                 return Field(name=param_name.strip(), type=param_type.strip())
             else:
                 # Fallback for invalid parameters - try to reconstruct the full parameter
-                full_param = " ".join(t.value for t in param_tokens)
+                full_param = format_tokens_compact(param_tokens)
                 full_param = self._fix_array_bracket_spacing(full_param)
                 if full_param.strip():
                     return Field(name="unnamed", type=full_param.strip())
