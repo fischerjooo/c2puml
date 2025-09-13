@@ -457,6 +457,11 @@ class StructureFinder:
         self.pos = 0
         self.logger = logging.getLogger(__name__)
 
+    def _skip_whitespace(self) -> None:
+        """Advance self.pos over consecutive WHITESPACE tokens."""
+        while self.pos < len(self.tokens) and self._current_token_is(TokenType.WHITESPACE):
+            self.pos += 1
+
     def find_structs(self) -> List[Tuple[int, int, str]]:
         """Find struct definitions in token stream
 
@@ -585,10 +590,7 @@ class StructureFinder:
             check_pos -= 1
 
         # Skip whitespace
-        while self.pos < len(self.tokens) and self._current_token_is(
-            TokenType.WHITESPACE
-        ):
-            self.pos += 1
+        self._skip_whitespace()
 
         # Check if this is a cast expression: (struct type*)
         if self._current_token_is(TokenType.LPAREN):
@@ -700,10 +702,7 @@ class StructureFinder:
         self._advance()
 
         # Skip whitespace
-        while self.pos < len(self.tokens) and self._current_token_is(
-            TokenType.WHITESPACE
-        ):
-            self.pos += 1
+        self._skip_whitespace()
 
         # Get struct tag name (optional)
         struct_tag = ""
@@ -711,10 +710,7 @@ class StructureFinder:
             struct_tag = self._advance().value
 
         # Skip whitespace
-        while self.pos < len(self.tokens) and self._current_token_is(
-            TokenType.WHITESPACE
-        ):
-            self.pos += 1
+        self._skip_whitespace()
 
         # Check if this is a forward declaration (no braces)
         if not self._current_token_is(TokenType.LBRACE):
@@ -759,10 +755,7 @@ class StructureFinder:
         self._advance()
 
         # Skip whitespace
-        while self.pos < len(self.tokens) and self._current_token_is(
-            TokenType.WHITESPACE
-        ):
-            self.pos += 1
+        self._skip_whitespace()
 
         # Get enum tag name (optional for anonymous enums)
         enum_tag = ""
