@@ -1496,13 +1496,9 @@ class CParser:
                     name_idx -= 1
 
                 if param_name is not None:
-                    # Base type is everything before the param name
-                    base_type_tokens = param_tokens[:name_idx]
-                    base_type = format_tokens_compact(base_type_tokens).strip()
-                    # Dimensions were collected from inner to outer; reverse to preserve original order
-                    dims.reverse()
-                    dim_suffix = "".join(f"[{d}]" for d in dims)
-                    param_type = (base_type + dim_suffix).strip()
+                    # Build the full type by removing the parameter name, preserving pointers/parentheses and dimensions
+                    tokens_without_name = param_tokens[:name_idx] + param_tokens[name_idx+1:]
+                    param_type = format_tokens_compact(tokens_without_name)
                     param_type = self._fix_array_bracket_spacing(param_type)
                     param_type = self._fix_pointer_spacing(param_type)
                     return Field(name=param_name, type=param_type)
