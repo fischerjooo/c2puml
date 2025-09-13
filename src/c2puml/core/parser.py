@@ -1169,13 +1169,7 @@ class CParser:
                                     var_name = collected_tokens[k].value
                                     type_tokens = collected_tokens[start_idx:k]
                                     # Format base type preserving spaces
-                                    formatted_type = []
-                                    for idx, token in enumerate(type_tokens):
-                                        if idx > 0:
-                                            formatted_type.append(" " + token.value)
-                                        else:
-                                            formatted_type.append(token.value)
-                                    base_type = "".join(formatted_type)
+                                    base_type = format_tokens_compact(type_tokens)
                                     # Collect all trailing [size] groups between name and '='
                                     dims = []
                                     idx = k + 1
@@ -1226,13 +1220,7 @@ class CParser:
                                     var_name = collected_tokens[k].value
                                     type_tokens = collected_tokens[start_idx:k]
                                     # Format base type preserving spaces
-                                    formatted_type = []
-                                    for idx2, token in enumerate(type_tokens):
-                                        if idx2 > 0:
-                                            formatted_type.append(" " + token.value)
-                                        else:
-                                            formatted_type.append(token.value)
-                                    base_type = "".join(formatted_type)
+                                    base_type = format_tokens_compact(type_tokens)
                                     # Collect all trailing [size] groups after the name
                                     dims = []
                                     idx2 = k + 1
