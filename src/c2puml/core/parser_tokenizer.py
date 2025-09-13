@@ -552,24 +552,14 @@ class StructureFinder:
         return None
 
     def _find_matching_brace(self, start_pos: int) -> Optional[int]:
-        """Find matching closing brace starting from open brace position"""
-        if (
-            start_pos >= len(self.tokens)
-            or self.tokens[start_pos].type != TokenType.LBRACE
-        ):
-            return None
+        """Find matching closing brace starting from open brace position.
 
-        depth = 1
-        pos = start_pos + 1
+        Delegates to shared parse_utils implementation to ensure one source of
+        truth for balanced scanning across components.
+        """
+        from .parse_utils import find_matching_brace as _find_brace
 
-        while pos < len(self.tokens) and depth > 0:
-            if self.tokens[pos].type == TokenType.LBRACE:
-                depth += 1
-            elif self.tokens[pos].type == TokenType.RBRACE:
-                depth -= 1
-            pos += 1
-
-        return pos - 1 if depth == 0 else None
+        return _find_brace(self.tokens, start_pos)
 
     def _parse_struct(self) -> Optional[Tuple[int, int, str]]:
         """Parse struct definition starting at current position"""
@@ -1038,7 +1028,7 @@ class StructureFinder:
             if self.tokens[pos].type == TokenType.SEMICOLON:
                 return pos
             elif self.tokens[pos].type == TokenType.LBRACE:
-                # Function definition - find matching brace
+                # Function definition - find matching brace (delegate)
                 end_brace = self._find_matching_brace(pos)
                 return end_brace if end_brace else pos
             pos += 1
