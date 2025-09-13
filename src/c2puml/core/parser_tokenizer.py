@@ -1445,42 +1445,47 @@ def find_struct_fields(
                 and field_tokens[-1].type == TokenType.RBRACKET
                 and any(t.type == TokenType.LBRACKET for t in field_tokens)
             ):
-                # Walk from the end to collect trailing [dim] groups
-                i = len(field_tokens) - 1
-                dimensions = []
-                while i >= 2 and field_tokens[i].type == TokenType.RBRACKET and field_tokens[i - 2].type == TokenType.LBRACKET:
-                    dim_token = field_tokens[i - 1].value
-                    # Strip unsigned/long suffixes when the dim is a pure number; keep expressions as-is
-                    m = re.match(r"\s*(\d+)", dim_token)
-                    if m:
-                        dimensions.append(m.group(1))
-                    else:
-                        dimensions.append(dim_token)
-                    i -= 3
-                # Find the field name (identifier) immediately before the first '[' encountered above
-                name_idx = None
-                j = i
-                while j >= 0:
-                    if field_tokens[j].type == TokenType.IDENTIFIER:
-                        name_idx = j
+                # Robust multi-dimensional array handling using shared utils
+                from .parse_utils import collect_array_dimensions_from_tokens, join_type_with_dims
+
+                # Find the first '[' from the end
+                first_lbracket_idx = None
+                for idx in range(len(field_tokens) - 1, -1, -1):
+                    if field_tokens[idx].type == TokenType.LBRACKET:
+                        first_lbracket_idx = idx
                         break
-                    j -= 1
-                if name_idx is not None and dimensions:
-                    field_name = field_tokens[name_idx].value
-                    base_type_tokens = field_tokens[:name_idx]
-                    base_type = " ".join(t.value for t in base_type_tokens).strip()
-                    dimensions.reverse()
-                    field_type = base_type + "".join(f"[{d}]" for d in dimensions)
-                    if (
-                        field_name
-                        and field_name.strip()
-                        and field_type.strip()
-                        and field_name not in ["[", "]", ";", "}"]
-                    ):
-                        stripped_name = field_name.strip()
-                        stripped_type = field_type.strip()
-                        if stripped_name and stripped_type:
-                            fields.append((stripped_name, stripped_type))
+                if first_lbracket_idx is None:
+                    pass
+                else:
+                    # Find field name just before this '['
+                    name_idx = None
+                    for j in range(first_lbracket_idx - 1, -1, -1):
+                        if field_tokens[j].type == TokenType.IDENTIFIER:
+                            name_idx = j
+                            break
+                    if name_idx is not None:
+                        field_name = field_tokens[name_idx].value
+                        base_type_tokens = field_tokens[:name_idx]
+                        base_type = " ".join(t.value for t in base_type_tokens).strip()
+
+                        dims, _next = collect_array_dimensions_from_tokens(field_tokens, first_lbracket_idx)
+                        # Normalize pure numeric suffixes like 5U/6UL to base number for dims
+                        normalized_dims: list[str] = []
+                        for d in dims:
+                            m = re.match(r"\s*(\d+)", d)
+                            normalized_dims.append(m.group(1) if m else d)
+
+                        field_type = join_type_with_dims(base_type, normalized_dims)
+                        if (
+                            field_name
+                            and field_name.strip()
+                            and field_type.strip()
+                            and field_name not in ["[", "]", ";", "}"]
+                        ):
+                            stripped_name = field_name.strip()
+                            stripped_type = field_type.strip()
+                            if stripped_name and stripped_type:
+                                fields.append((stripped_name, stripped_type))
             else:
                 # Regular field: type name
                 # Check if this field declaration contains commas (multiple fields of same type)

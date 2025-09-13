@@ -6927,6 +6927,11 @@
               "name": "type_tst",
               "type": "int",
               "value": null
+            },
+            {
+              "name": "U",
+              "type": "int array_ofarray_aast[2[2]",
+              "value": null
             }
           ],
           "methods": [],

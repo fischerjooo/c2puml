@@ -76,3 +76,37 @@ def find_matching_brace(tokens, start_pos: int) -> Optional[int]:
 
     return pos - 1 if depth == 0 else None
 
+
+def collect_array_dimensions_from_tokens(tokens, start_index: int) -> tuple[list[str], int]:
+    """Collect one or more array dimension groups starting at start_index.
+
+    Expects tokens[start_index] to be a LBRACKET. Returns (dims, next_index)
+    where dims is a list of strings (each the content between brackets), and
+    next_index is the index after the last closing bracket.
+    """
+    from .parser_tokenizer import TokenType
+
+    dims: list[str] = []
+    i = start_index
+    while i < len(tokens) and tokens[i].type == TokenType.LBRACKET:
+        j = i + 1
+        content_parts: list[str] = []
+        while j < len(tokens) and tokens[j].type != TokenType.RBRACKET:
+            if tokens[j].type not in (TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE):
+                content_parts.append(tokens[j].value)
+            j += 1
+        # Join with spaces to preserve readability for expressions
+        dim_str = " ".join(content_parts).strip()
+        dims.append(dim_str)
+        # Move past the closing bracket if present
+        i = j + 1 if j < len(tokens) and tokens[j].type == TokenType.RBRACKET else j
+    return dims, i
+
+
+def join_type_with_dims(base_type: str, dims: list[str]) -> str:
+    """Append collected array dimensions to a base type and normalize spacing."""
+    if not dims:
+        return base_type
+    type_with_dims = base_type + "".join(f"[{d}]" for d in dims)
+    return fix_array_bracket_spacing(type_with_dims)
+
