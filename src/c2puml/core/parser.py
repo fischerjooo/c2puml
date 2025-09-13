@@ -1199,7 +1199,7 @@ class CParser:
                     var_name = collected_tokens[assign_idx - 1].value
                     type_tokens = collected_tokens[start_idx : assign_idx - 1]
                     value_tokens = collected_tokens[assign_idx + 1 :]
-                    var_type = " ".join(t.value for t in type_tokens)
+                    var_type = format_tokens_compact(type_tokens)
                     var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
                     var_value = " ".join(t.value for t in value_tokens)
@@ -1251,7 +1251,7 @@ class CParser:
                     # Regular variable: last token is the name
                     var_name = collected_tokens[-1].value
                     type_tokens = collected_tokens[start_idx:-1]
-                    var_type = " ".join(t.value for t in type_tokens)
+                    var_type = format_tokens_compact(type_tokens)
                     var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
                     return (var_name, var_type, None)
@@ -1395,11 +1395,11 @@ class CParser:
                     if paren_count == 0:
                         # Extract the type (everything before the function pointer)
                         type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
+                        param_type = format_tokens_compact(type_tokens)
 
                         # Extract the function pointer part
                         func_ptr_tokens = param_tokens[i:param_end]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        func_ptr_type = format_tokens_compact(func_ptr_tokens)
 
                         # Combine type and function pointer
                         full_type = (param_type + " " + func_ptr_type).strip()
@@ -1411,60 +1411,14 @@ class CParser:
                     else:
                         # Incomplete function pointer - try to reconstruct
                         type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
+                        param_type = format_tokens_compact(type_tokens)
                         func_ptr_tokens = param_tokens[i:]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        func_ptr_type = format_tokens_compact(func_ptr_tokens)
                         full_type = (param_type + " " + func_ptr_type).strip()
                         full_type = self._fix_array_bracket_spacing(full_type)
                         return Field(name=func_name, type=full_type)
             
-            # Also look for pattern: type ( * name ) ( params ) with spaces
-            for i in range(len(param_tokens) - 4):
-                if (
-                    param_tokens[i].type == TokenType.LPAREN
-                    and param_tokens[i + 1].type == TokenType.ASTERISK
-                    and param_tokens[i + 2].type == TokenType.IDENTIFIER
-                    and param_tokens[i + 3].type == TokenType.RPAREN
-                    and param_tokens[i + 4].type == TokenType.LPAREN
-                ):
-                    # Found function pointer pattern
-                    func_name = param_tokens[i + 2].value
-
-                    # Find the closing parenthesis for the parameter list
-                    paren_count = 1
-                    param_end = i + 5
-                    while param_end < len(param_tokens) and paren_count > 0:
-                        if param_tokens[param_end].type == TokenType.LPAREN:
-                            paren_count += 1
-                        elif param_tokens[param_end].type == TokenType.RPAREN:
-                            paren_count -= 1
-                        param_end += 1
-
-                    if paren_count == 0:
-                        # Extract the type (everything before the function pointer)
-                        type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
-
-                        # Extract the function pointer part
-                        func_ptr_tokens = param_tokens[i:param_end]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
-
-                        # Combine type and function pointer
-                        full_type = (param_type + " " + func_ptr_type).strip()
-                        
-                        # Fix array bracket spacing
-                        full_type = self._fix_array_bracket_spacing(full_type)
-
-                        return Field(name=func_name, type=full_type)
-                    else:
-                        # Incomplete function pointer - try to reconstruct
-                        type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
-                        func_ptr_tokens = param_tokens[i:]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
-                        full_type = (param_type + " " + func_ptr_type).strip()
-                        full_type = self._fix_array_bracket_spacing(full_type)
-                        return Field(name=func_name, type=full_type)
+            # (Duplicate function-pointer parsing block removed; handled above.)
 
                     # For parameters like "int x" or "const char *name" or "char* argv[]"
         if len(param_tokens) >= 2:

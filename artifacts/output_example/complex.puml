@@ -6,11 +6,11 @@ class "complex" as COMPLEX <<source>> #LightBlue
     - Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct
     - math_operation_t[10] global_math_ops
     -- Functions --
-    + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), void ( * free_func ) ( void * ))
-    + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), complex_callback_t callback)
+    + complex_handler_t * create_complex_handler(const char * name, int (* validate_func)(const char *) validate_func, void * (* alloc_func)(size_t) alloc_func, void (* free_func)(void *) free_func)
+    + void * create_handler(const char * name, int (* init_func)(void *) init_func, void (* cleanup_func)(void *) cleanup_func, complex_callback_t callback)
     + int execute_operations(int value, math_ops_array_t ops, int op_count)
     + math_operation_t * get_math_operations()
-    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void ( * pre_process ) ( int * , int ), void ( * post_process ) ( int * , int ))
+    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void (* pre_process)(int * , int) pre_process, void (* post_process)(int * , int) post_process)
     + void test_processor_job_processing()
     + void test_processor_utility_macros()
 
@@ -52,11 +52,11 @@ class "complex" as HEADER_COMPLEX <<header>> #LightGreen
     + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
     + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
     -- Functions --
-    + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), void ( * free_func ) ( void * ))
-    + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), complex_callback_t callback)
+    + complex_handler_t * create_complex_handler(const char * name, int (* validate_func)(const char *) validate_func, void * (* alloc_func)(size_t) alloc_func, void (* free_func)(void *) free_func)
+    + void * create_handler(const char * name, int (* init_func)(void *) init_func, void (* cleanup_func)(void *) cleanup_func, complex_callback_t callback)
     + int execute_operations(int value, math_ops_array_t ops, int op_count)
     + math_operation_t * get_math_operations()
-    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void ( * pre_process ) ( int * , int ), void ( * post_process ) ( int * , int ))
+    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void (* pre_process)(int * , int) pre_process, void (* post_process)(int * , int) post_process)
     + void test_processor_job_processing()
     + void test_processor_utility_macros()
 }

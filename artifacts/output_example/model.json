@@ -248,17 +248,17 @@
             },
             {
               "name": "validate_func",
-              "type": "int ( * validate_func ) ( const char * )",
+              "type": "int (* validate_func)(const char *)",
               "value": null
             },
             {
               "name": "alloc_func",
-              "type": "void * ( * alloc_func ) ( size_t )",
+              "type": "void * (* alloc_func)(size_t)",
               "value": null
             },
             {
               "name": "free_func",
-              "type": "void ( * free_func ) ( void * )",
+              "type": "void (* free_func)(void *)",
               "value": null
             }
           ],
@@ -277,12 +277,12 @@
             },
             {
               "name": "init_func",
-              "type": "int ( * init_func ) ( void * )",
+              "type": "int (* init_func)(void *)",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * cleanup_func ) ( void * )",
+              "type": "void (* cleanup_func)(void *)",
               "value": null
             },
             {
@@ -437,12 +437,12 @@
             },
             {
               "name": "pre_process",
-              "type": "void ( * pre_process ) ( int * , int )",
+              "type": "void (* pre_process)(int * , int)",
               "value": null
             },
             {
               "name": "post_process",
-              "type": "void ( * post_process ) ( int * , int )",
+              "type": "void (* post_process)(int * , int)",
               "value": null
             }
           ],
@@ -902,17 +902,17 @@
             },
             {
               "name": "validate_func",
-              "type": "int ( * validate_func ) ( const char * )",
+              "type": "int (* validate_func)(const char *)",
               "value": null
             },
             {
               "name": "alloc_func",
-              "type": "void * ( * alloc_func ) ( size_t )",
+              "type": "void * (* alloc_func)(size_t)",
               "value": null
             },
             {
               "name": "free_func",
-              "type": "void ( * free_func ) ( void * )",
+              "type": "void (* free_func)(void *)",
               "value": null
             }
           ],
@@ -931,12 +931,12 @@
             },
             {
               "name": "init_func",
-              "type": "int ( * init_func ) ( void * )",
+              "type": "int (* init_func)(void *)",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * cleanup_func ) ( void * )",
+              "type": "void (* cleanup_func)(void *)",
               "value": null
             },
             {
@@ -1007,12 +1007,12 @@
             },
             {
               "name": "pre_process",
-              "type": "void ( * pre_process ) ( int * , int )",
+              "type": "void (* pre_process)(int * , int)",
               "value": null
             },
             {
               "name": "post_process",
-              "type": "void ( * post_process ) ( int * , int )",
+              "type": "void (* post_process)(int * , int)",
               "value": null
             }
           ],
@@ -5634,7 +5634,7 @@
             },
             {
               "name": "destructor",
-              "type": "void ( * destructor ) ( void * )",
+              "type": "void (* destructor)(void *)",
               "value": null
             }
           ],
@@ -5716,7 +5716,7 @@
             },
             {
               "name": "destructor",
-              "type": "void ( * destructor ) ( void * )",
+              "type": "void (* destructor)(void *)",
               "value": null
             }
           ],

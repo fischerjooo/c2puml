@@ -147,10 +147,10 @@ class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
     + #define SQLITE_SCHEMA      17   /* The database schema changed */
     + #define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
     -- Functions --
-    + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, void ( * destructor ) ( void * ))
+    + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, void (* destructor)(void *) destructor)
     + int sqlite3_bind_double(sqlite3_stmt * pStmt, int i, double value)
     + int sqlite3_bind_int(sqlite3_stmt * pStmt, int i, int value)
-    + int sqlite3_bind_text(sqlite3_stmt * pStmt, int i, const char * value, int n, void ( * destructor ) ( void * ))
+    + int sqlite3_bind_text(sqlite3_stmt * pStmt, int i, const char * value, int n, void (* destructor)(void *) destructor)
     + int sqlite3_close(sqlite3 * db)
     + const void * sqlite3_column_blob(sqlite3_stmt * pStmt, int iCol)
     + int sqlite3_column_count(sqlite3_stmt * pStmt)
