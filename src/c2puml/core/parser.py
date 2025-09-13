@@ -13,6 +13,7 @@ from .parser_tokenizer import (
     TokenType,
     find_enum_values,
     find_struct_fields,
+    format_tokens_compact,
 )
 from .preprocessor import PreprocessorManager
 from .parser_anonymous_processor import AnonymousTypedefProcessor
@@ -827,21 +828,13 @@ class CParser:
                         and tokens[j + 4].type == TokenType.LPAREN
                     ):
                         typedef_name = tokens[j + 2].value
-                        # Collect the full typedef original type up to the semicolon, preserving parentheses/brackets spacing
+                        # Collect the full typedef original type up to the semicolon using shared formatter
                         k = pos
-                        formatted: list[str] = []
+                        collected = []
                         while k < len(tokens) and tokens[k].type != TokenType.SEMICOLON:
-                            t = tokens[k]
-                            if t.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
-                                formatted.append(t.value)
-                            elif formatted and formatted[-1] not in ["(", ")", "[", "]"]:
-                                # Prepend space before non-bracket tokens when previous isn't a bracket
-                                formatted.append(" " + t.value)
-                            else:
-                                formatted.append(t.value)
+                            collected.append(tokens[k])
                             k += 1
-                        original_type = "".join(formatted)
-                        # Clean excessive whitespace inside type
+                        original_type = format_tokens_compact(collected)
                         original_type = self._clean_type_string(original_type)
                         return (typedef_name, original_type)
             # Fallback to standard complex typedef parsing
@@ -908,21 +901,7 @@ class CParser:
                 # Simple function pointer typedef without complex parameters
                 typedef_name = all_tokens[i + 3].value
                 # Fix: Properly format function pointer type - preserve spaces between tokens but not around parentheses
-                formatted_tokens = []
-                for j, token in enumerate(all_tokens):
-                    if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
-                        # Don't add spaces around parentheses
-                        formatted_tokens.append(token.value)
-                    elif j > 0 and all_tokens[j - 1].type not in [
-                        TokenType.LPAREN,
-                        TokenType.RPAREN,
-                    ]:
-                        # Add space before token if previous token wasn't a parenthesis
-                        formatted_tokens.append(" " + token.value)
-                    else:
-                        # No space before token
-                        formatted_tokens.append(token.value)
-                original_type = "".join(formatted_tokens)
+                original_type = format_tokens_compact(all_tokens)
                 return (typedef_name, original_type)
 
         # Complex function pointer typedef: typedef ret (*name)(complex_params);
@@ -963,21 +942,7 @@ class CParser:
                     if paren_count == 0:
                         typedef_name = all_tokens[i + 3].value
                         # Format the complete typedef properly
-                        formatted_tokens = []
-                        for j, token in enumerate(all_tokens):
-                            if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
-                                # Don't add spaces around parentheses
-                                formatted_tokens.append(token.value)
-                            elif j > 0 and all_tokens[j - 1].type not in [
-                                TokenType.LPAREN,
-                                TokenType.RPAREN,
-                            ]:
-                                # Add space before token if previous token wasn't a parenthesis
-                                formatted_tokens.append(" " + token.value)
-                            else:
-                                # No space before token
-                                formatted_tokens.append(token.value)
-                        original_type = "".join(formatted_tokens)
+                        original_type = format_tokens_compact(all_tokens)
                         return (typedef_name, original_type)
 
         # Array typedef: typedef type name[size];
@@ -989,21 +954,7 @@ class CParser:
             ):
                 typedef_name = all_tokens[i - 1].value
                 # Fix: Properly format array type - preserve spaces between tokens but not around brackets
-                formatted_tokens = []
-                for j, token in enumerate(all_tokens):
-                    if token.type in [TokenType.LBRACKET, TokenType.RBRACKET]:
-                        # Don't add spaces around brackets
-                        formatted_tokens.append(token.value)
-                    elif j > 0 and all_tokens[j - 1].type not in [
-                        TokenType.LBRACKET,
-                        TokenType.RBRACKET,
-                    ]:
-                        # Add space before token if previous token wasn't a bracket
-                        formatted_tokens.append(" " + token.value)
-                    else:
-                        # No space before token
-                        formatted_tokens.append(token.value)
-                original_type = "".join(formatted_tokens)
+                original_type = format_tokens_compact(all_tokens)
                 return (typedef_name, original_type)
 
         # Pointer typedef: typedef type * name;
@@ -1014,15 +965,7 @@ class CParser:
             ):
                 typedef_name = all_tokens[i + 1].value
                 # Fix: Properly format pointer type - preserve spaces between tokens
-                formatted_tokens = []
-                for j, token in enumerate(all_tokens):
-                    if j > 0:
-                        # Add space before token
-                        formatted_tokens.append(" " + token.value)
-                    else:
-                        # No space before first token
-                        formatted_tokens.append(token.value)
-                original_type = "".join(formatted_tokens)
+                original_type = format_tokens_compact(all_tokens)
                 return (typedef_name, original_type)
 
         # Basic typedef: the last token is the typedef name, everything else is the type
@@ -1256,7 +1199,7 @@ class CParser:
                     var_name = collected_tokens[assign_idx - 1].value
                     type_tokens = collected_tokens[start_idx : assign_idx - 1]
                     value_tokens = collected_tokens[assign_idx + 1 :]
-                    var_type = " ".join(t.value for t in type_tokens)
+                    var_type = format_tokens_compact(type_tokens)
                     var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
                     var_value = " ".join(t.value for t in value_tokens)
@@ -1308,7 +1251,7 @@ class CParser:
                     # Regular variable: last token is the name
                     var_name = collected_tokens[-1].value
                     type_tokens = collected_tokens[start_idx:-1]
-                    var_type = " ".join(t.value for t in type_tokens)
+                    var_type = format_tokens_compact(type_tokens)
                     var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
                     return (var_name, var_type, None)
@@ -1452,11 +1395,11 @@ class CParser:
                     if paren_count == 0:
                         # Extract the type (everything before the function pointer)
                         type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
+                        param_type = format_tokens_compact(type_tokens)
 
                         # Extract the function pointer part
                         func_ptr_tokens = param_tokens[i:param_end]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        func_ptr_type = format_tokens_compact(func_ptr_tokens)
 
                         # Combine type and function pointer
                         full_type = (param_type + " " + func_ptr_type).strip()
@@ -1468,103 +1411,56 @@ class CParser:
                     else:
                         # Incomplete function pointer - try to reconstruct
                         type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
+                        param_type = format_tokens_compact(type_tokens)
                         func_ptr_tokens = param_tokens[i:]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
+                        func_ptr_type = format_tokens_compact(func_ptr_tokens)
                         full_type = (param_type + " " + func_ptr_type).strip()
                         full_type = self._fix_array_bracket_spacing(full_type)
                         return Field(name=func_name, type=full_type)
             
-            # Also look for pattern: type ( * name ) ( params ) with spaces
-            for i in range(len(param_tokens) - 4):
-                if (
-                    param_tokens[i].type == TokenType.LPAREN
-                    and param_tokens[i + 1].type == TokenType.ASTERISK
-                    and param_tokens[i + 2].type == TokenType.IDENTIFIER
-                    and param_tokens[i + 3].type == TokenType.RPAREN
-                    and param_tokens[i + 4].type == TokenType.LPAREN
-                ):
-                    # Found function pointer pattern
-                    func_name = param_tokens[i + 2].value
-
-                    # Find the closing parenthesis for the parameter list
-                    paren_count = 1
-                    param_end = i + 5
-                    while param_end < len(param_tokens) and paren_count > 0:
-                        if param_tokens[param_end].type == TokenType.LPAREN:
-                            paren_count += 1
-                        elif param_tokens[param_end].type == TokenType.RPAREN:
-                            paren_count -= 1
-                        param_end += 1
-
-                    if paren_count == 0:
-                        # Extract the type (everything before the function pointer)
-                        type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
-
-                        # Extract the function pointer part
-                        func_ptr_tokens = param_tokens[i:param_end]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
-
-                        # Combine type and function pointer
-                        full_type = (param_type + " " + func_ptr_type).strip()
-                        
-                        # Fix array bracket spacing
-                        full_type = self._fix_array_bracket_spacing(full_type)
-
-                        return Field(name=func_name, type=full_type)
-                    else:
-                        # Incomplete function pointer - try to reconstruct
-                        type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
-                        func_ptr_tokens = param_tokens[i:]
-                        func_ptr_type = " ".join(t.value for t in func_ptr_tokens)
-                        full_type = (param_type + " " + func_ptr_type).strip()
-                        full_type = self._fix_array_bracket_spacing(full_type)
-                        return Field(name=func_name, type=full_type)
+            # (Duplicate function-pointer parsing block removed; handled above.)
 
                     # For parameters like "int x" or "const char *name" or "char* argv[]"
         if len(param_tokens) >= 2:
             # Check if the last token is a closing bracket (array parameter)
             if param_tokens[-1].type == TokenType.RBRACKET:
-                # Find the opening bracket to get the array size
-                bracket_start = None
-                for i in range(len(param_tokens) - 1, -1, -1):
-                    if param_tokens[i].type == TokenType.LBRACKET:
-                        bracket_start = i
+                # Collect multiple dimensions by scanning backwards and pairing [] groups
+                dims: list[str] = []
+                idx = len(param_tokens) - 1
+                while idx >= 0 and param_tokens[idx].type == TokenType.RBRACKET:
+                    # find matching '[' for this ']'
+                    j = idx - 1
+                    while j >= 0 and param_tokens[j].type != TokenType.LBRACKET:
+                        j -= 1
+                    if j < 0:
                         break
-                
-                if bracket_start is not None:
-                    # Extract the parameter name (last identifier before the opening bracket)
-                    param_name = None
-                    for i in range(bracket_start - 1, -1, -1):
-                        if param_tokens[i].type == TokenType.IDENTIFIER:
-                            param_name = param_tokens[i].value
-                            break
-                    
-                    if param_name:
-                        # Extract the type (everything before the parameter name)
-                        type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
-                        
-                        # Add the array brackets to the type
-                        array_size = ""
-                        if bracket_start + 1 < len(param_tokens) - 1:
-                            # There's content between brackets
-                            array_content = param_tokens[bracket_start + 1:-1]
-                            array_size = " ".join(t.value for t in array_content)
-                        
-                        param_type = param_type + "[" + array_size + "]"
-                        
-                        # Fix array bracket spacing
-                        param_type = self._fix_array_bracket_spacing(param_type)
-                        
-                        return Field(name=param_name, type=param_type)
+                    # content between j and idx (exclusive)
+                    inner_tokens = param_tokens[j + 1:idx]
+                    inner_str = format_tokens_compact(inner_tokens) if inner_tokens else ""
+                    dims.append(inner_str)
+                    idx = j - 1
+
+                # Find parameter name: last identifier before the first '[' of the bracket chain
+                param_name: Optional[str] = None
+                name_idx = idx
+                while name_idx >= 0:
+                    if param_tokens[name_idx].type == TokenType.IDENTIFIER:
+                        param_name = param_tokens[name_idx].value
+                        break
+                    name_idx -= 1
+
+                if param_name is not None:
+                    # Build the full type by removing the parameter name, preserving pointers/parentheses and dimensions
+                    tokens_without_name = param_tokens[:name_idx] + param_tokens[name_idx+1:]
+                    param_type = format_tokens_compact(tokens_without_name)
+                    param_type = self._fix_array_bracket_spacing(param_type)
+                    param_type = self._fix_pointer_spacing(param_type)
+                    return Field(name=param_name, type=param_type)
             else:
                 # Regular parameter: last token is the parameter name
                 param_name = param_tokens[-1].value
                 type_tokens = param_tokens[:-1]
-                param_type = " ".join(t.value for t in type_tokens)
+                param_type = format_tokens_compact(type_tokens)
                 
                 # Fix array bracket spacing and pointer spacing
                 param_type = self._fix_array_bracket_spacing(param_type)
