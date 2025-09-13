@@ -701,7 +701,7 @@
         },
         "callback_with_anon_struct_t": {
           "name": "callback_with_anon_struct_t",
-          "original_type": "void(* callback_with_anon_struct_t)(\n int id , \n struct { \n int config_flags ; \n char config_name [ 64 ] ; \n union { \n int int_config ; \n float float_config ; \n } config_value ; \n } * config_param , \n void * user_data \n)",
+          "original_type": "void(* callback_with_anon_struct_t)(int id , struct { int config_flags ; char config_name[64]; union { int int_config ; float float_config ; } config_value ; } * config_param , void * user_data)",
           "uses": [
             "config_param",
             "config_value"
@@ -709,14 +709,14 @@
         },
         "complex_callback_t": {
           "name": "complex_callback_t",
-          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1 ; \n char * nested2 ; \n void(* nested_func)(int); \n } * param4 \n)",
+          "original_type": "int(* complex_callback_t)(int param1 , char * param2 , void * param3 , struct { int nested1 ; char * nested2 ; void(* nested_func)(int); } * param4)",
           "uses": [
             "param4"
           ]
         },
         "complex_func_ptr_t": {
           "name": "complex_func_ptr_t",
-          "original_type": "int ( * ( * complex_func_ptr_t ) ( int , char * ) ) ( double , void * )",
+          "original_type": "int(*(* complex_func_ptr_t)(int , char *))(double , void *)",
           "uses": []
         },
         "data_processor_array_t": {

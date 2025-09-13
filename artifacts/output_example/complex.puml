@@ -404,17 +404,17 @@ class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
 
 class "callback_with_anon_struct_t" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T <<function pointer>> #LightYellow
 {
-    alias of void(* callback_with_anon_struct_t)( int id , struct { int config_flags ; char config_name [ 64 ] ; union { int int_config ; float float_config ; } config_value ; } * config_param , void * user_data )
+    alias of void(* callback_with_anon_struct_t)(int id , struct { int config_flags ; char config_name[64]; union { int int_config ; float float_config ; } config_value ; } * config_param , void * user_data)
 }
 
 class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
 {
-    alias of int(* complex_callback_t)( int param1 , char * param2 , void * param3 , struct { int nested1 ; char * nested2 ; void(* nested_func)(int); } * param4 )
+    alias of int(* complex_callback_t)(int param1 , char * param2 , void * param3 , struct { int nested1 ; char * nested2 ; void(* nested_func)(int); } * param4)
 }
 
 class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<function pointer>> #LightYellow
 {
-    alias of int ( * ( * complex_func_ptr_t ) ( int , char * ) ) ( double , void * )
+    alias of int(*(* complex_func_ptr_t)(int , char *))(double , void *)
 }
 
 class "data_processor_array_t" as TYPEDEF_DATA_PROCESSOR_ARRAY_T <<typedef>> #LightYellow

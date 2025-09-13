@@ -13,6 +13,7 @@ from .parser_tokenizer import (
     TokenType,
     find_enum_values,
     find_struct_fields,
+    format_tokens_compact,
 )
 from .preprocessor import PreprocessorManager
 from .parser_anonymous_processor import AnonymousTypedefProcessor
@@ -827,21 +828,13 @@ class CParser:
                         and tokens[j + 4].type == TokenType.LPAREN
                     ):
                         typedef_name = tokens[j + 2].value
-                        # Collect the full typedef original type up to the semicolon, preserving parentheses/brackets spacing
+                        # Collect the full typedef original type up to the semicolon using shared formatter
                         k = pos
-                        formatted: list[str] = []
+                        collected = []
                         while k < len(tokens) and tokens[k].type != TokenType.SEMICOLON:
-                            t = tokens[k]
-                            if t.type in [TokenType.LPAREN, TokenType.RPAREN, TokenType.LBRACKET, TokenType.RBRACKET]:
-                                formatted.append(t.value)
-                            elif formatted and formatted[-1] not in ["(", ")", "[", "]"]:
-                                # Prepend space before non-bracket tokens when previous isn't a bracket
-                                formatted.append(" " + t.value)
-                            else:
-                                formatted.append(t.value)
+                            collected.append(tokens[k])
                             k += 1
-                        original_type = "".join(formatted)
-                        # Clean excessive whitespace inside type
+                        original_type = format_tokens_compact(collected)
                         original_type = self._clean_type_string(original_type)
                         return (typedef_name, original_type)
             # Fallback to standard complex typedef parsing
@@ -908,21 +901,7 @@ class CParser:
                 # Simple function pointer typedef without complex parameters
                 typedef_name = all_tokens[i + 3].value
                 # Fix: Properly format function pointer type - preserve spaces between tokens but not around parentheses
-                formatted_tokens = []
-                for j, token in enumerate(all_tokens):
-                    if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
-                        # Don't add spaces around parentheses
-                        formatted_tokens.append(token.value)
-                    elif j > 0 and all_tokens[j - 1].type not in [
-                        TokenType.LPAREN,
-                        TokenType.RPAREN,
-                    ]:
-                        # Add space before token if previous token wasn't a parenthesis
-                        formatted_tokens.append(" " + token.value)
-                    else:
-                        # No space before token
-                        formatted_tokens.append(token.value)
-                original_type = "".join(formatted_tokens)
+                original_type = format_tokens_compact(all_tokens)
                 return (typedef_name, original_type)
 
         # Complex function pointer typedef: typedef ret (*name)(complex_params);
@@ -963,21 +942,7 @@ class CParser:
                     if paren_count == 0:
                         typedef_name = all_tokens[i + 3].value
                         # Format the complete typedef properly
-                        formatted_tokens = []
-                        for j, token in enumerate(all_tokens):
-                            if token.type in [TokenType.LPAREN, TokenType.RPAREN]:
-                                # Don't add spaces around parentheses
-                                formatted_tokens.append(token.value)
-                            elif j > 0 and all_tokens[j - 1].type not in [
-                                TokenType.LPAREN,
-                                TokenType.RPAREN,
-                            ]:
-                                # Add space before token if previous token wasn't a parenthesis
-                                formatted_tokens.append(" " + token.value)
-                            else:
-                                # No space before token
-                                formatted_tokens.append(token.value)
-                        original_type = "".join(formatted_tokens)
+                        original_type = format_tokens_compact(all_tokens)
                         return (typedef_name, original_type)
 
         # Array typedef: typedef type name[size];
@@ -989,21 +954,7 @@ class CParser:
             ):
                 typedef_name = all_tokens[i - 1].value
                 # Fix: Properly format array type - preserve spaces between tokens but not around brackets
-                formatted_tokens = []
-                for j, token in enumerate(all_tokens):
-                    if token.type in [TokenType.LBRACKET, TokenType.RBRACKET]:
-                        # Don't add spaces around brackets
-                        formatted_tokens.append(token.value)
-                    elif j > 0 and all_tokens[j - 1].type not in [
-                        TokenType.LBRACKET,
-                        TokenType.RBRACKET,
-                    ]:
-                        # Add space before token if previous token wasn't a bracket
-                        formatted_tokens.append(" " + token.value)
-                    else:
-                        # No space before token
-                        formatted_tokens.append(token.value)
-                original_type = "".join(formatted_tokens)
+                original_type = format_tokens_compact(all_tokens)
                 return (typedef_name, original_type)
 
         # Pointer typedef: typedef type * name;
@@ -1014,15 +965,7 @@ class CParser:
             ):
                 typedef_name = all_tokens[i + 1].value
                 # Fix: Properly format pointer type - preserve spaces between tokens
-                formatted_tokens = []
-                for j, token in enumerate(all_tokens):
-                    if j > 0:
-                        # Add space before token
-                        formatted_tokens.append(" " + token.value)
-                    else:
-                        # No space before first token
-                        formatted_tokens.append(token.value)
-                original_type = "".join(formatted_tokens)
+                original_type = format_tokens_compact(all_tokens)
                 return (typedef_name, original_type)
 
         # Basic typedef: the last token is the typedef name, everything else is the type

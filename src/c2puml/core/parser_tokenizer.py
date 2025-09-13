@@ -449,6 +449,41 @@ class CTokenizer:
         return merged_tokens
 
 
+def format_tokens_compact(tokens: List[Token]) -> str:
+    """Format tokens into a string with spaces between non-bracket tokens and
+    no spaces around parentheses/brackets.
+
+    - Whitespace, comments, and newlines are ignored
+    - No spaces added around (, ), [, ]
+    - A single leading space is added before non-bracket tokens if the previous
+      emitted token was not a bracket/parenthesis
+    """
+    compact_types = {
+        TokenType.LPAREN,
+        TokenType.RPAREN,
+        TokenType.LBRACKET,
+        TokenType.RBRACKET,
+    }
+
+    # Filter out non-significant tokens
+    filtered: List[Token] = [
+        t for t in tokens if t.type not in (TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE)
+    ]
+
+    parts: List[str] = []
+    prev_type: Optional[TokenType] = None
+    for t in filtered:
+        if t.type in compact_types:
+            parts.append(t.value)
+        else:
+            if parts and (prev_type not in compact_types):
+                parts.append(" " + t.value)
+            else:
+                parts.append(t.value)
+        prev_type = t.type
+
+    return "".join(parts)
+
 class StructureFinder:
     """Helper class to find C/C++ structures in token streams"""
 
