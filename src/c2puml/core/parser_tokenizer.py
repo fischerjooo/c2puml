@@ -993,9 +993,7 @@ class StructureFinder:
 
                         # Extract return type
                         if return_type_tokens:
-                            return_type = " ".join(
-                                t.value for t in return_type_tokens
-                            ).strip()
+                            return_type = format_tokens_compact(return_type_tokens).strip()
 
                             # Check if function is inline
                             is_inline = any(
@@ -1191,12 +1189,10 @@ def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
     """Extract raw text from token range, excluding whitespace, comments, and newlines"""
     if start >= len(tokens) or end >= len(tokens) or start > end:
         return ""
-    return " ".join(
-        token.value
-        for token in tokens[start : end + 1]
-        if token.type
-        not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]
-    )
+    return format_tokens_compact([
+        token for token in tokens[start : end + 1]
+        if token.type not in (TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE)
+    ])
 
 
 def find_struct_fields(
@@ -1391,9 +1387,7 @@ def find_struct_fields(
                         break
 
                 if name_end is not None:
-                    field_name = " ".join(
-                        t.value for t in field_tokens[name_start:name_end]
-                    )
+                    field_name = format_tokens_compact(field_tokens[name_start:name_end])
 
                     # Format the type properly - preserve spaces between tokens but not around brackets/parentheses
                     formatted_tokens = []
@@ -1445,7 +1439,7 @@ def find_struct_fields(
                 if func_ptr_start is not None:
                     # Extract the type (everything before the opening parenthesis)
                     type_tokens = field_tokens[:func_ptr_start]
-                    field_type = " ".join(t.value for t in type_tokens)
+                    field_type = format_tokens_compact(type_tokens)
                     
                     # Find the closing parenthesis after the function name
                     paren_count = 0
@@ -1462,17 +1456,17 @@ def find_struct_fields(
                     if name_end is not None:
                         # Extract function name (between * and closing parenthesis)
                         name_tokens = field_tokens[func_ptr_start + 2:name_end]
-                        field_name = " ".join(t.value for t in name_tokens)
+                        field_name = format_tokens_compact(name_tokens)
                         
                         # Extract the parameter list as part of the type
                         param_tokens = field_tokens[name_end + 1:]
-                        param_type = " ".join(t.value for t in param_tokens)
+                        param_type = format_tokens_compact(param_tokens)
                         
                         # Combine type and parameter list (without the function name in the type)
                         # The function name is already extracted as field_name, so we don't include it in the type
                         func_ptr_start_tokens = field_tokens[func_ptr_start:func_ptr_start + 2]  # ( *
                         func_ptr_end_tokens = field_tokens[name_end:name_end + 1]  # )
-                        full_type = field_type + " " + " ".join(t.value for t in func_ptr_start_tokens) + " " + " ".join(t.value for t in func_ptr_end_tokens) + " " + param_type
+                        full_type = field_type + " " + format_tokens_compact(func_ptr_start_tokens) + " " + format_tokens_compact(func_ptr_end_tokens) + " " + param_type
                         
                         if (
                             field_name
@@ -1513,7 +1507,7 @@ def find_struct_fields(
                 if name_idx is not None and dimensions:
                     field_name = field_tokens[name_idx].value
                     base_type_tokens = field_tokens[:name_idx]
-                    base_type = " ".join(t.value for t in base_type_tokens).strip()
+                    base_type = format_tokens_compact(base_type_tokens).strip()
                     dimensions.reverse()
                     field_type = base_type + "".join(f"[{d}]" for d in dimensions)
                     if (
@@ -1557,7 +1551,7 @@ def find_struct_fields(
                     
                     if first_field_start is not None:
                         type_tokens = field_tokens[:first_field_start]
-                        field_type = " ".join(t.value for t in type_tokens)
+                        field_type = format_tokens_compact(type_tokens)
                         
                         # Split fields on commas
                         field_starts = [first_field_start] + [pos + 1 for pos in comma_positions]
@@ -1566,7 +1560,7 @@ def find_struct_fields(
                         for start, end in zip(field_starts, field_ends):
                             if start < end:
                                 field_name_tokens = field_tokens[start:end]
-                                field_name = " ".join(t.value for t in field_name_tokens)
+                                field_name = format_tokens_compact(field_name_tokens)
                                 
                                 if (
                                     field_name
@@ -1581,7 +1575,7 @@ def find_struct_fields(
                 else:
                     # Single field: type name
                     field_name = field_tokens[-1].value
-                    field_type = " ".join(t.value for t in field_tokens[:-1])
+                    field_type = format_tokens_compact(field_tokens[:-1])
                     if (
                         field_name not in ["[", "]", ";", "}"]
                         and field_name
@@ -1618,7 +1612,7 @@ def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> Lis
                     if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
                 ]
                 if filtered_value:
-                    value_str = " ".join(t.value for t in filtered_value).strip()
+                    value_str = format_tokens_compact(filtered_value).strip()
                     if value_str:
                         values.append(value_str)
                 current_value = []
@@ -1632,7 +1626,7 @@ def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> Lis
             if t.type not in [TokenType.WHITESPACE, TokenType.COMMENT]
         ]
         if filtered_value:
-            value_str = " ".join(t.value for t in filtered_value).strip()
+            value_str = format_tokens_compact(filtered_value).strip()
             if value_str:
                 values.append(value_str)
     return values

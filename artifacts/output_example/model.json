@@ -1628,17 +1628,17 @@
             },
             {
               "name": "init_func",
-              "type": "void ( * ) ( void )",
+              "type": "void (* ) (void)",
               "value": null
             },
             {
               "name": "process_func",
-              "type": "int ( * ) ( int , int )",
+              "type": "int (* ) (int , int)",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * ) ( void )",
+              "type": "void (* ) (void)",
               "value": null
             }
           ],
@@ -1888,7 +1888,7 @@
             },
             {
               "name": "nested_func",
-              "type": "void ( * ) ( int )",
+              "type": "void (* ) (int)",
               "value": null
             }
           ],
@@ -1911,12 +1911,12 @@
             },
             {
               "name": "process_func",
-              "type": "int ( * ) ( int , char * )",
+              "type": "int (* ) (int , char *)",
               "value": null
             },
             {
               "name": "cleanup_func",
-              "type": "void ( * ) ( void * )",
+              "type": "void (* ) (void *)",
               "value": null
             }
           ],
@@ -2310,12 +2310,12 @@
             },
             {
               "name": "void_func",
-              "type": "void ( * ) ( void )",
+              "type": "void (* ) (void)",
               "value": null
             },
             {
               "name": "int_func",
-              "type": "int ( * ) ( int )",
+              "type": "int (* ) (int)",
               "value": null
             }
           ],
@@ -6234,12 +6234,12 @@
           "fields": [
             {
               "name": ")",
-              "type": "struct old_point * point = malloc ( sizeof ( struct old_point )",
+              "type": "struct old_point * point = malloc(sizeof(struct old_point)",
               "value": null
             },
             {
               "name": "point",
-              "type": "if ( point ) { point -> x = x ; point -> y = y ; } return",
+              "type": "if(point){ point -> x = x ; point -> y = y ; } return",
               "value": null
             }
           ],

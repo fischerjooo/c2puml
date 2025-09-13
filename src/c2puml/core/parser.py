@@ -1190,7 +1190,7 @@ class CParser:
                                     var_type = base_type + "".join(f"[{d}]" for d in dims)
                                     var_type = self._clean_type_string(var_type)
                                     value_tokens = collected_tokens[assign_idx + 1 :]
-                                    var_value = " ".join(t.value for t in value_tokens)
+                                    var_value = format_tokens_compact(value_tokens)
                                     var_value = self._clean_value_string(var_value)
                                     return (var_name, var_type, var_value)
                             break
@@ -1202,7 +1202,7 @@ class CParser:
                     var_type = format_tokens_compact(type_tokens)
                     var_type = self._clean_type_string(var_type)
                     var_type = self._fix_array_bracket_spacing(var_type)
-                    var_value = " ".join(t.value for t in value_tokens)
+                    var_value = format_tokens_compact(value_tokens)
                     # Clean the value string to remove excessive whitespace and newlines
                     var_value = self._clean_value_string(var_value)
                     return (var_name, var_type, var_value)
