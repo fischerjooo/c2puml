@@ -1439,7 +1439,11 @@ def find_struct_fields(
                 and any(t.type == TokenType.LBRACKET for t in field_tokens)
             ):
                 # Robust multi-dimensional array handling using shared utils
-                from .parse_utils import collect_array_dimensions_from_tokens, join_type_with_dims
+                from .parse_utils import (
+                    collect_array_dimensions_from_tokens,
+                    join_type_with_dims,
+                    normalize_dim_value,
+                )
 
                 # Find the first '[' from the end
                 first_lbracket_idx = None
@@ -1463,10 +1467,7 @@ def find_struct_fields(
 
                         dims, _next = collect_array_dimensions_from_tokens(field_tokens, first_lbracket_idx)
                         # Normalize pure numeric suffixes like 5U/6UL to base number for dims
-                        normalized_dims: list[str] = []
-                        for d in dims:
-                            m = re.match(r"\s*(\d+)", d)
-                            normalized_dims.append(m.group(1) if m else d)
+                        normalized_dims = [normalize_dim_value(d) for d in dims]
 
                         field_type = join_type_with_dims(base_type, normalized_dims)
                         if (

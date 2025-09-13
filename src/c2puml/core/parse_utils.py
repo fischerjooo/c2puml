@@ -110,3 +110,9 @@ def join_type_with_dims(base_type: str, dims: list[str]) -> str:
     type_with_dims = base_type + "".join(f"[{d}]" for d in dims)
     return fix_array_bracket_spacing(type_with_dims)
 
+
+def normalize_dim_value(dim: str) -> str:
+    """Normalize numeric dimension tokens like 5U/6UL to plain digits; keep expressions as-is."""
+    m = re.match(r"\s*(\d+)", dim)
+    return m.group(1) if m else dim
+
