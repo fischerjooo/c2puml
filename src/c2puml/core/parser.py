@@ -1470,44 +1470,47 @@ class CParser:
         if len(param_tokens) >= 2:
             # Check if the last token is a closing bracket (array parameter)
             if param_tokens[-1].type == TokenType.RBRACKET:
-                # Find the opening bracket to get the array size
-                bracket_start = None
-                for i in range(len(param_tokens) - 1, -1, -1):
-                    if param_tokens[i].type == TokenType.LBRACKET:
-                        bracket_start = i
+                # Collect multiple dimensions by scanning backwards and pairing [] groups
+                dims: list[str] = []
+                idx = len(param_tokens) - 1
+                while idx >= 0 and param_tokens[idx].type == TokenType.RBRACKET:
+                    # find matching '[' for this ']'
+                    j = idx - 1
+                    while j >= 0 and param_tokens[j].type != TokenType.LBRACKET:
+                        j -= 1
+                    if j < 0:
                         break
-                
-                if bracket_start is not None:
-                    # Extract the parameter name (last identifier before the opening bracket)
-                    param_name = None
-                    for i in range(bracket_start - 1, -1, -1):
-                        if param_tokens[i].type == TokenType.IDENTIFIER:
-                            param_name = param_tokens[i].value
-                            break
-                    
-                    if param_name:
-                        # Extract the type (everything before the parameter name)
-                        type_tokens = param_tokens[:i]
-                        param_type = " ".join(t.value for t in type_tokens)
-                        
-                        # Add the array brackets to the type
-                        array_size = ""
-                        if bracket_start + 1 < len(param_tokens) - 1:
-                            # There's content between brackets
-                            array_content = param_tokens[bracket_start + 1:-1]
-                            array_size = " ".join(t.value for t in array_content)
-                        
-                        param_type = param_type + "[" + array_size + "]"
-                        
-                        # Fix array bracket spacing
-                        param_type = self._fix_array_bracket_spacing(param_type)
-                        
-                        return Field(name=param_name, type=param_type)
+                    # content between j and idx (exclusive)
+                    inner_tokens = param_tokens[j + 1:idx]
+                    inner_str = format_tokens_compact(inner_tokens) if inner_tokens else ""
+                    dims.append(inner_str)
+                    idx = j - 1
+
+                # Find parameter name: last identifier before the first '[' of the bracket chain
+                param_name: Optional[str] = None
+                name_idx = idx
+                while name_idx >= 0:
+                    if param_tokens[name_idx].type == TokenType.IDENTIFIER:
+                        param_name = param_tokens[name_idx].value
+                        break
+                    name_idx -= 1
+
+                if param_name is not None:
+                    # Base type is everything before the param name
+                    base_type_tokens = param_tokens[:name_idx]
+                    base_type = format_tokens_compact(base_type_tokens).strip()
+                    # Dimensions were collected from inner to outer; reverse to preserve original order
+                    dims.reverse()
+                    dim_suffix = "".join(f"[{d}]" for d in dims)
+                    param_type = (base_type + dim_suffix).strip()
+                    param_type = self._fix_array_bracket_spacing(param_type)
+                    param_type = self._fix_pointer_spacing(param_type)
+                    return Field(name=param_name, type=param_type)
             else:
                 # Regular parameter: last token is the parameter name
                 param_name = param_tokens[-1].value
                 type_tokens = param_tokens[:-1]
-                param_type = " ".join(t.value for t in type_tokens)
+                param_type = format_tokens_compact(type_tokens)
                 
                 # Fix array bracket spacing and pointer spacing
                 param_type = self._fix_array_bracket_spacing(param_type)
