@@ -1142,7 +1142,7 @@
             },
             {
               "name": "point_data",
-              "type": "array_of_anon_structs_t_items_point_data",
+              "type": "item_value_point_data",
               "value": null
             }
           ],
@@ -1150,7 +1150,7 @@
           "name": "array_of_anon_structs_t_items",
           "tag_name": "",
           "uses": [
-            "array_of_anon_structs_t_items_point_data"
+            "item_value_point_data"
           ]
         },
         "array_of_anon_structs_t_items_point_data": {
@@ -1421,7 +1421,7 @@
             },
             {
               "name": "struct_union_struct",
-              "type": "complex_naming_test_t_third_struct_struct_union_struct",
+              "type": "struct_union_struct_union_struct",
               "value": null
             }
           ],
@@ -1429,7 +1429,7 @@
           "name": "complex_naming_test_t_third_struct",
           "tag_name": "",
           "uses": [
-            "complex_naming_test_t_third_struct_struct_union_struct"
+            "struct_union_struct_union_struct"
           ]
         },
         "complex_naming_test_t_third_struct_struct_union_struct": {
@@ -1590,7 +1590,7 @@
           "fields": [
             {
               "name": "mixed_struct",
-              "type": "extreme_nesting_test_t_level2_struct_2_mixed_struct",
+              "type": "mixed_union_mixed_struct",
               "value": null
             }
           ],
@@ -1598,7 +1598,7 @@
           "name": "extreme_nesting_test_t_level2_struct_2",
           "tag_name": "",
           "uses": [
-            "extreme_nesting_test_t_level2_struct_2_mixed_struct"
+            "mixed_union_mixed_struct"
           ]
         },
         "extreme_nesting_test_t_level2_struct_2_mixed_struct": {
@@ -6239,7 +6239,7 @@
             },
             {
               "name": "point",
-              "type": "if ( point ) { point -> x = x ; point -> y = y ; } return",
+              "type": "old_point",
               "value": null
             }
           ],
