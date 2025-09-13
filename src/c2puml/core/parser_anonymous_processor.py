@@ -8,15 +8,24 @@ from ..models import FileModel, Struct, Union, Field, Alias
 class AnonymousTypedefProcessor:
     """Handles extraction and processing of anonymous structures within typedefs."""
 
+    # Configuration constants for better maintainability
+    MAX_ITERATIONS = 5  # Reduced from 10 to prevent excessive processing
+    MAX_COMPLEXITY_SCORE = 50  # Limit for structure complexity
+    MAX_NESTING_DEPTH = 3  # Maximum nesting depth to process
+
     def __init__(self):
         self.anonymous_counters: Dict[str, Dict[str, int]] = {}  # parent -> {type -> count}
         self.global_anonymous_structures = {}  # Track anonymous structures globally by content hash
         self.content_to_structure_map = {}  # content_hash -> (name, struct_type)
+        self.processing_stats = {'processed': 0, 'skipped': 0, 'errors': 0}  # Track processing stats
 
     def process_file_model(self, file_model: FileModel) -> None:
         """Process all typedefs in a file model to extract anonymous structures using multi-pass processing."""
-        max_iterations = 10  # Increased from 5 to 10 for deeper processing
+        max_iterations = self.MAX_ITERATIONS  # Use configurable limit
         iteration = 0
+        
+        # Reset processing stats
+        self.processing_stats = {'processed': 0, 'skipped': 0, 'errors': 0}
         
         while iteration < max_iterations:
             iteration += 1
@@ -488,19 +497,48 @@ class AnonymousTypedefProcessor:
 
     def _is_too_complex_to_process(self, struct_content: str) -> bool:
         """Check if a structure is too complex to process."""
-        # Skip structures with function pointer arrays
+        try:
+            complexity_score = self._calculate_complexity_score(struct_content)
+            return complexity_score > self.MAX_COMPLEXITY_SCORE
+        except Exception:
+            # If we can't calculate complexity, assume it's too complex
+            return True
+
+    def _calculate_complexity_score(self, struct_content: str) -> int:
+        """Calculate complexity score for a structure"""
+        score = 0
+        
+        # Function pointer arrays are very complex
         if re.search(r'\(\s*\*\s*\w+\s*\)\s*\[', struct_content):
-            return True
+            score += 30
         
-        # Skip structures with complex nested patterns
-        if struct_content.count('{') > 5 or struct_content.count('}') > 5:
-            return True
+        # Nested structures add complexity
+        score += struct_content.count('{') * 5
+        score += struct_content.count('}') * 5
         
-        # Skip structures with too many semicolons (complex field declarations)
-        if struct_content.count(';') > 10:
-            return True
+        # Multiple fields add complexity
+        score += struct_content.count(';') * 2
         
-        return False
+        # Deep nesting adds complexity
+        max_nesting = self._calculate_max_nesting_depth(struct_content)
+        if max_nesting > self.MAX_NESTING_DEPTH:
+            score += (max_nesting - self.MAX_NESTING_DEPTH) * 10
+        
+        return score
+
+    def _calculate_max_nesting_depth(self, content: str) -> int:
+        """Calculate maximum nesting depth of braces"""
+        max_depth = 0
+        current_depth = 0
+        
+        for char in content:
+            if char == '{':
+                current_depth += 1
+                max_depth = max(max_depth, current_depth)
+            elif char == '}':
+                current_depth -= 1
+        
+        return max_depth
 
     def _replace_anonymous_struct_with_reference(
         self, original_type: str, struct_content: str, anon_name: str, struct_type: str

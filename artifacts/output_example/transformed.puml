@@ -31,7 +31,6 @@ class "transformed" as HEADER_TRANSFORMED <<header>> #LightGreen
 
 class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYellow
 {
-    + struct old_point * point = malloc ( sizeof ( struct old_point ) )
     + if ( point ) { point -> x = x ; point -> y = y ; } return point
 }
 

@@ -1167,17 +1167,25 @@ def extract_token_range(tokens: List[Token], start: int, end: int) -> str:
 def find_struct_fields(
     tokens: List[Token], struct_start: int, struct_end: int
 ) -> List[Tuple[str, str]]:
-    """Extract field information from struct token range
+    """Extract field information from struct token range - improved error handling
     Returns:
         List of tuples (field_name, field_type)
     """
     fields = []
-    pos = struct_start
-    while pos <= struct_end and tokens[pos].type != TokenType.LBRACE:
-        pos += 1
-    if pos > struct_end:
+    
+    # Validate input parameters
+    if not tokens or struct_start < 0 or struct_end >= len(tokens) or struct_start > struct_end:
         return fields
-    pos += 1  # Skip opening brace
+    
+    try:
+        pos = struct_start
+        while pos <= struct_end and tokens[pos].type != TokenType.LBRACE:
+            pos += 1
+        if pos > struct_end:
+            return fields
+        pos += 1  # Skip opening brace
+    except (IndexError, AttributeError):
+        return fields
 
     # Find the closing brace position of the main struct body
     closing_brace_pos = pos
@@ -1192,8 +1200,11 @@ def find_struct_fields(
                 break
         closing_brace_pos += 1
 
-    # Only parse fields up to the closing brace
-    while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE:
+    # Only parse fields up to the closing brace with circuit breaker
+    max_fields = 100  # Prevent infinite loops
+    field_count = 0
+    
+    while pos < closing_brace_pos and tokens[pos].type != TokenType.RBRACE and field_count < max_fields:
         field_tokens = []
         # Collect tokens until we find the semicolon that ends this field
         # For nested structures, we need to handle braces properly
@@ -1201,7 +1212,9 @@ def find_struct_fields(
         field_start_pos = pos
         
         # First pass: collect tokens until we find the semicolon outside of braces
-        while pos < closing_brace_pos:
+        # Add safety check to prevent infinite loops
+        start_pos_for_field = pos
+        while pos < closing_brace_pos and (pos - start_pos_for_field) < 1000:  # Safety limit
             if tokens[pos].type == TokenType.LBRACE:
                 brace_count += 1
             elif tokens[pos].type == TokenType.RBRACE:
@@ -1216,6 +1229,13 @@ def find_struct_fields(
             if tokens[pos].type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE]:
                 field_tokens.append(tokens[pos])
             pos += 1
+        
+        # Safety check: if we hit the limit, skip this field
+        if (pos - start_pos_for_field) >= 1000:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Skipping overly complex field at position {start_pos_for_field}")
+            return None
         
         # For nested structures, we need to continue collecting tokens until we find the field name
         # and the semicolon that ends the entire field
@@ -1273,7 +1293,7 @@ def find_struct_fields(
                     else:
                         field_type = "struct { ... }"
                     
-                    if field_name not in ["[", "]", ";", "}"]:
+                    if _is_valid_field_name_and_type(field_name, field_type):
                         fields.append((field_name, field_type))
                         # Skip parsing the nested struct's fields as separate fields
                         # Let the normal flow handle semicolon advancement
@@ -1322,7 +1342,7 @@ def find_struct_fields(
                     else:
                         field_type = "union { ... }"
                     
-                    if field_name not in ["[", "]", ";", "}"]:
+                    if _is_valid_field_name_and_type(field_name, field_type):
                         fields.append((field_name, field_type))
                         # Skip parsing the nested union's fields as separate fields
                         # Let the normal flow handle semicolon advancement
@@ -1389,7 +1409,7 @@ def find_struct_fields(
                         field_name
                         and field_name.strip()
                         and field_type.strip()
-                        and field_name not in ["[", "]", ";", "}"]
+                        and _is_valid_field_name_and_type(field_name, field_type)
                     ):
                         stripped_name = field_name.strip()
                         stripped_type = field_type.strip()
@@ -1443,7 +1463,7 @@ def find_struct_fields(
                             field_name
                             and field_name.strip()
                             and full_type.strip()
-                            and field_name not in ["[", "]", ";", "}"]
+                            and _is_valid_field_name_and_type(field_name, field_type)
                         ):
                             stripped_name = field_name.strip()
                             stripped_type = full_type.strip()
@@ -1485,7 +1505,7 @@ def find_struct_fields(
                         field_name
                         and field_name.strip()
                         and field_type.strip()
-                        and field_name not in ["[", "]", ";", "}"]
+                        and _is_valid_field_name_and_type(field_name, field_type)
                     ):
                         stripped_name = field_name.strip()
                         stripped_type = field_type.strip()
@@ -1537,7 +1557,7 @@ def find_struct_fields(
                                     field_name
                                     and field_name.strip()
                                     and field_type.strip()
-                                    and field_name not in ["[", "]", ";", "}"]
+                                    and _is_valid_field_name_and_type(field_name, field_type)
                                 ):
                                     stripped_name = field_name.strip()
                                     stripped_type = field_type.strip()
@@ -1547,20 +1567,56 @@ def find_struct_fields(
                     # Single field: type name
                     field_name = field_tokens[-1].value
                     field_type = " ".join(t.value for t in field_tokens[:-1])
-                    if (
-                        field_name not in ["[", "]", ";", "}"]
-                        and field_name
-                        and field_name.strip()
-                        and field_type.strip()
-                    ):
+                    if _is_valid_field_name_and_type(field_name, field_type):
                         # Additional validation to ensure we don't have empty strings
                         stripped_name = field_name.strip()
                         stripped_type = field_type.strip()
                         if stripped_name and stripped_type:
                             fields.append((stripped_name, stripped_type))
+                            field_count += 1
         if pos < closing_brace_pos:
             pos += 1  # Skip semicolon
+        
+        field_count += 1  # Increment even if field parsing failed to prevent infinite loops
+    
     return fields
+
+
+def _is_valid_field_name_and_type(field_name: str, field_type: str) -> bool:
+    """Validate field name and type to prevent parsing errors"""
+    if not field_name or not field_type:
+        return False
+    
+    # Invalid field name patterns
+    invalid_names = ["[", "]", ";", "}", "(", ")", "{", "=", "*", "&", ","]
+    if field_name.strip() in invalid_names:
+        return False
+    
+    # Check if field name looks like a valid C identifier
+    import re
+    if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', field_name.strip()):
+        return False
+    
+    # Field type should not be empty or just punctuation
+    if not field_type.strip() or field_type.strip() in invalid_names:
+        return False
+    
+    # Field type should not contain obvious parsing errors
+    try:
+        error_patterns = [
+            r"} ;", r"{ ;", r"\) ;", r"\( ;",  # Malformed punctuation
+            r"}.*struct.*{", r"}.*union.*{", r"}.*enum.*{",  # Multiple structures in one field
+            r"struct.*}.*struct", r"union.*}.*union",  # Multiple similar structures
+            r"}.*\w+.*;.*struct.*{",  # Pattern like "} nested_struct_a; struct { int"
+            r"}.*\w+.*;.*union.*{",   # Pattern like "} nested_union_a; union { int"
+        ]
+        if any(re.search(pattern, field_type) for pattern in error_patterns):
+            return False
+    except re.error:
+        # If regex fails, be conservative and allow the field
+        pass
+    
+    return True
 
 
 def find_enum_values(tokens: List[Token], enum_start: int, enum_end: int) -> List[str]:

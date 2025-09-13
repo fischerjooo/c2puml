@@ -497,18 +497,7 @@ class CParser:
                 if global_info:
                     var_name, var_type, var_value = global_info
                     # Only add if it looks like a real global variable (not a fragment)
-                    if (
-                        var_name
-                        and var_name.strip()
-                        and var_type
-                        and var_type.strip()
-                        and not var_name.startswith("#")
-                        and len(var_type) < 200
-                        and not var_type.startswith("\\")
-                        and not var_name.startswith("\\")
-                        and "\\" not in var_type
-                        and "\\" not in var_name
-                    ):
+                    if self._is_valid_global_variable(var_name, var_type):
                         try:
                             # Additional validation before creating Field
                             stripped_name = var_name.strip()
@@ -779,18 +768,18 @@ class CParser:
         return None
 
     def _parse_single_typedef(self, tokens, start_pos):
-        """Parse a single typedef starting at the given position"""
-        # Skip 'typedef' keyword
-        pos = start_pos + 1
+        """Parse a single typedef starting at the given position - improved error handling"""
+        try:
+            # Skip 'typedef' keyword
+            pos = start_pos + 1
 
-        # Skip whitespace and comments
-        while pos < len(tokens) and tokens[pos].type in [
-            TokenType.WHITESPACE,
-            TokenType.COMMENT,
-        ]:
-            pos += 1
+            # Skip whitespace and comments
+            pos = self._skip_whitespace_and_comments(tokens, pos)
 
-        if pos >= len(tokens):
+            if pos >= len(tokens):
+                return None
+        except (IndexError, AttributeError) as e:
+            self.logger.warning(f"Error parsing typedef at position {start_pos}: {e}")
             return None
 
         # Check if it's a struct/enum/union typedef
@@ -1176,7 +1165,15 @@ class CParser:
         return i
 
     def _parse_global_variable(self, tokens, start_pos):
-        """Parse a global variable declaration starting at start_pos"""
+        """Parse a global variable declaration starting at start_pos - improved error handling"""
+        try:
+            return self._parse_global_variable_impl(tokens, start_pos)
+        except (IndexError, AttributeError, ValueError) as e:
+            self.logger.debug(f"Error parsing global variable at position {start_pos}: {e}")
+            return None
+
+    def _parse_global_variable_impl(self, tokens, start_pos):
+        """Implementation of global variable parsing"""
         # Look for pattern: [static/extern] type name [= value];
         i = start_pos
         collected_tokens = []
@@ -1676,6 +1673,41 @@ class CParser:
         from datetime import datetime
 
         return datetime.now().isoformat()
+
+    def _skip_whitespace_and_comments(self, tokens, pos):
+        """Helper method to skip whitespace and comments"""
+        while pos < len(tokens) and tokens[pos].type in [TokenType.WHITESPACE, TokenType.COMMENT]:
+            pos += 1
+        return pos
+
+    def _safe_token_access(self, tokens, pos):
+        """Safely access token at position"""
+        if 0 <= pos < len(tokens):
+            return tokens[pos]
+        return None
+
+    def _is_valid_identifier(self, token_value):
+        """Check if token value is a valid C identifier"""
+        if not token_value or not isinstance(token_value, str):
+            return False
+        import re
+        return bool(re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', token_value.strip()))
+
+    def _is_valid_global_variable(self, var_name, var_type):
+        """Check if parsed global variable is valid"""
+        if not var_name or not var_name.strip() or not var_type or not var_type.strip():
+            return False
+        
+        # Filter out obvious parsing errors
+        invalid_patterns = [
+            lambda n, t: n.startswith("#"),  # Preprocessor fragments
+            lambda n, t: t.startswith("\\") or n.startswith("\\"),  # Escape sequences
+            lambda n, t: "\\" in t or "\\" in n,  # Backslashes
+            lambda n, t: len(t) > 200,  # Overly long types
+            lambda n, t: not self._is_valid_identifier(n),  # Invalid identifiers
+        ]
+        
+        return not any(check(var_name, var_type) for check in invalid_patterns)
 
 
 class Parser:
