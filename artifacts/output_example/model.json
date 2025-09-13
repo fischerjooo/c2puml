@@ -6233,11 +6233,6 @@
         "__anonymous_struct__": {
           "fields": [
             {
-              "name": ")",
-              "type": "struct old_point * point = malloc ( sizeof ( struct old_point )",
-              "value": null
-            },
-            {
               "name": "point",
               "type": "if ( point ) { point -> x = x ; point -> y = y ; } return",
               "value": null
@@ -6246,9 +6241,7 @@
           "methods": [],
           "name": "__anonymous_struct__",
           "tag_name": "",
-          "uses": [
-            "old_point"
-          ]
+          "uses": []
         },
         "legacy_data": {
           "fields": [
