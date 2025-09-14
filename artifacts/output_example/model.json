@@ -6830,8 +6830,8 @@
               "value": null
             },
             {
-              "name": "U",
-              "type": "int array_ofarray_aast[2[2]",
+              "name": "array_ofarray_aast",
+              "type": "int[2][2]",
               "value": null
             }
           ],

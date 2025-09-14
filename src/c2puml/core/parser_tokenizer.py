@@ -1445,9 +1445,9 @@ def find_struct_fields(
                     normalize_dim_value,
                 )
 
-                # Find the first '[' from the end
+                # Find the first '[' scanning forward (start of dimensions)
                 first_lbracket_idx = None
-                for idx in range(len(field_tokens) - 1, -1, -1):
+                for idx in range(0, len(field_tokens)):
                     if field_tokens[idx].type == TokenType.LBRACKET:
                         first_lbracket_idx = idx
                         break
