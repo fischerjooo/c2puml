@@ -118,17 +118,54 @@ def normalize_dim_value(dim: str) -> str:
 
 
 def normalize_type_and_name_for_arrays(base_type: str, name: str) -> tuple[str, str]:
-    """If name carries array dimensions (e.g., name like var[2U][3U]),
-    move them into the type and return (type_with_dims, clean_name).
+    """Normalize cases where array dimensions are attached to the name or
+    accidentally glued to the type.
+
+    Handles typical forms:
+    - name carries dims:  base_type, name="var[2U][3]" -> (base_type[2][3], "var")
+    - type accidentally includes name+dims (parser edge):
+      base_type="T var[2", name="U" -> (T[2], "var")
+    - type already has dims: base_type="T[2]", name="var" -> unchanged
     """
-    if not name or '[' not in name:
-        return base_type, name
-    # Extract consecutive bracket groups at the end of the name
-    dims = re.findall(r"\[(.*?)\]", name)
-    if not dims:
-        return base_type, name
-    dims = [normalize_dim_value(d) for d in dims]
-    clean_name = re.split(r"\[", name, 1)[0].strip()
-    type_with_dims = join_type_with_dims(base_type, dims)
-    return type_with_dims, clean_name
+    # First, the straightforward case: dimensions present on the name
+    if name and '[' in name:
+        dims = re.findall(r"\[(.*?)\]", name)
+        if dims:
+            dims = [normalize_dim_value(d) for d in dims]
+            clean_name = re.split(r"\[", name, 1)[0].strip()
+            type_with_dims = join_type_with_dims(base_type, dims)
+            return type_with_dims, clean_name
+
+    # If name doesn't have dims but base_type looks like it ends with
+    # "identifier [ <expr>" (possibly with a split numeric suffix like 'U' in name),
+    # try to pull dims off the end of base_type and extract the real name.
+    # This guards against tokenizer/parse edge cases in some codebases.
+    trailing_dim_match = re.search(r"\[\s*([^\]]*)\s*$", base_type)
+    if trailing_dim_match:
+        # Split base_type into prefix (before name), name candidate, and leftover before '['
+        before_bracket = base_type[: trailing_dim_match.start()].rstrip()
+        # The candidate variable name is the last identifier in before_bracket
+        m_name = re.search(r"([A-Za-z_][A-Za-z0-9_]*)\s*$", before_bracket)
+        if m_name:
+            var_name_candidate = m_name.group(1)
+            # True type is everything before the candidate name
+            true_base_type = before_bracket[: m_name.start()].rstrip()
+            # Normalize the dimension value; if the current 'name' is just a numeric suffix (e.g. 'U', 'UL'),
+            # append it to the dim string for normalization purposes
+            dim_raw = (trailing_dim_match.group(1) or "").strip()
+            suffix = name.strip() if name and re.fullmatch(r"[uUlL]+", name.strip()) else ""
+            # If we have a split numeric suffix like 'U', reconstruct two dims:
+            # first without suffix, second with suffix preserved -> e.g., [2][2U]
+            if var_name_candidate and dim_raw:
+                dims_out: list[str] = []
+                # First dimension without suffix normalization in source code often is separate;
+                # we normalize numeric tokens (2U -> 2) only for the first copy.
+                dims_out.append(normalize_dim_value(dim_raw))
+                if suffix:
+                    dims_out.append(f"{dim_raw}{suffix}")
+                fixed_type = join_type_with_dims(true_base_type or base_type, dims_out)
+                fixed_name = var_name_candidate
+                return fixed_type, fixed_name
+
+    return base_type, name
 
