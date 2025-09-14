@@ -1170,17 +1170,17 @@ class CParser:
                                     type_tokens = collected_tokens[start_idx:k]
                                     # Format base type preserving spaces
                                     base_type = format_tokens_compact(type_tokens)
-                                    # Collect all trailing [size] groups between name and '='
+                                    # Collect all trailing [size] groups between name and '=' (support multi-token dims)
                                     dims = []
                                     idx = k + 1
-                                    while idx + 2 < assign_idx and collected_tokens[idx].type == TokenType.LBRACKET and collected_tokens[idx + 2].type == TokenType.RBRACKET:
-                                        size_val = collected_tokens[idx + 1].value
-                                        # Normalize numeric sizes like 5U/6UL to 5/6
-                                        import re as _re
-                                        m = _re.match(r"\s*(\d+)", size_val)
-                                        size_clean = m.group(1) if m else size_val
-                                        dims.append(size_clean)
-                                        idx += 3
+                                    while idx < assign_idx and collected_tokens[idx].type == TokenType.LBRACKET:
+                                        endb = idx + 1
+                                        while endb < assign_idx and collected_tokens[endb].type != TokenType.RBRACKET:
+                                            endb += 1
+                                        inner = collected_tokens[idx + 1:endb]
+                                        dim_str = format_tokens_compact(inner).strip()
+                                        dims.append(dim_str)
+                                        idx = endb + 1
                                     var_type = base_type + "".join(f"[{d}]" for d in dims)
                                     var_type = self._clean_type_string(var_type)
                                     value_tokens = collected_tokens[assign_idx + 1 :]
@@ -1221,16 +1221,17 @@ class CParser:
                                     type_tokens = collected_tokens[start_idx:k]
                                     # Format base type preserving spaces
                                     base_type = format_tokens_compact(type_tokens)
-                                    # Collect all trailing [size] groups after the name
+                                    # Collect all trailing [size] groups after the name (support multi-token dims)
                                     dims = []
                                     idx2 = k + 1
-                                    while idx2 + 2 < len(collected_tokens) and collected_tokens[idx2].type == TokenType.LBRACKET and collected_tokens[idx2 + 2].type == TokenType.RBRACKET:
-                                        size_val = collected_tokens[idx2 + 1].value
-                                        import re as _re
-                                        m = _re.match(r"\s*(\d+)", size_val)
-                                        size_clean = m.group(1) if m else size_val
-                                        dims.append(size_clean)
-                                        idx2 += 3
+                                    while idx2 < len(collected_tokens) and collected_tokens[idx2].type == TokenType.LBRACKET:
+                                        endb = idx2 + 1
+                                        while endb < len(collected_tokens) and collected_tokens[endb].type != TokenType.RBRACKET:
+                                            endb += 1
+                                        inner = collected_tokens[idx2 + 1:endb]
+                                        dim_str = format_tokens_compact(inner).strip()
+                                        dims.append(dim_str)
+                                        idx2 = endb + 1
                                     var_type = base_type + "".join(f"[{d}]" for d in dims)
                                     var_type = self._clean_type_string(var_type)
                                     return (var_name, var_type, None)
