@@ -1,0 +1,126 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "c2puml"
+version = "2025.9.14.2"
+description = "Convert C/C++ code to PlantUML diagrams with advanced filtering and transformation capabilities"
+readme = "README.md"
+authors = [
+    {name = "C to PlantUML Team", email = "fischerjooo@users.noreply.github.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Documentation",
+]
+requires-python = ">=3.7"
+dependencies = []
+keywords = ["c", "cpp", "plantuml", "uml", "diagram", "code-generation", "documentation"]
+
+[project.urls]
+Homepage = "https://github.com/fischerjooo/c2puml"
+Repository = "https://github.com/fischerjooo/c2puml"
+Issues = "https://github.com/fischerjooo/c2puml/issues"
+Documentation = "https://fischerjooo.github.io/c2puml"
+"Download ZIP" = "https://github.com/fischerjooo/c2puml/archive/refs/heads/release.zip"
+"Download TAR.GZ" = "https://github.com/fischerjooo/c2puml/archive/refs/heads/release.tar.gz"
+
+[project.scripts]
+c2puml = "c2puml.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["c2puml*"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | c2puml\.egg-info
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_first_party = ["c2puml"]
+skip_glob = [
+    "build/*",
+    "dist/*",
+    "*.egg-info/*",
+    ".venv/*",
+    "venv/*",
+    ".tox/*",
+    ".mypy_cache/*"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short"
+]
+markers = [
+    "unit: Unit tests",
+    "feature: Feature tests", 
+    "integration: Integration tests",
+    "slow: Slow running tests"
+]
+
+[tool.coverage.run]
+source = ["c2puml"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
