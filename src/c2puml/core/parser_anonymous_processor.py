@@ -833,7 +833,7 @@ class AnonymousTypedefProcessor:
                 return union_name
         
         for struct_name in file_model.structs:
-            if struct_name == field.name or struct_name.endswith(f"_{struct_name}"):
+            if struct_name == field.name or struct_name.endswith(f"_{field.name}"):
                 return struct_name
         
         return None
