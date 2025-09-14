@@ -165,6 +165,7 @@ class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
 class "ArrayHolder_t" as TYPEDEF_ARRAYHOLDER_T <<struct>> #LightYellow
 {
     + int type_tst
+    + int[2][2] array_ofarray_aast
 }
 
 class "MyBuffer" as TYPEDEF_MYBUFFER <<struct>> #LightYellow

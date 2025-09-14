@@ -17,6 +17,18 @@ from .parser_tokenizer import (
 from .preprocessor import PreprocessorManager
 from .parser_anonymous_processor import AnonymousTypedefProcessor
 from ..utils import detect_file_encoding
+import re
+from .parse_utils import (
+    clean_type_string,
+    clean_value_string,
+    fix_array_bracket_spacing,
+    fix_pointer_spacing,
+    collect_array_dimensions_from_tokens,
+    join_type_with_dims,
+    normalize_dim_value,
+)
+
+INCLUDE_FILENAME_RE = re.compile(r'[<"\']([^>\'\"]+)[>\'\"]')
 
 if TYPE_CHECKING:
     from ..config import Config
@@ -540,15 +552,8 @@ class CParser:
 
         for token in tokens:
             if token.type == TokenType.INCLUDE:
-                # Extract include filename from the token value
-                # e.g., "#include <stdio.h>" -> "stdio.h"
-                # e.g., '#include "header.h"' -> "header.h"
-                # e.g., "#include 'header.h'" -> "header.h"
-                import re
-
-                match = re.search(r'[<"\']([^>\'"]+)[>\'"]', token.value)
+                match = INCLUDE_FILENAME_RE.search(token.value)
                 if match:
-                    # Return just the filename without quotes or angle brackets
                     includes.append(match.group(1))
 
         return includes
@@ -1233,18 +1238,10 @@ class CParser:
                                         else:
                                             formatted_type.append(token.value)
                                     base_type = "".join(formatted_type)
-                                    # Collect all trailing [size] groups between name and '='
-                                    dims = []
-                                    idx = k + 1
-                                    while idx + 2 < assign_idx and collected_tokens[idx].type == TokenType.LBRACKET and collected_tokens[idx + 2].type == TokenType.RBRACKET:
-                                        size_val = collected_tokens[idx + 1].value
-                                        # Normalize numeric sizes like 5U/6UL to 5/6
-                                        import re as _re
-                                        m = _re.match(r"\s*(\d+)", size_val)
-                                        size_clean = m.group(1) if m else size_val
-                                        dims.append(size_clean)
-                                        idx += 3
-                                    var_type = base_type + "".join(f"[{d}]" for d in dims)
+                                    # Collect all trailing [size] groups between name and '=' using shared helper
+                                    dims, _n = collect_array_dimensions_from_tokens(collected_tokens[:assign_idx], k + 1)
+                                    dims = [normalize_dim_value(d) for d in dims]
+                                    var_type = join_type_with_dims(base_type, dims)
                                     var_type = self._clean_type_string(var_type)
                                     value_tokens = collected_tokens[assign_idx + 1 :]
                                     var_value = " ".join(t.value for t in value_tokens)
@@ -1290,17 +1287,10 @@ class CParser:
                                         else:
                                             formatted_type.append(token.value)
                                     base_type = "".join(formatted_type)
-                                    # Collect all trailing [size] groups after the name
-                                    dims = []
-                                    idx2 = k + 1
-                                    while idx2 + 2 < len(collected_tokens) and collected_tokens[idx2].type == TokenType.LBRACKET and collected_tokens[idx2 + 2].type == TokenType.RBRACKET:
-                                        size_val = collected_tokens[idx2 + 1].value
-                                        import re as _re
-                                        m = _re.match(r"\s*(\d+)", size_val)
-                                        size_clean = m.group(1) if m else size_val
-                                        dims.append(size_clean)
-                                        idx2 += 3
-                                    var_type = base_type + "".join(f"[{d}]" for d in dims)
+                                    # Collect all trailing [size] groups after the name using shared helper
+                                    dims, _n = collect_array_dimensions_from_tokens(collected_tokens, k + 1)
+                                    dims = [normalize_dim_value(d) for d in dims]
+                                    var_type = join_type_with_dims(base_type, dims)
                                     var_type = self._clean_type_string(var_type)
                                     return (var_name, var_type, None)
                             break
@@ -1622,54 +1612,19 @@ class CParser:
 
     def _fix_array_bracket_spacing(self, type_str: str) -> str:
         """Fix spacing around array brackets in type strings"""
-        # First clean the type string to remove newlines
-        type_str = self._clean_type_string(type_str)
-        # Replace patterns like "type[ size ]" with "type[size]"
-        import re
-        # Remove spaces around array brackets
-        type_str = re.sub(r'\s*\[\s*', '[', type_str)
-        type_str = re.sub(r'\s*\]\s*', ']', type_str)
-        return type_str
+        return fix_array_bracket_spacing(type_str)
 
     def _fix_pointer_spacing(self, type_str: str) -> str:
         """Fix spacing around pointer asterisks in type strings"""
-        import re
-        # Fix double pointer spacing: "type * *" -> "type **"
-        type_str = re.sub(r'\*\s+\*', '**', type_str)
-        # Fix triple pointer spacing: "type * * *" -> "type ***"
-        type_str = re.sub(r'\*\s+\*\s+\*', '***', type_str)
-        return type_str
+        return fix_pointer_spacing(type_str)
 
     def _clean_type_string(self, type_str: str) -> str:
         """Clean type string by removing newlines and normalizing whitespace"""
-        if not type_str:
-            return type_str
-        # Replace newlines with spaces and normalize whitespace
-        cleaned = type_str.replace('\n', ' ')
-        # Normalize multiple spaces to single space
-        import re
-        cleaned = re.sub(r'\s+', ' ', cleaned)
-        # Strip leading/trailing whitespace
-        cleaned = cleaned.strip()
-        return cleaned
+        return clean_type_string(type_str)
 
     def _clean_value_string(self, value_str: str) -> str:
         """Clean value string by removing excessive whitespace and newlines"""
-        if not value_str:
-            return value_str
-        # Replace newlines with spaces and normalize whitespace
-        cleaned = value_str.replace('\n', ' ')
-        # Normalize multiple spaces to single space
-        import re
-        cleaned = re.sub(r'\s+', ' ', cleaned)
-        # Strip leading/trailing whitespace
-        cleaned = cleaned.strip()
-        # Remove excessive spaces around braces and operators
-        cleaned = re.sub(r'\s*{\s*', '{', cleaned)
-        cleaned = re.sub(r'\s*}\s*', '}', cleaned)
-        cleaned = re.sub(r'\s*,\s*', ', ', cleaned)
-        cleaned = re.sub(r'\s*&\s*', '&', cleaned)
-        return cleaned
+        return clean_value_string(value_str)
 
     def _get_timestamp(self) -> str:
         """Get current timestamp string"""
