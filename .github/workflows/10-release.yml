@@ -3,8 +3,8 @@ name: 10. Release
 on:
   workflow_dispatch:
     inputs:
-      release_suffix:
-        description: 'Optional suffix to append to tag name (e.g., "beta", "rc1")'
+      version_override:
+        description: 'Optional version override (defaults to current date-based version)'
         required: false
         default: ''
         type: string
@@ -37,18 +37,25 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: "10.04 Generate release date and tag"
+      - name: "10.04 Generate release metadata and tag"
         id: release_date
         run: |
-          # Always use current date
+          # Always compute current date for notes
           RELEASE_DATE=$(date +%Y-%m-%d)
           echo "date=${RELEASE_DATE}" >> $GITHUB_OUTPUT
-          
-          # Build tag name with optional suffix
-          TAG_NAME="v${RELEASE_DATE}"
-          if [ -n "${{ github.event.inputs.release_suffix }}" ]; then
-            TAG_NAME="${TAG_NAME}-${{ github.event.inputs.release_suffix }}"
+
+          # Determine version: user-provided override or date-based default (YYYY.M.D)
+          if [ -n "${{ github.event.inputs.version_override }}" ]; then
+            VERSION="${{ github.event.inputs.version_override }}"
+            # Normalize: strip leading 'v' if provided
+            VERSION="${VERSION#v}"
+          else
+            VERSION=$(date +%Y.%-m.%-d)
           fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+          # Build tag name from version
+          TAG_NAME="v${VERSION}"
           echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
 
       - name: "10.05 Update release branch"
@@ -94,8 +101,8 @@ jobs:
 
       - name: "10.07 Update version in pyproject.toml and __init__.py"
         run: |
-          # Generate version in format YYYY.M.D (e.g., 2025.8.2)
-          VERSION=$(date +%Y.%-m.%-d)
+          # Use version determined earlier (override or date-based)
+          VERSION="${{ steps.release_date.outputs.version }}"
           echo "📝 Updating version to: $VERSION"
           
           # Update the version in pyproject.toml
