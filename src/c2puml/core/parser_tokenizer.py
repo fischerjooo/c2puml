@@ -950,6 +950,12 @@ class StructureFinder:
                                 token.type in [TokenType.INLINE, TokenType.LOCAL_INLINE]
                                 for token in return_type_tokens
                             )
+                            # Fallback: detect inline by textual prefix in return_type
+                            # This covers cases where macros like LOCAL_INLINE were not token-mapped earlier
+                            if not is_inline:
+                                rt_upper = return_type.upper()
+                                if rt_upper.startswith("LOCAL_INLINE ") or rt_upper.startswith("INLINE "):
+                                    is_inline = True
 
                             # Find end of function (either ; for declaration or { for definition)
                             end_pos = self._find_function_end(self.pos)
