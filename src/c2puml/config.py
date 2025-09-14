@@ -96,12 +96,6 @@ class Config:
             for key, value in data.items():
                 if hasattr(self, key):
                     setattr(self, key, value)
-        elif len(kwargs) == 1 and isinstance(next(iter(kwargs.values())), dict):
-            # Handle case where a single dict is passed as keyword argument
-            data = next(iter(kwargs.values()))
-            for key, value in data.items():
-                if hasattr(self, key):
-                    setattr(self, key, value)
         else:
             # Handle normal keyword arguments
             for key, value in kwargs.items():
