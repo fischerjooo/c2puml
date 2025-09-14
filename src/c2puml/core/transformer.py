@@ -984,7 +984,7 @@ class Transformer:
 				
 			seen_names.add(new_name)
 			
-			updated_element = create_renamed_element(new_name, element)
+			updated_element = element if new_name == name else create_renamed_element(new_name, element)
 			deduplicated_elements[new_name] = updated_element
 		
 		removed_count = original_count - len(deduplicated_elements)
@@ -1022,7 +1022,7 @@ class Transformer:
 				
 			seen_names.add(new_name)
 			
-			updated_element = create_renamed_element(new_name, element)
+			updated_element = element if new_name == name else create_renamed_element(new_name, element)
 			deduplicated_elements.append(updated_element)
 		
 		removed_count = original_count - len(deduplicated_elements)
@@ -1083,9 +1083,7 @@ class Transformer:
 			return func.name
 		
 		def create_renamed_function(name: str, func: Function) -> Function:
-			return Function(
-				name, func.return_type, func.parameters, func.is_static, func.is_declaration
-			)
+			return Function(name, func.return_type, func.parameters, func.is_static, func.is_declaration, func.is_inline)
 		
 		file_model.functions = self._rename_list_elements(
 			file_model.functions, patterns_map, get_function_name, 
@@ -1524,3 +1522,6 @@ class Transformer:
 			self.logger.debug("Model saved to: %s", output_file)
 		except Exception as e:
 			raise ValueError(f"Failed to save model to {output_file}: {e}") from e
+
+
+
