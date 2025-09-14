@@ -116,3 +116,19 @@ def normalize_dim_value(dim: str) -> str:
     m = re.match(r"\s*(\d+)", dim)
     return m.group(1) if m else dim
 
+
+def normalize_type_and_name_for_arrays(base_type: str, name: str) -> tuple[str, str]:
+    """If name carries array dimensions (e.g., name like var[2U][3U]),
+    move them into the type and return (type_with_dims, clean_name).
+    """
+    if not name or '[' not in name:
+        return base_type, name
+    # Extract consecutive bracket groups at the end of the name
+    dims = re.findall(r"\[(.*?)\]", name)
+    if not dims:
+        return base_type, name
+    dims = [normalize_dim_value(d) for d in dims]
+    clean_name = re.split(r"\[", name, 1)[0].strip()
+    type_with_dims = join_type_with_dims(base_type, dims)
+    return type_with_dims, clean_name
+

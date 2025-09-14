@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from ..models import Field, FileModel, Function, ProjectModel
+from .parse_utils import normalize_type_and_name_for_arrays
 
 # PlantUML generation constants
 MAX_LINE_LENGTH = 120
@@ -361,7 +362,10 @@ class Generator:
 
     def _format_global_variable(self, global_var, prefix: str = "") -> str:
         """Format a global variable with the given prefix."""
-        return f"{INDENT}{prefix}{global_var.type} {global_var.name}"
+        # In some parsed cases, array brackets may end up attached to the name.
+        # Normalize by moving any trailing [dim] groups from the name into the type.
+        t, n = normalize_type_and_name_for_arrays(global_var.type, global_var.name)
+        return f"{INDENT}{prefix}{t} {n}"
 
     def _format_function_signature(self, func, prefix: str = "") -> str:
         """Format a function signature with truncation if needed."""
