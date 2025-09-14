@@ -31,9 +31,18 @@ assertions:
       - pp.h
     functions_exist:
       - kept
+    element_counts:
+      functions: 3
+      includes: 1
   puml:
     syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - 'MAIN --> HEADER_PP : <<include>>'
+          - '+ int kept()'
   files:
     output_dir_exists: ./output
     files_exist:
       - ./output/model.json
+      - ./output/main.puml

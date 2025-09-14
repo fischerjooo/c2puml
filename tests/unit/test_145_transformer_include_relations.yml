@@ -42,6 +42,8 @@ assertions:
       - a.h
       - b.h
       - c.h
+    element_counts:
+      includes: 3
   puml:
     syntax_valid: true
     files:
@@ -50,6 +52,8 @@ assertions:
           - 'MAIN --> HEADER_A : <<include>>'
           - 'MAIN --> HEADER_B : <<include>>'
           - 'HEADER_A --> HEADER_C : <<include>>'
+        not_contains:
+          - '+ #define'
   files:
     output_dir_exists: ./output
     files_exist:

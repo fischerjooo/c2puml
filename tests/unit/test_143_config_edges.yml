@@ -23,7 +23,18 @@ assertions:
       - main.c
     element_counts:
       files: 1
+      functions: 1
+      macros: 0
+      includes: 0
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - '@startuml main'
+          - '@enduml'
   files:
     output_dir_exists: ./output
     files_exist:
       - ./output/model.json
+      - ./output/main.puml
