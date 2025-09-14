@@ -1,13 +1,12 @@
-/opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/inorout.py:473: CoverageWarning: --include is ignored because --source is set (include-ignored)
+/home/ubuntu/.local/lib/python3.13/site-packages/coverage/inorout.py:473: CoverageWarning: --include is ignored because --source is set (include-ignored)
   self.warn("--include is ignored because --source is set", slug="include-ignored")
 ============================= test session starts ==============================
-platform linux -- Python 3.9.23, pytest-8.4.2, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.9.23/x64/bin/python3
+platform linux -- Python 3.13.3, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
 cachedir: .pytest_cache
-benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
-metadata: {'Python': '3.9.23', 'Platform': 'Linux-6.11.0-1018-azure-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.2', 'pluggy': '1.6.0'}, 'Plugins': {'mock': '3.15.0', 'benchmark': '5.1.0', 'metadata': '3.1.1', 'cov': '7.0.0', 'xdist': '3.8.0', 'html': '4.1.1'}, 'CI': 'true', 'JAVA_HOME': '/usr/lib/jvm/temurin-17-jdk-amd64'}
-rootdir: /home/runner/work/c2puml/c2puml
+metadata: {'Python': '3.13.3', 'Platform': 'Linux-6.1.147-x86_64-with-glibc2.41', 'Packages': {'pytest': '8.4.2', 'pluggy': '1.6.0'}, 'Plugins': {'metadata': '3.1.1', 'xdist': '3.8.0', 'cov': '7.0.0', 'html': '4.1.1'}}
+rootdir: /workspace
 configfile: pytest.ini
-plugins: mock-3.15.0, benchmark-5.1.0, metadata-3.1.1, cov-7.0.0, xdist-3.8.0, html-4.1.1
+plugins: metadata-3.1.1, xdist-3.8.0, cov-7.0.0, html-4.1.1
 collecting ... collected 81 items
 
 tests/example/test_901_basic_example.py::TestBasicExample::test_basic_example PASSED [  1%]
@@ -92,6 +91,6 @@ tests/unit/test_140_malformed_anonymous.py::TestMalformedAnonymousStructures::te
 tests/unit/test_141_array_of_array.py::TestArrayOfArrayFormatting::test_array_of_array_typedef_struct_field PASSED [ 98%]
 tests/unit/test_142_include_depth_limit.py::TestIncludeDepthLimit::test_include_depth_limit PASSED [100%]
 
-============================== 81 passed in 9.33s ==============================
-/opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:945: CoverageWarning: No data was collected. (no-data-collected)
+============================= 81 passed in 16.33s ==============================
+/home/ubuntu/.local/lib/python3.13/site-packages/coverage/control.py:945: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")

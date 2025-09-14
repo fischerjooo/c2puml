@@ -6439,7 +6439,9 @@
           "methods": [],
           "name": "__anonymous_struct__",
           "tag_name": "",
-          "uses": []
+          "uses": [
+            "old_point"
+          ]
         },
         "old_point": {
           "fields": [

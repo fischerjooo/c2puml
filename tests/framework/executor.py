@@ -57,6 +57,7 @@ class TestExecutor:
         # Use absolute path to main.py
         # __file__ is tests/framework/executor.py, so go up 2 levels to workspace root
         workspace_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self.workspace_root = workspace_root
         main_script_path = os.path.join(workspace_root, "main.py")
         self.main_script_command = [sys.executable, main_script_path]
 
@@ -217,16 +218,26 @@ class TestExecutor:
         Returns:
             Complete command list
         """
-        # Try different ways to run c2puml
-        commands_to_try = [
-            self.main_script_command + args,  # Try python main.py first (most reliable)
-            [self.c2puml_command] + args,  # Try installed c2puml command
-            self.python_module_command + args,  # Try python -m c2puml.main
-        ]
+        # Prefer running under coverage to collect subprocess coverage data during tests
+        try:
+            enable_cov = bool(os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("C2PUML_FORCE_COVERAGE"))
+            if enable_cov:
+                # Convert to: python -m coverage run -p main.py <args>
+                main_script_path = self.main_script_command[1]
+                return [
+                    sys.executable,
+                    "-m",
+                    "coverage",
+                    "run",
+                    "-p",
+                    main_script_path,
+                    *args,
+                ]
+        except Exception:
+            pass
 
-        # Return the first command that should work
-        # The actual command validation happens in _execute_command
-        return commands_to_try[0]
+        # Fallbacks: run without coverage
+        return self.main_script_command + args
 
     def _execute_command(
         self,
@@ -270,6 +281,12 @@ class TestExecutor:
             try:
                 # Prepare environment
                 process_env = os.environ.copy()
+                # Write coverage data to project root to allow combining reports
+                try:
+                    if "coverage" in " ".join(cmd):
+                        process_env["COVERAGE_FILE"] = os.path.join(self.workspace_root, ".coverage")
+                except Exception:
+                    pass
                 if env:
                     process_env.update(env)
 
