@@ -131,19 +131,36 @@ class TestDataLoader:
         Returns:
             Tuple of (source_dir_path, config_file_path)
         """
-        # Find the test category and create test-specific folder
-        test_categories = ["unit", "feature", "integration", "example"]
-        test_dir = None
-        
-        for category in test_categories:
-            category_dir = f"tests/{category}"
-            if os.path.exists(category_dir):
-                # Create test-specific folder: tests/unit/test-001/
-                test_dir = os.path.join(category_dir, f"test-{test_id}")
-                break
-        
-        if not test_dir:
-            raise ValueError(f"Could not find test directory for test ID: {test_id}")
+        # Find the test category from YAML metadata first; fallback to numeric mapping
+        yaml_category = None
+        try:
+            meta = test_data.get("test", {}) or {}
+            yaml_category = str(meta.get("category", "")).strip().lower() or None
+        except Exception:
+            yaml_category = None
+
+        resolved_category = None
+        if yaml_category in {"unit", "feature", "integration", "example"}:
+            resolved_category = yaml_category
+        else:
+            # Fallback using numeric ID mapping when possible
+            try:
+                resolved_category = self._get_test_category(test_id)
+            except Exception:
+                resolved_category = None
+
+        if not resolved_category:
+            # As a last resort, choose the first available test category directory
+            for cat in ["unit", "feature", "integration", "example"]:
+                if os.path.exists(f"tests/{cat}"):
+                    resolved_category = cat
+                    break
+
+        if not resolved_category:
+            raise ValueError(f"Could not resolve test category for test ID: {test_id}")
+
+        # Create test-specific folder under the resolved category
+        test_dir = os.path.join(f"tests/{resolved_category}", f"test-{test_id}")
         
         # Test folder should already be cleaned up by setUp() method
         # Just ensure it exists

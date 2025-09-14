@@ -1,0 +1,48 @@
+---
+description: "Preprocessor edges via CLI"
+source_files:
+  "pp.h": |
+      #ifndef PP_H
+      #define PP_H
+      #if defined(FOO)
+      int kept(void);
+      #endif
+      #endif
+
+  "main.c": |
+      #define FOO 1
+      #include "pp.h"
+      int kept(void) { return 1; }
+      int main(void) { return kept(); }
+
+  "config.json": |
+    {
+      "project_name": "PreprocEdges",
+      "source_folders": ["."],
+      "output_dir": "./output"
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    expected_files:
+      - main.c
+      - pp.h
+    functions_exist:
+      - kept
+    element_counts:
+      functions: 3
+      includes: 1
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - 'MAIN --> HEADER_PP : <<include>>'
+          - '+ int kept()'
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/main.puml

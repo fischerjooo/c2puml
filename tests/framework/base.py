@@ -213,9 +213,12 @@ class UnifiedTestCase(unittest.TestCase):
         )
 
     def _cleanup_existing_test_folders(self):
-        """Clean up any existing test-* folders in test directories"""
+        """Clean up old test-* folders (disabled under parallel execution to avoid races)."""
+        # When running with pytest-xdist (parallel), do not clean shared folders to avoid races
+        if os.environ.get('PYTEST_XDIST_WORKER'):
+            return
+        # Optional sequential cleanup: remove only empty leftover test-* folders
         test_categories = ['unit', 'feature', 'integration', 'example']
-        
         for category in test_categories:
             category_path = os.path.join(os.path.dirname(__file__), '..', category)
             if os.path.exists(category_path):
@@ -223,8 +226,10 @@ class UnifiedTestCase(unittest.TestCase):
                     item_path = os.path.join(category_path, item)
                     if os.path.isdir(item_path) and item.startswith('test-'):
                         try:
-                            import shutil
-                            shutil.rmtree(item_path)
+                            # Remove folder if it looks like a stale leftover (contains only input/output dirs)
+                            contents = set(os.listdir(item_path))
+                            if contents.issubset({'input', 'output'}) or not contents:
+                                import shutil
+                                shutil.rmtree(item_path)
                         except Exception as e:
-                            # Log warning but don't fail the test
                             print(f"Warning: Could not clean up {item_path}: {e}")

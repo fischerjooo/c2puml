@@ -1,0 +1,40 @@
+---
+description: "Config edges via CLI"
+source_files:
+  "main.c": |
+      int main(void) { return 0; }
+
+  "config.json": |
+    {
+      "project_name": "ConfigEdges",
+      "source_folders": ["."],
+      "output_dir": "./output",
+      "file_filters": {
+        "include": ["^main\\.c$", "("],
+        "exclude": [".*notmatching.*"]
+      }
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    expected_files:
+      - main.c
+    element_counts:
+      files: 1
+      functions: 1
+      macros: 0
+      includes: 0
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - '@startuml main'
+          - '@enduml'
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/main.puml

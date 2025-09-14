@@ -1626,11 +1626,7 @@ class CParser:
         """Clean value string by removing excessive whitespace and newlines"""
         return clean_value_string(value_str)
 
-    def _get_timestamp(self) -> str:
-        """Get current timestamp string"""
-        from datetime import datetime
-
-        return datetime.now().isoformat()
+    # _get_timestamp helper removed as unused to reduce surface area
 
 
 class Parser:
