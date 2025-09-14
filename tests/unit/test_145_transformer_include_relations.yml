@@ -1,0 +1,57 @@
+---
+description: "Transformer include relations with depth and placeholders via CLI"
+source_files:
+  "a.h": |
+      #ifndef A_H
+      #define A_H
+      #include "c.h"
+      #endif
+  "b.h": |
+      #ifndef B_H
+      #define B_H
+      #endif
+  "c.h": |
+      #ifndef C_H
+      #define C_H
+      #endif
+  "main.c": |
+      #include "a.h"
+      #include "b.h"
+      int main(void) { return 0; }
+
+  "config.json": |
+    {
+      "project_name": "TransIncludeRels",
+      "source_folders": ["."],
+      "output_dir": "./output",
+      "include_depth": 2,
+      "always_show_includes": true,
+      "file_specific": {
+        "main.c": {
+          "include_filter": ["^a\\.h$"]
+        }
+      }
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    expected_files:
+      - main.c
+      - a.h
+      - b.h
+      - c.h
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_lines:
+          - 'MAIN --> HEADER_A : <<include>>'
+          - 'MAIN --> HEADER_B : <<include>>'
+          - 'HEADER_A --> HEADER_C : <<include>>'
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/main.puml

@@ -1,0 +1,29 @@
+---
+description: "Config edges via CLI"
+source_files:
+  "main.c": |
+      int main(void) { return 0; }
+
+  "config.json": |
+    {
+      "project_name": "ConfigEdges",
+      "source_folders": ["."],
+      "output_dir": "./output",
+      "file_filters": {
+        "include": ["^main\\.c$", "("],
+        "exclude": [".*notmatching.*"]
+      }
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    expected_files:
+      - main.c
+    element_counts:
+      files: 1
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
