@@ -92,6 +92,6 @@ tests/unit/test_140_malformed_anonymous.py::TestMalformedAnonymousStructures::te
 tests/unit/test_141_array_of_array.py::TestArrayOfArrayFormatting::test_array_of_array_typedef_struct_field PASSED [ 98%]
 tests/unit/test_142_include_depth_limit.py::TestIncludeDepthLimit::test_include_depth_limit PASSED [100%]
 
-============================== 81 passed in 9.69s ==============================
+============================== 81 passed in 9.23s ==============================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:945: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
