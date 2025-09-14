@@ -300,6 +300,15 @@ class AnonymousTypedefProcessor:
             if not decl or decl.strip() == ';':
                 continue
             
+            # Filter out non-field statements that cannot legally appear in struct/union bodies
+            # e.g., control flow, returns, assignments with function calls, etc.
+            if re.search(r"\b(if|for|while|switch|return|goto)\b", decl):
+                continue
+            # Disallow initializer assignments in struct fields (not valid in C)
+            if '=' in decl and not re.search(r"\(\s*\*\s*\w+\s*\)", decl):
+                # Allow function pointer syntax '( *name )' but skip other '=' assignments
+                continue
+
             # Remove trailing semicolon
             decl = decl.rstrip(';').strip()
             
