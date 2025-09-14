@@ -1,0 +1,95 @@
+test:
+  name: generator_exact_format_cli_with_parameters
+  description: Test the format works correctly with function parameters
+  category: generator
+  steps:
+  - generate
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "calc.c": {
+          "file_path": "calc.c",
+          "name": "calc.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "Calculate",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "int"
+                }
+              ]
+            },
+            {
+              "name": "HelperFunction",
+              "return_type": "void",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": []
+        },
+        "calc.h": {
+          "file_path": "calc.h",
+          "name": "calc.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "Calculate",
+              "return_type": "int",
+              "is_declaration": true,
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "int"
+                }
+              ]
+            }
+          ],
+          "globals": []
+        }
+      },
+      "include_relations": []
+    }
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+    files:
+      calc.c.puml:
+        contains_lines:
+        - '+ int Calculate(int value)'
+        - "- void HelperFunction()"
+        - '-- Functions --'
+        regex_matches:
+        - pattern: \+ int Calculate.*\n\s*\n.*\- void HelperFunction
+          description: Public function with parameters, empty line, private function sequence

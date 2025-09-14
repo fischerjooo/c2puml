@@ -1,0 +1,95 @@
+test:
+  name: Struct and Nested Ordering – Comprehensive
+  description: Preserve field order in simple and complex structs, including nested structs and unions; verify PUML order
+  category: unit
+  id: '116'
+---
+source_files:
+  struct_order.c: |
+    typedef struct triangle_tag {
+        point_t vertices[3];
+        char label[MAX_LABEL_LEN];
+    } triangle_t;
+  struct_order_puml.c: |
+    typedef struct triangle_tag {
+        point_t vertices[3];
+        char label[MAX_LABEL_LEN];
+    } triangle_t;
+  struct_order_complex.c: |
+    typedef struct complex_struct {
+        int id;
+        char name[32];
+        float value;
+        struct {
+            int x;
+            int y;
+        } position;
+        union {
+            int int_data;
+            float float_data;
+        } data;
+    } complex_struct_t;
+---
+config.json: |
+  {
+    "project_name": "struct_and_nested_ordering_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - struct_order.puml
+    - struct_order_puml.puml
+    - struct_order_complex.puml
+  model:
+    project_name: struct_and_nested_ordering_comprehensive
+    files:
+      struct_order.c:
+        structs:
+          triangle_t:
+            fields:
+            - vertices
+            - label
+      struct_order_puml.c:
+        structs:
+          triangle_t:
+            fields:
+            - vertices
+            - label
+      struct_order_complex.c:
+        structs:
+          complex_struct_t:
+            fields:
+            - id
+            - name
+            - value
+            - position
+            - data
+    element_counts:
+      files: 3
+  puml:
+    syntax_valid: true
+    files:
+      struct_order_puml.puml:
+        contains_elements:
+        - triangle_t
+        contains_lines:
+        - class "triangle_t" as TYPEDEF_TRIANGLE_T
+        - + point_t[3] vertices
+        - + char[MAX_LABEL_LEN] label
+      struct_order_complex.puml:
+        contains_elements:
+        - complex_struct_t
+        contains_lines:
+        - class "complex_struct_t" as TYPEDEF_COMPLEX_STRUCT_T
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

@@ -1,0 +1,21 @@
+test:
+  name: Error Handling - Invalid Configuration
+  description: Test CLI error handling for invalid configuration (no source folders)
+  category: feature
+  id: '204'
+---
+source_files: {}
+---
+config.json: |
+  {
+    "project_name": "test_error_handling",
+    "source_folders": [],
+    "output_dir": "output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    success_expected: false
+    exit_code: 1
+    stdout_contains: At least one source folder must be provided

@@ -1,0 +1,73 @@
+test:
+  name: Subdirectory Includes Path Resolution
+  id: '103'
+  description: Test path resolution for includes in subdirectories to ensure correct handling
+---
+source_files:
+  include/types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+
+    typedef struct {
+        float x, y, z;
+    } vector3_t;
+
+    #endif
+  geometry.c: |
+    #include "include/types.h"
+
+    vector3_t normalize(vector3_t v) {
+        // Implementation here
+        return v;
+    }
+---
+config.json: |
+  {
+    "project_name": "subdirectory_includes_path_resolution",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    structs_exist:
+    - vector3_t
+    functions_exist:
+    - normalize
+    files:
+      geometry.c:
+        includes:
+        - include/types.h
+        functions:
+        - normalize
+      types.h:
+        structs:
+          vector3_t:
+            fields:
+            - x
+            - y
+            - z
+    element_counts:
+      structs: 1
+      functions: 1
+      aliases: 0
+  puml:
+    syntax_valid: true
+    contains_elements:
+    - vector3_t
+    - normalize
+    contains_lines:
+    - '- vector3_t normalize(vector3_t v)'
+    - '+ float x'
+    - '+ float y'
+    - '+ float z'
+    class_count: 3
+    relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

@@ -1,0 +1,69 @@
+test:
+  name: Generator Visibility Logic – Comprehensive
+  description: Validate visibility markers for functions/globals across presence in headers and no-headers cases
+  category: unit
+  id: '125'
+  steps: ["generate"]
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "visibility_project",
+      "source_folder": "/test",
+      "files": {
+        "math.c": {"file_path": "math.c", "functions": [{"name": "calculate", "return_type": "int", "is_declaration": false, "parameters": []}], "globals": [], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "math.h": {"file_path": "math.h", "functions": [{"name": "calculate", "return_type": "int", "is_declaration": true, "parameters": []}], "globals": [], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "utils.c": {"file_path": "utils.c", "functions": [{"name": "internal_helper", "return_type": "void", "is_declaration": false, "parameters": []}], "globals": [], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "config.c": {"file_path": "config.c", "functions": [], "globals": [{"name": "global_config", "type": "int"}], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "config.h": {"file_path": "config.h", "functions": [], "globals": [{"name": "global_config", "type": "int"}], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "internal.c": {"file_path": "internal.c", "functions": [], "globals": [{"name": "internal_state", "type": "static int"}], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}},
+        "standalone.c": {"file_path": "standalone.c", "functions": [{"name": "function_one", "return_type": "int", "is_declaration": false, "parameters": []}, {"name": "function_two", "return_type": "void", "is_declaration": false, "parameters": []}], "globals": [{"name": "global_one", "type": "int"}, {"name": "global_two", "type": "char*"}], "includes": [], "macros": {}, "enums": {}, "structs": {}, "unions": {}, "aliases": {}}
+      },
+      "include_relations": []
+    }
+---
+config.json: |
+  {
+    "project_name": "visibility_project",
+    "output_dir": "output",
+    "source_folders": ["src"]
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+    contains_elements:
+    - '+ int calculate'
+    - "- void internal_helper"
+    - '+ int global_config'
+    - "- static int internal_state"
+    - "- int function_one"
+    - "- void function_two"
+    - "- int global_one"
+    - "- char* global_two"
+    not_contains_elements:
+    - "- int calculate"
+    - '+ void internal_helper'
+    - "- int global_config"
+    - '+ static int internal_state'
+    files:
+      math.puml:
+        contains_lines:
+          - '+ int calculate'
+      utils.puml:
+        contains_lines:
+          - "- void internal_helper"
+      config.puml:
+        contains_lines:
+          - '+ int global_config'
+      internal.puml:
+        contains_lines:
+          - "- static int internal_state"
+      standalone.puml:
+        contains_lines:
+          - "- int function_one"
+          - "- void function_two"
+          - "- int global_one"
+          - "- char* global_two"

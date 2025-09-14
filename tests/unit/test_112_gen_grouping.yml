@@ -1,0 +1,115 @@
+test:
+  name: Generator – Comprehensive
+  description: Validate grouping with empty line separation for functions and globals, plus mixed cases
+  category: unit
+  id: '112'
+  steps:
+  - generate
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "grouping_project",
+      "source_folder": "/test",
+      "files": {
+        "math.c": {
+          "file_path": "math.c",
+          "name": "math.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {"name": "Init", "return_type": "void", "is_declaration": false, "parameters": []},
+            {"name": "HelperFunction", "return_type": "void", "is_declaration": false, "parameters": []},
+            {"name": "Calculate", "return_type": "int", "is_declaration": false, "parameters": []},
+            {"name": "InternalComputation", "return_type": "static int", "is_declaration": false, "parameters": []},
+            {"name": "Shutdown", "return_type": "void", "is_declaration": false, "parameters": []}
+          ],
+          "globals": []
+        },
+        "module.c": {
+          "file_path": "module.c",
+          "name": "module.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": [
+            {"name": "api_version", "type": "int"},
+            {"name": "internal_state", "type": "static int"},
+            {"name": "module_name", "type": "char*"},
+            {"name": "debug_flag", "type": "static bool"}
+          ]
+        },
+        "processor.c": {
+          "file_path": "processor.c",
+          "name": "processor.c",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {"name": "ProcessData", "return_type": "int", "is_declaration": false, "parameters": []},
+            {"name": "ValidateInput", "return_type": "static bool", "is_declaration": false, "parameters": []}
+          ],
+          "globals": [
+            {"name": "error_count", "type": "int"},
+            {"name": "buffer_size", "type": "static size_t"}
+          ]
+        }
+      },
+      "include_relations": []
+    }
+---
+config.json: |
+  {
+    "project_name": "grouping_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+    files:
+      math.c.puml:
+        contains_lines:
+        - '+ void Init'
+        - '+ int Calculate'
+        - '+ void Shutdown'
+        - "- void HelperFunction"
+        - "- static int InternalComputation"
+        - '-- Functions --'
+        regex_matches:
+        - pattern: \+[^-]*\n\s*\n[^+]*-
+          description: Empty line between public and private function groups
+      module.c.puml:
+        contains_lines:
+        - '+ int api_version'
+        - '+ char* module_name'
+        - "- static int internal_state"
+        - "- static bool debug_flag"
+        - '-- Global Variables --'
+        regex_matches:
+        - pattern: \+[^-]*\n\s*\n[^+]*-
+          description: Empty line between public and private global groups
+      processor.c.puml:
+        contains_lines:
+        - '+ int error_count'
+        - '+ int ProcessData'
+        - "- static size_t buffer_size"
+        - "- static bool ValidateInput"
+        - '-- Global Variables --'
+        - '-- Functions --'

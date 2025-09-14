@@ -1,0 +1,126 @@
+test:
+  name: Absolute vs Relative Path Consistency
+  id: '103'
+  description: Test absolute vs relative path consistency to ensure similar results regardless of path style
+---
+source_files:
+  shared/config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+
+    #define MAX_BUFFER_SIZE 1024
+    #define DEFAULT_TIMEOUT 30
+
+    typedef struct {
+        int port;
+        char host[256];
+        int timeout;
+    } config_t;
+
+    extern config_t global_config;
+
+    void config_load(const char* filename);
+    void config_save(const char* filename);
+
+    #endif
+  core/network.c: |
+    #include "../shared/config.h"
+
+    config_t global_config = {8080, "localhost", DEFAULT_TIMEOUT};
+
+    void network_connect(void) {
+        // Connect using global_config
+        config_load("network.conf");
+    }
+
+    void network_disconnect(void) {
+        config_save("network.conf");
+    }
+  main.c: |
+    #include "shared/config.h"
+    #include "core/network.c"  // Direct include for testing path consistency
+
+    int main() {
+        config_load("main.conf");
+        network_connect();
+        network_disconnect();
+        return 0;
+    }
+---
+config.json: |
+  {
+    "project_name": "absolute_vs_relative_path_consistency",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    structs_exist:
+    - config_t
+    functions_exist:
+    - main
+    - config_load
+    - config_save
+    - network_connect
+    - network_disconnect
+    globals_exist:
+    - global_config
+    macros_exist:
+    - MAX_BUFFER_SIZE
+    - DEFAULT_TIMEOUT
+    files:
+      main.c:
+        functions:
+        - main
+      config.h:
+        structs:
+          config_t:
+            fields:
+            - port
+            - host
+            - timeout
+        functions:
+        - config_load
+        - config_save
+        macros:
+        - MAX_BUFFER_SIZE
+        - DEFAULT_TIMEOUT
+        - CONFIG_H
+        globals:
+        - global_config
+      network.c:
+        functions:
+        - network_connect
+        - network_disconnect
+        globals:
+        - global_config
+    element_counts:
+      structs: 1
+      functions: 5
+      globals: 2
+      macros: 3
+      aliases: 0
+  puml:
+    syntax_valid: true
+    contains_elements:
+    - config_t
+    - main
+    - global_config
+    - network_connect
+    contains_lines:
+    - '- int main()'
+    - + void config_load(const char * filename)
+    - + void config_save(const char * filename)
+    - '- void network_connect()'
+    - '- void network_disconnect()'
+    class_count: 7
+    relationship_count: 6
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

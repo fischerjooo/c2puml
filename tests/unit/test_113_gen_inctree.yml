@@ -1,0 +1,169 @@
+---
+test:
+  name: "generator_include_tree_cli_comprehensive"
+  description: "Test comprehensive include tree generation with multiple files and deep includes"
+  category: "generator"
+  steps: ["generate"]
+  
+---
+source_files:
+  model.json: |
+    {
+      "project_name": "test_project",
+      "source_folder": "/test",
+      "files": {
+        "main.c": {
+          "file_path": "main.c",
+          "name": "main.c",
+          "includes": ["app.h"],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "main",
+              "return_type": "int",
+              "is_declaration": false,
+              "parameters": []
+            }
+          ],
+          "globals": []
+        },
+        "app.h": {
+          "file_path": "app.h",
+          "name": "app.h",
+          "includes": ["utils.h", "config.h"],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "app_init",
+              "return_type": "void",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": []
+        },
+        "utils.h": {
+          "file_path": "utils.h",
+          "name": "utils.h",
+          "includes": ["types.h"],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [
+            {
+              "name": "utility_function",
+              "return_type": "void",
+              "is_declaration": true,
+              "parameters": []
+            }
+          ],
+          "globals": []
+        },
+        "config.h": {
+          "file_path": "config.h", 
+          "name": "config.h",
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {},
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": [
+            {
+              "name": "CONFIG_VALUE",
+              "type": "extern int"
+            }
+          ]
+        },
+        "types.h": {
+          "file_path": "types.h",
+          "name": "types.h", 
+          "includes": [],
+          "macros": [],
+          "enums": {},
+          "structs": {
+            "Point": {
+              "name": "Point",
+              "fields": [
+                {
+                  "name": "x",
+                  "type": "int"
+                },
+                {
+                  "name": "y", 
+                  "type": "int"
+                }
+              ]
+            }
+          },
+          "unions": {},
+          "aliases": {},
+          "functions": [],
+          "globals": []
+        }
+      },
+      "include_relations": [
+        {
+          "source_file": "main.c",
+          "included_file": "app.h",
+          "depth": 1
+        },
+        {
+          "source_file": "app.h",
+          "included_file": "utils.h",
+          "depth": 1
+        },
+        {
+          "source_file": "app.h",
+          "included_file": "config.h",
+          "depth": 1
+        },
+        {
+          "source_file": "utils.h",
+          "included_file": "types.h",
+          "depth": 1
+        }
+      ]
+    }
+
+---
+config.json: |
+  {
+    "project_name": "test_project",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "plantuml_jar_path": "/app/tools/plantuml-1.2024.8.jar",
+    "use_short_names": false,
+    "group_by_visibility": true
+  }
+
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+    files:
+      main.c.puml:
+        contains_lines:
+          - "main.c"
+          - "app.h"
+          - "utils.h"
+          - "config.h"
+          - "types.h"
+          - "main("
+          - "app_init"
+          - "utility_function"
+          - "CONFIG_VALUE"
+          - 'class "Point" as STRUCT_POINT <<struct>>'

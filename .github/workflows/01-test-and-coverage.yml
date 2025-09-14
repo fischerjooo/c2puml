@@ -1,0 +1,130 @@
+name: "01. Test and Coverage"
+
+on:
+  push:
+    branches: [main, master]
+    paths-ignore:
+      - 'artifacts/output_example/**'
+      - 'artifacts/coverage/**'
+      - 'artifacts/test_reports/**'
+  workflow_dispatch:
+
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - name: "01.01 Checkout code"
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
+
+    - name: "01.02 Setup Git configuration"
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: "01.03 Setup Python ${{ matrix.python-version }}"
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: "01.04 Cache dependencies"
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: "01.05 Install dependencies"
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        pip install -e .
+
+    - name: "01.06 Verify package installation"
+      run: |
+        python -c "import c2puml; print('✅ Package installed successfully')"
+        python -c "from c2puml.core.parser import CParser; print('✅ Core modules accessible')"
+        python main.py --help
+
+    - name: "01.07 Run unit tests"
+      run: |
+        echo "🧪 Running unit tests..."
+        python -m pytest tests/unit/ -v --tb=short
+
+    - name: "01.08 Run integration tests"
+      run: |
+        echo "🧪 Running integration tests..."
+        python -m pytest tests/integration/ -v --tb=short
+
+    - name: "01.09 Run feature tests"
+      run: |
+        echo "🧪 Running feature tests..."
+        python -m pytest tests/feature/ -v --tb=short
+
+    - name: "01.10 Run example workflow"
+      run: |
+        echo "🚀 Running example workflow..."
+        bash scripts/run_example.sh
+
+    - name: "01.11 Generate coverage report"
+      run: |
+        echo "📊 Generating coverage report..."
+        bash scripts/run_tests_with_coverage.sh
+
+    - name: "01.12 Commit test and coverage artifacts"
+      if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      run: |
+        echo "📝 Committing test and coverage artifacts..."
+        
+        # Add all artifacts
+        git add artifacts/coverage/ 2>/dev/null || echo "No coverage artifacts to add"
+        git add artifacts/test_reports/ 2>/dev/null || echo "No test report artifacts to add"
+        
+        # Check if there are changes to commit
+        if ! git diff --cached --quiet; then
+          git commit -m "Update test coverage reports and test artifacts - run #${{ github.run_number }}"
+          git pull origin ${{ github.ref }} --rebase || git pull origin ${{ github.ref }}
+          git push origin ${{ github.ref }}
+          
+          echo "✅ Successfully committed and pushed test and coverage artifacts"
+        else
+          echo "ℹ️ No changes to commit for test and coverage artifacts"
+        fi
+
+    - name: "01.13 Upload test artifacts"
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-coverage-results-py${{ matrix.python-version }}
+        path: |
+          artifacts/test_reports/
+          artifacts/coverage/
+        retention-days: 30
+
+    - name: "01.14 Trigger PlantUML generation"
+      if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: actions/github-script@v7
+      with:
+        script: |
+          console.log('🚀 Triggering PlantUML generation workflow...');
+          try {
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '02-puml-to-png.yml',
+              ref: context.ref
+            });
+            console.log('✅ Successfully triggered PlantUML generation workflow');
+          } catch (error) {
+            console.error('❌ Failed to trigger PlantUML generation workflow:', error);
+            core.setFailed('Failed to trigger PlantUML generation workflow');
+          }

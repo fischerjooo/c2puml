@@ -1,0 +1,87 @@
+test:
+  name: Basic Transformer Functionality
+  description: Test basic transformer operations with parse, transform, generate workflow
+  category: unit
+  id: '102'
+---
+source_files:
+  sample.c: |
+    #include <stdio.h>
+
+    struct MyStruct {
+        int value;
+        char name[50];
+    };
+
+    enum Status {
+        ACTIVE,
+        INACTIVE
+    };
+
+    void process_data() {
+        printf("Processing data");
+    }
+
+    int global_counter;
+---
+config.json: |
+  {
+    "project_name": "test_transformer_basic",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "transformations": {
+      "rename": {
+        "functions": {
+          "process_data": "handle_data"
+        }
+      }
+    }
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - sample.puml
+  model:
+    files:
+      sample.c:
+        structs:
+          MyStruct:
+            fields:
+            - value
+            - name
+        enums:
+          Status:
+            values:
+            - ACTIVE
+            - INACTIVE
+        functions:
+        - handle_data
+        globals:
+        - global_counter
+        includes:
+        - stdio.h
+    element_counts:
+      structs: 1
+      enums: 1
+      functions: 1
+      globals: 1
+      includes: 1
+  puml:
+    syntax_valid: true
+    files:
+      sample.puml:
+        contains_elements:
+        - MyStruct
+        - Status
+        - handle_data
+        - global_counter
+        contains_lines:
+        - class "MyStruct" as TYPEDEF_MYSTRUCT
+        - void handle_data()
+        class_count: 3
+        relationship_count: 2

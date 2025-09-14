@@ -1,0 +1,84 @@
+test:
+  name: Include Processing – Comprehensive
+  description: Validate include graph resolution across multiple headers, presence of prototypes/globals, and successful end-to-end generation
+  category: feature
+  id: '202'
+---
+source_files:
+  main.c: |
+    #include "api.h"
+    #include "worker.h"
+    int main() { api_function(); worker_function(); return 0; }
+  api.h: |
+    #ifndef API_H
+    #define API_H
+    #include "types.h"
+    void api_function(void);
+    extern int api_global;
+    #endif
+  worker.h: |
+    #ifndef WORKER_H
+    #define WORKER_H
+    #include "validation.h"
+    void worker_function(void);
+    extern int worker_global;
+    #endif
+  types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+    typedef int ProcessorID;
+    #endif
+  validation.h: |
+    #ifndef VALIDATION_H
+    #define VALIDATION_H
+    int validate_input(int value);
+    #endif
+  extra.h: |
+    #ifndef EXTRA_H
+    #define EXTRA_H
+    #include "worker.h"
+    #endif
+---
+config.json: |
+  {
+    "project_name": "include_processing_all",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3,
+    "file_specific": {"main.c": {"include_depth": 2}}
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 30.0
+  model:
+    validate_structure: true
+    expected_files:
+      - main.c
+      - api.h
+      - worker.h
+      - types.h
+      - validation.h
+      - extra.h
+    functions_exist:
+      - main
+      - api_function
+      - worker_function
+      - validate_input
+    globals_exist:
+      - api_global
+      - worker_global
+    includes_exist:
+      - api.h
+      - worker.h
+      - types.h
+      - validation.h
+  puml:
+    syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

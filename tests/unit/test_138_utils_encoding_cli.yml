@@ -1,0 +1,29 @@
+---
+description: "Utils encoding via full CLI path (ensures pipeline stable)"
+source_files:
+  "enc.c": |
+      int main(void) { return 0; }
+
+  "config.json": |
+    {
+      "project_name": "utils_enc",
+      "source_folders": ["."],
+      "output_dir": "./output"
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    files:
+      enc.c:
+        functions:
+          - main
+  puml:
+    syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/enc.puml
+

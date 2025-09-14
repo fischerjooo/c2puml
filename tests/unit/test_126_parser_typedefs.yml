@@ -1,0 +1,114 @@
+test:
+  name: Parser – Typedefs Comprehensive
+  description: Consolidated parsing of typedef aliases, function pointers, typedef struct, and simple/typedef enums
+  category: unit
+  id: '126'
+---
+source_files:
+  typedefs.c: |
+    typedef int Integer;
+    typedef char* String;
+    typedef void (*Callback)(int);
+    typedef struct {
+        int x;
+        int y;
+    } Point;
+  point_typedef.c: |
+    typedef struct point_tag {
+        int x;
+        int y;
+    } point_t;
+  status.c: |
+    enum Status {
+        OK = 0,
+        ERROR = 1,
+        PENDING = 2
+    };
+  color.c: |
+    typedef enum {
+        RED,
+        GREEN,
+        BLUE
+    } Color;
+---
+config.json: |
+  {
+    "project_name": "test_parser_typedefs_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - typedefs.puml
+    - point_typedef.puml
+    - status.puml
+    - color.puml
+  model:
+    files:
+      typedefs.c:
+        aliases:
+        - Integer
+        - String
+        - Callback
+        structs:
+          Point:
+            fields:
+            - x
+            - y
+      point_typedef.c:
+        structs:
+          point_t:
+            fields:
+            - x
+            - y
+      status.c:
+        enums:
+          Status:
+            values:
+            - OK
+            - ERROR
+            - PENDING
+      color.c:
+        enums:
+          Color:
+            values:
+            - RED
+            - GREEN
+            - BLUE
+  puml:
+    syntax_valid: true
+    files:
+      typedefs.puml:
+        contains_elements:
+        - Integer
+        - String
+        - Callback
+        - Point
+        contains_lines:
+        - class "Point" as TYPEDEF_POINT
+      point_typedef.puml:
+        contains_elements:
+        - point_t
+        contains_lines:
+        - class "point_t" as TYPEDEF_POINT_T
+      status.puml:
+        contains_elements:
+        - Status
+        contains_lines:
+        - class "Status" as TYPEDEF_STATUS
+      color.puml:
+        contains_elements:
+        - Color
+        contains_lines:
+        - class "Color" as TYPEDEF_COLOR
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

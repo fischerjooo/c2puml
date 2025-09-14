@@ -1,0 +1,92 @@
+{
+  "project_name": "example_project",
+  "source_folders": [
+    "tests/example/source",
+    "tests/example/source"
+  ],
+  "output_dir": "./artifacts/output_example",
+  "model_output_path": "model.json",
+  "recursive_search": true,
+  "include_depth": 10,
+  "max_function_signature_chars": 0,
+  "file_filters": {
+    "include": [],
+    "exclude": []
+  },
+
+  "file_specific": {
+    "sample.c": {
+      "include_filter": [
+        "^stdio\\.h$",
+        "^stdlib\\.h$",
+        "^string\\.h$",
+        "^sample\\.h$",
+        "^math_utils\\.h$",
+        "^logger\\.h$",
+        "^geometry\\.h$",
+        "^config\\.h$"
+      ],
+      "include_depth": 3
+    },
+    "utils.c": {
+      "include_filter": [
+        "^math\\.h$",
+        "^time\\.h$"
+      ],
+      "include_depth": 2
+    },
+    "complex.c": {
+      "include_depth": 5
+    }
+  },
+  "transformations_01_rename": {
+    "file_selection": [".*transformed\\.(c|h)$"],
+    "rename": {
+      "typedef": {
+        "^old_config_t$": "config_t"
+      },
+      "functions": {
+        "^deprecated_(.*)": "legacy_\\1"
+      },
+      "macros": {
+        "^OLD_(.*)": "LEGACY_\\1"
+      },
+      "globals": {
+        "^legacy_path$": "system_path"
+      },
+      "structs": {
+        "^old_config$": "modern_config"
+      }
+    }
+  },
+  "transformations_02_cleanup": {
+    "file_selection": [".*transformed\\.(c|h)$"],
+    "remove": {
+      "typedef": ["^legacy_.*", "^old_.*"],
+      "functions": ["^test_.*", "^debug_.*"],
+      "macros": ["^DEPRECATED_.*", "^LEGACY_(?!API_VERSION$).*"],
+      "globals": ["^old_.*", "^deprecated_.*"],
+      "includes": ["^time\\.h$", "^unistd\\.h$"],
+      "structs": ["^legacy_.*"],
+      "enums": ["^old_.*", "^legacy_.*"],
+      "unions": ["^old_.*"]
+    }
+  },
+  "transformations": {
+    "remove": {
+      "typedef": [],
+      "functions": [],
+      "macros": [],
+      "globals": [],
+      "includes": []
+    },
+    "rename": {
+      "typedef": {},
+      "functions": {},
+      "macros": {},
+      "globals": {},
+      "includes": {},
+      "files": {}
+    }
+  }
+}

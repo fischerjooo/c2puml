@@ -1,0 +1,104 @@
+test:
+  name: Debug Anonymous Structure Parsing
+  description: Test parsing anonymous structures in typedefs for debugging purposes
+  category: unit
+  id: '108'
+---
+source_files:
+  anonymous_struct.c: |
+    // Anonymous struct in typedef
+    typedef struct {
+        int id;
+        struct {
+            float x, y;
+        } position;
+        struct {
+            char r, g, b;
+        } color;
+    } point_t;
+
+    // Anonymous union in typedef
+    typedef struct {
+        int type;
+        union {
+            int int_value;
+            float float_value;
+            char string_value[16];
+        } data;
+    } variant_t;
+
+    // Global variable using the types
+    point_t global_point;
+    variant_t global_variant;
+---
+config.json: |
+  {
+    "project_name": "debug_anonymous_structure_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - anonymous_struct.puml
+  model:
+    validate_structure: true
+    project_name: debug_anonymous_structure_parsing
+    expected_files:
+    - anonymous_struct.c
+    structs_exist:
+    - point_t
+    - variant_t
+    unions_exist:
+    - variant_t_data
+    - data
+    globals_exist:
+    - global_point
+    - global_variant
+    struct_details:
+      point_t:
+        fields:
+        - id
+        - position
+        - color
+      variant_t:
+        fields:
+        - type
+        - data
+    union_details:
+      variant_t_data:
+        fields:
+        - int_value
+        - float_value
+        - string_value
+    element_counts:
+      structs: 5
+      unions: 2
+      globals: 2
+      aliases: 0
+  puml:
+    syntax_valid: true
+    file_count: 1
+    files:
+      anonymous_struct.puml:
+        contains_elements:
+        - point_t
+        - variant_t
+        - global_point
+        - global_variant
+        - data
+        contains_lines:
+        - point_t global_point
+        - variant_t global_variant
+        class_count: 8
+        relationship_count: 8
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

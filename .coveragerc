@@ -1,0 +1,52 @@
+[run]
+# Source paths to track
+source = src/c2puml
+
+# Include patterns for files to measure
+include = src/c2puml/*
+
+# Exclude patterns for files not to measure
+omit = 
+    */tests/*
+    */__pycache__/*
+    */venv/*
+    */env/*
+    setup.py
+    */migrations/*
+    */site-packages/*
+    */usr/lib/*
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+
+# Ignore missing source files
+ignore_errors = True
+
+# Show line numbers of missing lines
+show_missing = True
+
+# Minimum coverage percentage required
+fail_under = 50
+
+[html]
+# Directory for HTML output
+directory = artifacts/coverage/htmlcov
+
+[xml]
+# File for XML output
+output = artifacts/coverage/coverage.xml
+
+[json]
+# File for JSON output
+output = artifacts/coverage/coverage.json

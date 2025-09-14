@@ -1,0 +1,6974 @@
+{
+  "files": {
+    "application.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/application.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [
+            {
+              "name": "argc",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "argv",
+              "type": "char *[]",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "signal_handler",
+          "parameters": [
+            {
+              "name": "sig",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "running",
+          "type": "volatile int",
+          "value": "1"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "common.h",
+        "database.h",
+        "network.h",
+        "signal.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h",
+        "unistd.h"
+      ],
+      "macros": [],
+      "name": "application.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "common.h": {
+      "aliases": {
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "result_t": {
+          "name": "result_t",
+          "original_type": "int32_t",
+          "uses": []
+        },
+        "status_bool_t": {
+          "name": "status_bool_t",
+          "original_type": "bool",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "common_status_t": {
+          "name": "common_status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_ERROR",
+              "value": "- 1"
+            },
+            {
+              "name": "STATUS_PENDING",
+              "value": "1"
+            },
+            {
+              "name": "STATUS_TIMEOUT",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/common.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "common_cleanup",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "common_get_error_string",
+          "parameters": [
+            {
+              "name": "error",
+              "type": "result_t",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "common_init",
+          "parameters": [],
+          "return_type": "result_t"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stdbool.h",
+        "stddef.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))",
+        "#define COMMON_H",
+        "#define DEPRECATED",
+        "#define DEPRECATED __attribute__((deprecated))",
+        "#define ERROR_GENERAL -1",
+        "#define ERROR_INVALID_PARAM -2",
+        "#define ERROR_MEMORY -3",
+        "#define ERROR_TIMEOUT -4",
+        "#define MAX(a, b) ((a) > (b) ? (a) : (b))",
+        "#define MIN(a, b) ((a) < (b) ? (a) : (b))",
+        "#define PACKED",
+        "#define PACKED __attribute__((packed))",
+        "#define SUCCESS 0",
+        "#define UNUSED(x) (void)(x)"
+      ],
+      "name": "common.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "complex.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/complex.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "ProcessorAdapter_Process",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Process_T *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "ProcessorHardware_Process",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Process_T *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "ProcessorService_Process",
+          "parameters": [
+            {
+              "name": "job_pst",
+              "type": "const Process_T *",
+              "value": null
+            }
+          ],
+          "return_type": "static Std_ReturnType"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "add_operation",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_complex_handler",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
+              "value": null
+            },
+            {
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
+              "value": null
+            },
+            {
+              "name": "free_func",
+              "type": "void ( * free_func ) ( void * )",
+              "value": null
+            }
+          ],
+          "return_type": "complex_handler_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_handler",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "init_func",
+              "type": "int ( * init_func ) ( void * )",
+              "value": null
+            },
+            {
+              "name": "cleanup_func",
+              "type": "void ( * cleanup_func ) ( void * )",
+              "value": null
+            },
+            {
+              "name": "callback",
+              "type": "complex_callback_t",
+              "value": null
+            }
+          ],
+          "return_type": "void *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "divide_operation",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "execute_operations",
+          "parameters": [
+            {
+              "name": "value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "ops",
+              "type": "math_ops_array_t",
+              "value": null
+            },
+            {
+              "name": "op_count",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "get_math_operations",
+          "parameters": [],
+          "return_type": "math_operation_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "init_math_operations",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "modulo_operation",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "multiply_operation",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "print_result",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "int *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_with_callbacks",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "int[]",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "operations",
+              "type": "math_operation_t[]",
+              "value": null
+            },
+            {
+              "name": "op_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "pre_process",
+              "type": "void ( * pre_process ) ( int * , int )",
+              "value": null
+            },
+            {
+              "name": "post_process",
+              "type": "void ( * post_process ) ( int * , int )",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "run_complex_tests",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "subtract_operation",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "static int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_callback",
+          "parameters": [
+            {
+              "name": "item",
+              "type": "int *",
+              "value": null
+            }
+          ],
+          "return_type": "static int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_complex_macro",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int *",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_handle_operation",
+          "parameters": [
+            {
+              "name": "op_type",
+              "type": "operation_type_t",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "int *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_handler_table",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_mixed_union",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_operation_set",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_process_array",
+          "parameters": [
+            {
+              "name": "arr",
+              "type": "int *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_processor_job_processing",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_processor_utility_macros",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_stringify_macro",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "Process_Cfg_Process_acpfct",
+          "type": "Process_Cfg_Process_acpfct_t",
+          "value": "{&ProcessorAdapter_Process,&ProcessorService_Process,&ProcessorHardware_Process, }"
+        },
+        {
+          "name": "global_math_ops",
+          "type": "math_operation_t[10]",
+          "value": "{NULL}"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "complex.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "complex.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "complex.h": {
+      "aliases": {
+        "Process_Cfg_Process_acpfct_t": {
+          "name": "Process_Cfg_Process_acpfct_t",
+          "original_type": "Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT]",
+          "uses": [
+            "Process_Cfg_Process_fct"
+          ]
+        },
+        "Process_Cfg_Process_fct": {
+          "name": "Process_Cfg_Process_fct",
+          "original_type": "Std_ReturnType(* Process_Cfg_Process_fct)(const Process_T * job_pst)",
+          "uses": [
+            "Process_T",
+            "Std_ReturnType"
+          ]
+        },
+        "Std_ReturnType": {
+          "name": "Std_ReturnType",
+          "original_type": "int",
+          "uses": []
+        },
+        "callback_with_anon_struct_t": {
+          "name": "callback_with_anon_struct_t",
+          "original_type": "void(* callback_with_anon_struct_t)(\n int id , \n struct { \n int config_flags ; \n char config_name [ 64 ] ; \n union { \n int int_config ; \n float float_config ; \n } config_value ; \n } * config_param , \n void * user_data \n)",
+          "uses": [
+            "config_param",
+            "config_value"
+          ]
+        },
+        "complex_callback_t": {
+          "name": "complex_callback_t",
+          "original_type": "int(* complex_callback_t)(\n int param1 , \n char * param2 , \n void * param3 , \n struct { \n int nested1 ; \n char * nested2 ; \n void(* nested_func)(int); \n } * param4 \n)",
+          "uses": [
+            "param4"
+          ]
+        },
+        "complex_func_ptr_t": {
+          "name": "complex_func_ptr_t",
+          "original_type": "int ( * ( * complex_func_ptr_t ) ( int , char * ) ) ( double , void * )",
+          "uses": []
+        },
+        "data_processor_array_t": {
+          "name": "data_processor_array_t",
+          "original_type": "data_processor_t *",
+          "uses": [
+            "data_processor_t"
+          ]
+        },
+        "data_processor_t": {
+          "name": "data_processor_t",
+          "original_type": "int(* data_processor_t)(data_item_t * item , void * context)",
+          "uses": [
+            "data_item_t"
+          ]
+        },
+        "debug_callback_t": {
+          "name": "debug_callback_t",
+          "original_type": "void(* debug_callback_t)(const char * message , int level)",
+          "uses": []
+        },
+        "handler_table_t": {
+          "name": "handler_table_t",
+          "original_type": "handler_entry_t handler_table_t[8]",
+          "uses": [
+            "handler_entry_t"
+          ]
+        },
+        "math_operation_t": {
+          "name": "math_operation_t",
+          "original_type": "int(* math_operation_t)(int , int)",
+          "uses": []
+        },
+        "math_ops_array_t": {
+          "name": "math_ops_array_t",
+          "original_type": "math_operation_t math_ops_array_t[10]",
+          "uses": [
+            "math_operation_t"
+          ]
+        },
+        "release_callback_t": {
+          "name": "release_callback_t",
+          "original_type": "void(* release_callback_t)(const char * message)",
+          "uses": []
+        },
+        "result_generator_t": {
+          "name": "result_generator_t",
+          "original_type": "struct { int result_code",
+          "uses": []
+        },
+        "uint16": {
+          "name": "uint16",
+          "original_type": "uint16_t",
+          "uses": []
+        },
+        "uint32": {
+          "name": "uint32",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "uint8": {
+          "name": "uint8",
+          "original_type": "uint8_t",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {
+        "__anonymous_struct__": [
+          "__anonymous_struct___level3_union",
+          "level3_union"
+        ],
+        "array_of_anon_structs_t": [
+          "array_of_anon_structs_t_items"
+        ],
+        "array_of_anon_structs_t_items": [
+          "array_of_anon_structs_t_items_point_data"
+        ],
+        "callback_with_anon_struct_t": [
+          "callback_with_anon_struct_t_config_param",
+          "callback_with_anon_struct_t_config_value"
+        ],
+        "callback_with_anon_struct_t_config_param": [
+          "callback_with_anon_struct_t_config_param_config_value",
+          "config_value"
+        ],
+        "complex_callback_t": [
+          "complex_callback_t_param4"
+        ],
+        "complex_handler_t": [
+          "complex_handler_t_memory_manager",
+          "complex_handler_t_validator"
+        ],
+        "complex_naming_test_t": [
+          "complex_naming_test_t_first_struct",
+          "complex_naming_test_t_mixed_union",
+          "complex_naming_test_t_second_struct",
+          "complex_naming_test_t_third_struct"
+        ],
+        "complex_naming_test_t_first_struct": [
+          "complex_naming_test_t_first_struct_deep_struct_a1",
+          "complex_naming_test_t_first_struct_deep_struct_a2"
+        ],
+        "complex_naming_test_t_mixed_union": [
+          "complex_naming_test_t_mixed_union_deep_in_union"
+        ],
+        "complex_naming_test_t_third_struct": [
+          "complex_naming_test_t_third_struct_struct_union_struct"
+        ],
+        "config_param": [
+          "config_param_config_value",
+          "config_value"
+        ],
+        "data_union": [
+          "data_union_point_value"
+        ],
+        "extreme_nesting_test_t": [
+          "extreme_nesting_test_t_level2_struct_1",
+          "extreme_nesting_test_t_level2_struct_2"
+        ],
+        "extreme_nesting_test_t_level2_struct_1": [
+          "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
+          "extreme_nesting_test_t_level2_struct_1_level4_struct_2"
+        ],
+        "extreme_nesting_test_t_level2_struct_2": [
+          "extreme_nesting_test_t_level2_struct_2_mixed_struct"
+        ],
+        "item_value": [
+          "item_value_point_data"
+        ],
+        "mixed_union": [
+          "mixed_union_mixed_struct"
+        ],
+        "moderately_nested_t": [
+          "moderately_nested_t_level2_struct"
+        ],
+        "moderately_nested_t_level2_struct": [
+          "level3_union"
+        ],
+        "multi_anonymous_t": [
+          "first_anon_union",
+          "multi_anonymous_t_first_anon_struct",
+          "multi_anonymous_t_first_anon_union",
+          "multi_anonymous_t_second_anon_struct"
+        ],
+        "multiple_simple_anonymous_t": [
+          "multiple_simple_anonymous_t_first_anon",
+          "multiple_simple_anonymous_t_first_union",
+          "multiple_simple_anonymous_t_second_anon",
+          "multiple_simple_anonymous_t_second_union",
+          "multiple_simple_anonymous_t_third_anon"
+        ],
+        "result_generator_t": [
+          "result_data",
+          "result_generator_t_result_data"
+        ],
+        "struct_union": [
+          "struct_union_struct_union_struct"
+        ],
+        "struct_with_struct_t": [
+          "struct_with_struct_t_inner_struct"
+        ],
+        "struct_with_union_t": [
+          "struct_with_union_t_data_union"
+        ],
+        "union_with_struct_t": [
+          "union_with_struct_t_complex_struct"
+        ],
+        "union_with_union_t": [
+          "union_with_union_t_nested_union"
+        ]
+      },
+      "enums": {
+        "operation_type_t": {
+          "name": "operation_type_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OP_ADD",
+              "value": "0"
+            },
+            {
+              "name": "OP_SUB",
+              "value": "1"
+            },
+            {
+              "name": "OP_MUL",
+              "value": "2"
+            },
+            {
+              "name": "OP_DIV",
+              "value": "3"
+            }
+          ]
+        },
+        "processor_module_enum_t": {
+          "name": "processor_module_enum_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "PROCESSOR_CFG_MODULE_COUNT",
+              "value": "3"
+            },
+            {
+              "name": "PROCESSOR_CFG_MODULE_ADAPTER",
+              "value": "0"
+            },
+            {
+              "name": "PROCESSOR_CFG_MODULE_SERVICE",
+              "value": "1"
+            },
+            {
+              "name": "PROCESSOR_CFG_MODULE_HARDWARE",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/complex.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_complex_handler",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
+              "value": null
+            },
+            {
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
+              "value": null
+            },
+            {
+              "name": "free_func",
+              "type": "void ( * free_func ) ( void * )",
+              "value": null
+            }
+          ],
+          "return_type": "complex_handler_t *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_handler",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "init_func",
+              "type": "int ( * init_func ) ( void * )",
+              "value": null
+            },
+            {
+              "name": "cleanup_func",
+              "type": "void ( * cleanup_func ) ( void * )",
+              "value": null
+            },
+            {
+              "name": "callback",
+              "type": "complex_callback_t",
+              "value": null
+            }
+          ],
+          "return_type": "void *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "execute_operations",
+          "parameters": [
+            {
+              "name": "value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "ops",
+              "type": "math_ops_array_t",
+              "value": null
+            },
+            {
+              "name": "op_count",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "get_math_operations",
+          "parameters": [],
+          "return_type": "math_operation_t *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_with_callbacks",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "int[]",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "operations",
+              "type": "math_operation_t[]",
+              "value": null
+            },
+            {
+              "name": "op_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "pre_process",
+              "type": "void ( * pre_process ) ( int * , int )",
+              "value": null
+            },
+            {
+              "name": "post_process",
+              "type": "void ( * post_process ) ( int * , int )",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_processor_job_processing",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_processor_utility_macros",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stdbool.h",
+        "stddef.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "#define COMPLEX_H",
+        "#define COMPLEX_MACRO_FUNC(x, y, z) do { \n    int temp_var = (x) + (y) * (z); \n    if (temp_var > 100) { \n        temp_var = temp_var / 2; \n    } else { \n        temp_var = temp_var * 3; \n    } \n    (x) = temp_var; \n} while(0)",
+        "#define CREATE_FUNC_NAME(prefix, suffix) prefix##_##suffix",
+        "#define DEPRECATED",
+        "#define DEPRECATED __attribute__((deprecated))",
+        "#define HANDLE_OPERATION(op_type, data, size, callback) do { \n    switch ((op_type)) { \n        case OP_ADD: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] + 1; \n            } \n            break; \n        case OP_SUB: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] - 1; \n            } \n            break; \n        case OP_MUL: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] * 2; \n            } \n            break; \n        case OP_DIV: \n            for (int i = 0; i < (size); i++) { \n                (data)[i] = (data)[i] / 2; \n            } \n            break; \n    } \n    if ((callback) != NULL) { \n        (callback)((data), (size)); \n    } \n} while(0)",
+        "#define PROCESS_ARRAY(arr, size, callback) do { \n    for (int i = 0; i < (size); i++) { \n        int result = (callback)(&(arr)[i]); \n        if (result < 0) { \n            break; \n        } \n    } \n} while(0)",
+        "#define STRINGIFY(x) #x",
+        "#define TOSTRING(x) STRINGIFY(x)",
+        "#define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8) \n{                                                                     \n    (ptr_pau8)[1U] = (uint8)((value_u16));                            \n    (ptr_pau8)[0U] = (uint8)((value_u16) >> 8U);                      \n}",
+        "#define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8) \n{                                                                     \n    (ptr_pau8)[3U] = (uint8)((value_u32));                            \n    (ptr_pau8)[2U] = (uint8)((value_u32) >> 8U);                      \n    (ptr_pau8)[1U] = (uint8)((value_u32) >> 16U);                     \n    (ptr_pau8)[0U] = (uint8)((value_u32) >> 24U);                     \n}",
+        "#define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8) \n    (((uint16)((ptr_pau8)[0U]) << 8U) | ((uint16)((ptr_pau8)[1U])))",
+        "#define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8) \n    (((uint32)((ptr_pau8)[0U]) << 24U) | \n     ((uint32)((ptr_pau8)[1U]) << 16U) | \n     ((uint32)((ptr_pau8)[2U]) << 8U) | \n     ((uint32)((ptr_pau8)[3U])))"
+      ],
+      "name": "complex.h",
+      "placeholder_headers": [],
+      "structs": {
+        "Process_T": {
+          "fields": [
+            {
+              "name": "job_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "job_data",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "data_size",
+              "type": "size_t",
+              "value": null
+            },
+            {
+              "name": "priority",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "Process_T",
+          "tag_name": "",
+          "uses": []
+        },
+        "__anonymous_struct__": {
+          "fields": [
+            {
+              "name": "level2_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "level3_union",
+              "type": "level3_union",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "__anonymous_struct__",
+          "tag_name": "",
+          "uses": [
+            "level3_union"
+          ]
+        },
+        "array_of_anon_structs_t": {
+          "fields": [
+            {
+              "name": "count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "items",
+              "type": "array_of_anon_structs_t_items",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "array_of_anon_structs_t",
+          "tag_name": "",
+          "uses": [
+            "array_of_anon_structs_t_items"
+          ]
+        },
+        "array_of_anon_structs_t_items": {
+          "fields": [
+            {
+              "name": "int_data",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_data",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "point_data",
+              "type": "item_value_point_data",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "array_of_anon_structs_t_items",
+          "tag_name": "",
+          "uses": [
+            "item_value_point_data"
+          ]
+        },
+        "array_of_anon_structs_t_items_point_data": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "int",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "array_of_anon_structs_t_items_point_data",
+          "tag_name": "",
+          "uses": []
+        },
+        "callback_with_anon_struct_t_config_param": {
+          "fields": [
+            {
+              "name": "config_flags",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "config_name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "config_value",
+              "type": "config_value",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "callback_with_anon_struct_t_config_param",
+          "tag_name": "",
+          "uses": [
+            "config_value"
+          ]
+        },
+        "complex_callback_t_param4": {
+          "fields": [
+            {
+              "name": "nested1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested2",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "nested_func",
+              "type": "void(* nested_func)(int)",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_callback_t_param4",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_handler_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "validator",
+              "type": "complex_handler_t_validator",
+              "value": null
+            },
+            {
+              "name": "memory_manager",
+              "type": "complex_handler_t_memory_manager",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_handler_t",
+          "tag_name": "",
+          "uses": [
+            "complex_handler_t_memory_manager",
+            "complex_handler_t_validator"
+          ]
+        },
+        "complex_handler_t_memory_manager": {
+          "fields": [
+            {
+              "name": "max_size",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "alloc_func",
+              "type": "void * ( * alloc_func ) ( size_t )",
+              "value": null
+            },
+            {
+              "name": "free_func",
+              "type": "void ( * free_func ) ( void * )",
+              "value": null
+            },
+            {
+              "name": "resize_func",
+              "type": "int ( * resize_func ) ( void * *, size_t )",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_handler_t_memory_manager",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_handler_t_validator": {
+          "fields": [
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "validate_func",
+              "type": "int ( * validate_func ) ( const char * )",
+              "value": null
+            },
+            {
+              "name": "format_func",
+              "type": "void ( * format_func ) ( char *, int )",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_handler_t_validator",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_naming_test_t": {
+          "fields": [
+            {
+              "name": "first_struct",
+              "type": "complex_naming_test_t_first_struct",
+              "value": null
+            },
+            {
+              "name": "second_struct",
+              "type": "complex_naming_test_t_second_struct",
+              "value": null
+            },
+            {
+              "name": "mixed_union",
+              "type": "mixed_union",
+              "value": null
+            },
+            {
+              "name": "third_struct",
+              "type": "complex_naming_test_t_third_struct",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t",
+          "tag_name": "",
+          "uses": [
+            "complex_naming_test_t_first_struct",
+            "complex_naming_test_t_second_struct",
+            "complex_naming_test_t_third_struct",
+            "mixed_union"
+          ]
+        },
+        "complex_naming_test_t_first_struct": {
+          "fields": [
+            {
+              "name": "nested_a1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "deep_struct_a1",
+              "type": "complex_naming_test_t_first_struct_deep_struct_a1",
+              "value": null
+            },
+            {
+              "name": "deep_struct_a2",
+              "type": "complex_naming_test_t_first_struct_deep_struct_a2",
+              "value": null
+            },
+            {
+              "name": "nested_a2",
+              "type": "} nested_struct_a; struct { int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_first_struct",
+          "tag_name": "",
+          "uses": [
+            "complex_naming_test_t_first_struct_deep_struct_a1",
+            "complex_naming_test_t_first_struct_deep_struct_a2"
+          ]
+        },
+        "complex_naming_test_t_first_struct_deep_struct_a1": {
+          "fields": [
+            {
+              "name": "deep_a1",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_first_struct_deep_struct_a1",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_naming_test_t_first_struct_deep_struct_a2": {
+          "fields": [
+            {
+              "name": "deep_a2",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_first_struct_deep_struct_a2",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_naming_test_t_mixed_union_deep_in_union": {
+          "fields": [
+            {
+              "name": "deep_union_struct",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_mixed_union_deep_in_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_naming_test_t_second_struct": {
+          "fields": [
+            {
+              "name": "nested_b1",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_second_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_naming_test_t_third_struct": {
+          "fields": [
+            {
+              "name": "struct_union_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "struct_union_struct",
+              "type": "struct_union_struct_union_struct",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_third_struct",
+          "tag_name": "",
+          "uses": [
+            "struct_union_struct_union_struct"
+          ]
+        },
+        "complex_naming_test_t_third_struct_struct_union_struct": {
+          "fields": [
+            {
+              "name": "struct_union_struct_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "complex_naming_test_t_third_struct_struct_union_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "config_param": {
+          "fields": [
+            {
+              "name": "config_flags",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "config_name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "config_value",
+              "type": "config_value",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "config_param",
+          "tag_name": "",
+          "uses": [
+            "config_value"
+          ]
+        },
+        "data_item_t": {
+          "fields": [
+            {
+              "name": "value",
+              "type": "config_value",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "data_item_t",
+          "tag_name": "",
+          "uses": [
+            "config_value"
+          ]
+        },
+        "data_union_point_value": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "data_union_point_value",
+          "tag_name": "",
+          "uses": []
+        },
+        "extreme_nesting_test_t": {
+          "fields": [
+            {
+              "name": "level2_struct_1",
+              "type": "extreme_nesting_test_t_level2_struct_1",
+              "value": null
+            },
+            {
+              "name": "level2_struct_2",
+              "type": "extreme_nesting_test_t_level2_struct_2",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "extreme_nesting_test_t",
+          "tag_name": "",
+          "uses": [
+            "extreme_nesting_test_t_level2_struct_1",
+            "extreme_nesting_test_t_level2_struct_2"
+          ]
+        },
+        "extreme_nesting_test_t_level2_struct_1": {
+          "fields": [
+            {
+              "name": "level4_struct_1",
+              "type": "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
+              "value": null
+            },
+            {
+              "name": "level4_struct_2",
+              "type": "extreme_nesting_test_t_level2_struct_1_level4_struct_2",
+              "value": null
+            },
+            {
+              "name": "level3_field",
+              "type": "} level3_struct_1; struct { int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "extreme_nesting_test_t_level2_struct_1",
+          "tag_name": "",
+          "uses": [
+            "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
+            "extreme_nesting_test_t_level2_struct_1_level4_struct_2"
+          ]
+        },
+        "extreme_nesting_test_t_level2_struct_1_level4_struct_1": {
+          "fields": [
+            {
+              "name": "level4_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "extreme_nesting_test_t_level2_struct_1_level4_struct_1",
+          "tag_name": "",
+          "uses": []
+        },
+        "extreme_nesting_test_t_level2_struct_1_level4_struct_2": {
+          "fields": [
+            {
+              "name": "level4_field2",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "extreme_nesting_test_t_level2_struct_1_level4_struct_2",
+          "tag_name": "",
+          "uses": []
+        },
+        "extreme_nesting_test_t_level2_struct_2": {
+          "fields": [
+            {
+              "name": "mixed_struct",
+              "type": "mixed_union_mixed_struct",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "extreme_nesting_test_t_level2_struct_2",
+          "tag_name": "",
+          "uses": [
+            "mixed_union_mixed_struct"
+          ]
+        },
+        "extreme_nesting_test_t_level2_struct_2_mixed_struct": {
+          "fields": [
+            {
+              "name": "mixed_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "extreme_nesting_test_t_level2_struct_2_mixed_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "handler_entry_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[16]",
+              "value": null
+            },
+            {
+              "name": "init_func",
+              "type": "void ( * ) ( void )",
+              "value": null
+            },
+            {
+              "name": "process_func",
+              "type": "int ( * ) ( int , int )",
+              "value": null
+            },
+            {
+              "name": "cleanup_func",
+              "type": "void ( * ) ( void )",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "handler_entry_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "item_value_point_data": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "item_value_point_data",
+          "tag_name": "",
+          "uses": []
+        },
+        "mixed_union_mixed_struct": {
+          "fields": [
+            {
+              "name": "mixed_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "mixed_union_mixed_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "moderately_nested_t": {
+          "fields": [
+            {
+              "name": "level1_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "level2_struct",
+              "type": "moderately_nested_t_level2_struct",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "moderately_nested_t",
+          "tag_name": "",
+          "uses": [
+            "moderately_nested_t_level2_struct"
+          ]
+        },
+        "moderately_nested_t_level2_struct": {
+          "fields": [
+            {
+              "name": "level3_union",
+              "type": "level3_union",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "moderately_nested_t_level2_struct",
+          "tag_name": "",
+          "uses": [
+            "level3_union"
+          ]
+        },
+        "multi_anonymous_t": {
+          "fields": [
+            {
+              "name": "first_anon_struct",
+              "type": "multi_anonymous_t_first_anon_struct",
+              "value": null
+            },
+            {
+              "name": "second_anon_struct",
+              "type": "multi_anonymous_t_second_anon_struct",
+              "value": null
+            },
+            {
+              "name": "first_anon_union",
+              "type": "first_anon_union",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multi_anonymous_t",
+          "tag_name": "",
+          "uses": [
+            "first_anon_union",
+            "multi_anonymous_t_first_anon_struct",
+            "multi_anonymous_t_second_anon_struct"
+          ]
+        },
+        "multi_anonymous_t_first_anon_struct": {
+          "fields": [
+            {
+              "name": "first_x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "first_y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multi_anonymous_t_first_anon_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "multi_anonymous_t_second_anon_struct": {
+          "fields": [
+            {
+              "name": "deep_value",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multi_anonymous_t_second_anon_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "multiple_simple_anonymous_t": {
+          "fields": [
+            {
+              "name": "first_anon",
+              "type": "multiple_simple_anonymous_t_first_anon",
+              "value": null
+            },
+            {
+              "name": "second_anon",
+              "type": "multiple_simple_anonymous_t_second_anon",
+              "value": null
+            },
+            {
+              "name": "third_anon",
+              "type": "multiple_simple_anonymous_t_third_anon",
+              "value": null
+            },
+            {
+              "name": "first_union",
+              "type": "first_union",
+              "value": null
+            },
+            {
+              "name": "second_union",
+              "type": "second_union",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multiple_simple_anonymous_t",
+          "tag_name": "",
+          "uses": [
+            "first_union",
+            "multiple_simple_anonymous_t_first_anon",
+            "multiple_simple_anonymous_t_second_anon",
+            "multiple_simple_anonymous_t_third_anon",
+            "second_union"
+          ]
+        },
+        "multiple_simple_anonymous_t_first_anon": {
+          "fields": [
+            {
+              "name": "first_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multiple_simple_anonymous_t_first_anon",
+          "tag_name": "",
+          "uses": []
+        },
+        "multiple_simple_anonymous_t_second_anon": {
+          "fields": [
+            {
+              "name": "second_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multiple_simple_anonymous_t_second_anon",
+          "tag_name": "",
+          "uses": []
+        },
+        "multiple_simple_anonymous_t_third_anon": {
+          "fields": [
+            {
+              "name": "third_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "multiple_simple_anonymous_t_third_anon",
+          "tag_name": "",
+          "uses": []
+        },
+        "operation_set_t": {
+          "fields": [
+            {
+              "name": "count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "operations",
+              "type": "math_operation_t[5]",
+              "value": null
+            },
+            {
+              "name": "callbacks",
+              "type": "void(* callbacks[3])(int , char *)",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "operation_set_t",
+          "tag_name": "",
+          "uses": [
+            "math_operation_t"
+          ]
+        },
+        "param4": {
+          "fields": [
+            {
+              "name": "nested1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested2",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "nested_func",
+              "type": "void ( * ) ( int )",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "param4",
+          "tag_name": "",
+          "uses": []
+        },
+        "processor_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "process_func",
+              "type": "int ( * ) ( int , char * )",
+              "value": null
+            },
+            {
+              "name": "cleanup_func",
+              "type": "void ( * ) ( void * )",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "processor_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "result_generator_t": {
+          "fields": [
+            {
+              "name": "result_code",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "result_data",
+              "type": "result_data",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "result_generator_t",
+          "tag_name": "",
+          "uses": [
+            "result_data"
+          ]
+        },
+        "simplified_handler_t": {
+          "fields": [
+            {
+              "name": "event_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "event_name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "event_flags",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "simplified_handler_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "struct_union_struct_union_struct": {
+          "fields": [
+            {
+              "name": "struct_union_struct_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "struct_union_struct_union_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "struct_with_struct_t": {
+          "fields": [
+            {
+              "name": "outer_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "outer_name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "inner_struct",
+              "type": "struct_with_struct_t_inner_struct",
+              "value": null
+            },
+            {
+              "name": "outer_flags",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "struct_with_struct_t",
+          "tag_name": "",
+          "uses": [
+            "struct_with_struct_t_inner_struct"
+          ]
+        },
+        "struct_with_struct_t_inner_struct": {
+          "fields": [
+            {
+              "name": "inner_x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "inner_y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "inner_label",
+              "type": "char[16]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "struct_with_struct_t_inner_struct",
+          "tag_name": "",
+          "uses": []
+        },
+        "struct_with_union_t": {
+          "fields": [
+            {
+              "name": "type_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data_union",
+              "type": "data_union",
+              "value": null
+            },
+            {
+              "name": "checksum",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "struct_with_union_t",
+          "tag_name": "",
+          "uses": [
+            "data_union"
+          ]
+        },
+        "union_with_struct_t_complex_struct": {
+          "fields": [
+            {
+              "name": "error_code",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "error_msg",
+              "type": "char[128]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "union_with_struct_t_complex_struct",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "__anonymous_struct___level3_union": {
+          "fields": [
+            {
+              "name": "level3_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "level3_float",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "__anonymous_struct___level3_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "callback_with_anon_struct_t_config_param_config_value": {
+          "fields": [
+            {
+              "name": "int_config",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "name": "callback_with_anon_struct_t_config_param_config_value",
+          "tag_name": "",
+          "uses": []
+        },
+        "callback_with_anon_struct_t_config_value": {
+          "fields": [
+            {
+              "name": "int_config",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_config",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "callback_with_anon_struct_t_config_value",
+          "tag_name": "",
+          "uses": []
+        },
+        "complex_naming_test_t_mixed_union": {
+          "fields": [
+            {
+              "name": "union_struct_field",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "deep_in_union",
+              "type": "complex_naming_test_t_mixed_union_deep_in_union",
+              "value": null
+            }
+          ],
+          "name": "complex_naming_test_t_mixed_union",
+          "tag_name": "",
+          "uses": [
+            "complex_naming_test_t_mixed_union_deep_in_union"
+          ]
+        },
+        "config_param_config_value": {
+          "fields": [
+            {
+              "name": "int_config",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_config",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "config_param_config_value",
+          "tag_name": "",
+          "uses": []
+        },
+        "config_value": {
+          "fields": [
+            {
+              "name": "int_config",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_config",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "config_value",
+          "tag_name": "",
+          "uses": []
+        },
+        "data_union": {
+          "fields": [
+            {
+              "name": "int_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_value",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "string_value",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "point_value",
+              "type": "data_union_point_value",
+              "value": null
+            }
+          ],
+          "name": "data_union",
+          "tag_name": "",
+          "uses": [
+            "data_union_point_value"
+          ]
+        },
+        "first_anon_union": {
+          "fields": [
+            {
+              "name": "union_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "union_float",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "first_anon_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "first_union": {
+          "fields": [
+            {
+              "name": "union_field1",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "name": "first_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "item_value": {
+          "fields": [
+            {
+              "name": "int_data",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "float_data",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "point_data",
+              "type": "item_value_point_data",
+              "value": null
+            }
+          ],
+          "name": "item_value",
+          "tag_name": "",
+          "uses": [
+            "item_value_point_data"
+          ]
+        },
+        "level3_union": {
+          "fields": [
+            {
+              "name": "level3_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "level3_float",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "level3_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "mixed_union": {
+          "fields": [
+            {
+              "name": "mixed_struct",
+              "type": "mixed_union_mixed_struct",
+              "value": null
+            }
+          ],
+          "name": "mixed_union",
+          "tag_name": "",
+          "uses": [
+            "mixed_union_mixed_struct"
+          ]
+        },
+        "mixed_union_t": {
+          "fields": [
+            {
+              "name": "int_val",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "str_val",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "void_func",
+              "type": "void ( * ) ( void )",
+              "value": null
+            },
+            {
+              "name": "int_func",
+              "type": "int ( * ) ( int )",
+              "value": null
+            }
+          ],
+          "name": "mixed_union_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "multi_anonymous_t_first_anon_union": {
+          "fields": [
+            {
+              "name": "union_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "union_float",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "multi_anonymous_t_first_anon_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "multiple_simple_anonymous_t_first_union": {
+          "fields": [
+            {
+              "name": "union_field1",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "name": "multiple_simple_anonymous_t_first_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "multiple_simple_anonymous_t_second_union": {
+          "fields": [
+            {
+              "name": "union_field2",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "name": "multiple_simple_anonymous_t_second_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "result_data": {
+          "fields": [
+            {
+              "name": "success_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "error_message",
+              "type": "char[128]",
+              "value": null
+            }
+          ],
+          "name": "result_data",
+          "tag_name": "",
+          "uses": []
+        },
+        "result_generator_t_result_data": {
+          "fields": [
+            {
+              "name": "success_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "error_message",
+              "type": "char[128]",
+              "value": null
+            }
+          ],
+          "name": "result_generator_t_result_data",
+          "tag_name": "",
+          "uses": []
+        },
+        "second_union": {
+          "fields": [
+            {
+              "name": "union_field2",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "name": "second_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "struct_union": {
+          "fields": [
+            {
+              "name": "struct_union_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "struct_union_struct",
+              "type": "struct_union_struct_union_struct",
+              "value": null
+            }
+          ],
+          "name": "struct_union",
+          "tag_name": "",
+          "uses": [
+            "struct_union_struct_union_struct"
+          ]
+        },
+        "struct_with_union_t_data_union": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "name": "struct_with_union_t_data_union",
+          "tag_name": "",
+          "uses": []
+        },
+        "union_with_struct_t": {
+          "fields": [
+            {
+              "name": "simple_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "simple_float",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "complex_struct",
+              "type": "union_with_struct_t_complex_struct",
+              "value": null
+            },
+            {
+              "name": "raw_bytes",
+              "type": "char[256]",
+              "value": null
+            }
+          ],
+          "name": "union_with_struct_t",
+          "tag_name": "",
+          "uses": [
+            "union_with_struct_t_complex_struct"
+          ]
+        },
+        "union_with_union_t": {
+          "fields": [
+            {
+              "name": "primary_int",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "nested_union",
+              "type": "union_with_union_t_nested_union",
+              "value": null
+            },
+            {
+              "name": "primary_bytes",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "name": "union_with_union_t",
+          "tag_name": "",
+          "uses": [
+            "union_with_union_t_nested_union"
+          ]
+        },
+        "union_with_union_t_nested_union": {
+          "fields": [
+            {
+              "name": "deep_char",
+              "type": "char",
+              "value": null
+            },
+            {
+              "name": "deep_short",
+              "type": "short",
+              "value": null
+            }
+          ],
+          "name": "union_with_union_t_nested_union",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
+    "complex_example.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "CE_Status_t": {
+          "name": "CE_Status_t",
+          "tag_name": "CE_Status_tag",
+          "values": [
+            {
+              "name": "CE_STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "CE_STATUS_WARN",
+              "value": null
+            },
+            {
+              "name": "CE_STATUS_FAIL",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/complex_example.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "config.h",
+        "logger.h"
+      ],
+      "macros": [
+        "#define COMPLEX_EXAMPLE_H"
+      ],
+      "name": "complex_example.h",
+      "placeholder_headers": [],
+      "structs": {
+        "ComplexExample_t": {
+          "fields": [
+            {
+              "name": "info",
+              "type": "NestedInfo_t",
+              "value": null
+            },
+            {
+              "name": "status",
+              "type": "CE_Status_t",
+              "value": null
+            },
+            {
+              "name": "values",
+              "type": "int[5]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "ComplexExample_t",
+          "tag_name": "ComplexExample_tag",
+          "uses": [
+            "CE_Status_t",
+            "NestedInfo_t"
+          ]
+        },
+        "NestedInfo_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "id_t",
+              "value": null
+            },
+            {
+              "name": "description",
+              "type": "char[MAX_LABEL_LEN]",
+              "value": null
+            },
+            {
+              "name": "log_level",
+              "type": "log_level_t",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "NestedInfo_t",
+          "tag_name": "NestedInfo_tag",
+          "uses": [
+            "id_t",
+            "log_level_t"
+          ]
+        }
+      },
+      "unions": {}
+    },
+    "config.h": {
+      "aliases": {
+        "id_t": {
+          "name": "id_t",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "status_t": {
+          "name": "status_t",
+          "original_type": "int32_t",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "GlobalStatus": {
+          "name": "GlobalStatus",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "GS_OK",
+              "value": null
+            },
+            {
+              "name": "GS_ERROR",
+              "value": null
+            },
+            {
+              "name": "GS_UNKNOWN",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/config.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stddef.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "#define CONFIG_H",
+        "#define DEFAULT_BUFFER_SIZE 256",
+        "#define MAX_LABEL_LEN 64",
+        "#define PROJECT_NAME \"ComplexCProject\""
+      ],
+      "name": "config.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "database.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/database.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_begin_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_commit_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_disconnect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_execute_query",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "QueryResult *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_execute_update",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_free_result",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "QueryResult *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_get_error",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_is_connected",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_rollback_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "database.h",
+        "errno.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "database.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "database.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "DatabaseType": {
+          "name": "DatabaseType",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "DB_TYPE_SQLITE",
+              "value": null
+            },
+            {
+              "name": "DB_TYPE_MYSQL",
+              "value": null
+            },
+            {
+              "name": "DB_TYPE_POSTGRESQL",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/database.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_begin_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_commit_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_disconnect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_escape_string",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "input",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "output",
+              "type": "char *",
+              "value": null
+            },
+            {
+              "name": "max_output_size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_execute_query",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "QueryResult *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_execute_update",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_free_result",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "QueryResult *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_get_error",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_is_connected",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "database_rollback_transaction",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "DatabaseConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "common.h",
+        "libpq-fe.h",
+        "mysql.h",
+        "sqlite3.h",
+        "stdio.h",
+        "stdlib.h"
+      ],
+      "macros": [
+        "#define DATABASE_H",
+        "#define MAX_DB_NAME_LENGTH 256",
+        "#define MAX_QUERY_LENGTH 4096"
+      ],
+      "name": "database.h",
+      "placeholder_headers": [],
+      "structs": {
+        "DatabaseConfig": {
+          "fields": [
+            {
+              "name": "type",
+              "type": "DatabaseType",
+              "value": null
+            },
+            {
+              "name": "db_name",
+              "type": "char[MAX_DB_NAME_LENGTH]",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "char[256]",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "username",
+              "type": "char[128]",
+              "value": null
+            },
+            {
+              "name": "password",
+              "type": "char[128]",
+              "value": null
+            },
+            {
+              "name": "connection",
+              "type": "void *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "DatabaseConfig",
+          "tag_name": "",
+          "uses": [
+            "DatabaseType"
+          ]
+        },
+        "QueryResult": {
+          "fields": [
+            {
+              "name": "row_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "column_count",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "char * *",
+              "value": null
+            },
+            {
+              "name": "column_names",
+              "type": "char * *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "QueryResult",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "filtered_header.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "filtered_enum_t": {
+          "name": "filtered_enum_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "FILTERED_VALUE_1",
+              "value": "1"
+            },
+            {
+              "name": "FILTERED_VALUE_2",
+              "value": "2"
+            },
+            {
+              "name": "FILTERED_VALUE_3",
+              "value": "3"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/filtered_header.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "filtered_function1",
+          "parameters": [
+            {
+              "name": "param",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "filtered_function2",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "filtered_function3",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "filtered_struct_t *",
+              "value": null
+            }
+          ],
+          "return_type": "double"
+        }
+      ],
+      "globals": [
+        {
+          "name": "filtered_global_string",
+          "type": "char[100]",
+          "value": null
+        },
+        {
+          "name": "filtered_global_var",
+          "type": "int",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "stdlib.h"
+      ],
+      "macros": [
+        "#define FILTERED_CONSTANT 42",
+        "#define FILTERED_HEADER_H",
+        "#define FILTERED_MACRO(x) ((x) * 2)"
+      ],
+      "name": "filtered_header.h",
+      "placeholder_headers": [],
+      "structs": {
+        "filtered_struct_t": {
+          "fields": [
+            {
+              "name": "filtered_field1",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "filtered_field2",
+              "type": "char[50]",
+              "value": null
+            },
+            {
+              "name": "filtered_field3",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "filtered_struct_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "first_level.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/first_level.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "filtered_header.h"
+      ],
+      "macros": [
+        "#define FIRST_LEVEL_H"
+      ],
+      "name": "first_level.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "geometry.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/geometry.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_triangle",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "triangle_t"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "triangle_area",
+          "parameters": [
+            {
+              "name": "tri",
+              "type": "const triangle_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "geometry.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "geometry.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "geometry.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/geometry.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_triangle",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "const point_t *",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "triangle_t"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "triangle_area",
+          "parameters": [
+            {
+              "name": "tri",
+              "type": "const triangle_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "math_utils.h",
+        "sample.h"
+      ],
+      "macros": [
+        "#define GEOMETRY_H"
+      ],
+      "name": "geometry.h",
+      "placeholder_headers": [],
+      "structs": {
+        "triangle_t": {
+          "fields": [
+            {
+              "name": "vertices",
+              "type": "point_t[3]",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "char[MAX_LABEL_LEN]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "triangle_t",
+          "tag_name": "triangle_tag",
+          "uses": [
+            "point_t"
+          ]
+        }
+      },
+      "unions": {}
+    },
+    "libpq-fe.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "ExecStatusType": {
+          "name": "ExecStatusType",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "PGRES_EMPTY_QUERY",
+              "value": "0"
+            },
+            {
+              "name": "PGRES_COMMAND_OK",
+              "value": "1"
+            },
+            {
+              "name": "PGRES_TUPLES_OK",
+              "value": "2"
+            },
+            {
+              "name": "PGRES_COPY_OUT",
+              "value": "3"
+            },
+            {
+              "name": "PGRES_COPY_IN",
+              "value": "4"
+            },
+            {
+              "name": "PGRES_BAD_RESPONSE",
+              "value": "5"
+            },
+            {
+              "name": "PGRES_NONFATAL_ERROR",
+              "value": "6"
+            },
+            {
+              "name": "PGRES_FATAL_ERROR",
+              "value": "7"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/libpq-fe.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQclear",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQconnectdb",
+          "parameters": [
+            {
+              "name": "conninfo",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "PGconn *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQerrorMessage",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "const PGconn *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQexec",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "PGconn *",
+              "value": null
+            },
+            {
+              "name": "command",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "PGresult *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQfinish",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "PGconn *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQfname",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            },
+            {
+              "name": "field_num",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQgetvalue",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            },
+            {
+              "name": "tup_num",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "field_num",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQnfields",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQntuples",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQresultStatus",
+          "parameters": [
+            {
+              "name": "res",
+              "type": "const PGresult *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "PQstatus",
+          "parameters": [
+            {
+              "name": "conn",
+              "type": "const PGconn *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stddef.h"
+      ],
+      "macros": [
+        "#define CONNECTION_BAD 1",
+        "#define CONNECTION_OK 0",
+        "#define LIBPQ_FE_H"
+      ],
+      "name": "libpq-fe.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "logger.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/logger.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "log_message",
+          "parameters": [
+            {
+              "name": "level",
+              "type": "log_level_t",
+              "value": null
+            },
+            {
+              "name": "fmt",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "...",
+              "type": "...",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "set_log_callback",
+          "parameters": [
+            {
+              "name": "cb",
+              "type": "log_callback_t",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "current_cb",
+          "type": "log_callback_t",
+          "value": "NULL"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "logger.h",
+        "stdarg.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "logger.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "logger.h": {
+      "aliases": {
+        "log_callback_t": {
+          "name": "log_callback_t",
+          "original_type": "void(* log_callback_t)(log_level_t level , const char * message)",
+          "uses": [
+            "log_level_t"
+          ]
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "log_level_t": {
+          "name": "log_level_t",
+          "tag_name": "log_level_tag",
+          "values": [
+            {
+              "name": "LOG_DEBUG",
+              "value": "0"
+            },
+            {
+              "name": "LOG_INFO",
+              "value": null
+            },
+            {
+              "name": "LOG_WARN",
+              "value": null
+            },
+            {
+              "name": "LOG_ERROR",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/logger.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "log_message",
+          "parameters": [
+            {
+              "name": "level",
+              "type": "log_level_t",
+              "value": null
+            },
+            {
+              "name": "fmt",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "...",
+              "type": "...",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "set_log_callback",
+          "parameters": [
+            {
+              "name": "cb",
+              "type": "log_callback_t",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "config.h",
+        "stdio.h"
+      ],
+      "macros": [
+        "#define LOGGER_H"
+      ],
+      "name": "logger.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "math_utils.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/math_utils.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "add",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "average",
+          "parameters": [
+            {
+              "name": "arr",
+              "type": "const int *",
+              "value": null
+            },
+            {
+              "name": "len",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "real_t"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "subtract",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "math_utils.h"
+      ],
+      "macros": [],
+      "name": "math_utils.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "math_utils.h": {
+      "aliases": {
+        "math_op_t": {
+          "name": "math_op_t",
+          "original_type": "int(* math_op_t)(int , int)",
+          "uses": []
+        },
+        "real_t": {
+          "name": "real_t",
+          "original_type": "double",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/math_utils.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "add",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "average",
+          "parameters": [
+            {
+              "name": "arr",
+              "type": "const int *",
+              "value": null
+            },
+            {
+              "name": "len",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "real_t"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "subtract",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "config.h"
+      ],
+      "macros": [
+        "#define MATH_UTILS_H"
+      ],
+      "name": "math_utils.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "mysql.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/mysql.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_close",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_error",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_fetch_row",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL_ROW"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_free_result",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_init",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_num_fields",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "unsigned int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_num_rows",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "MYSQL_RES *",
+              "value": null
+            }
+          ],
+          "return_type": "unsigned long"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_ping",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_query",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            },
+            {
+              "name": "query",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_real_connect",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "user",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "passwd",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "db",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "unsigned int",
+              "value": null
+            },
+            {
+              "name": "unix_socket",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "clientflag",
+              "type": "unsigned long",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "mysql_store_result",
+          "parameters": [
+            {
+              "name": "mysql",
+              "type": "MYSQL *",
+              "value": null
+            }
+          ],
+          "return_type": "MYSQL_RES *"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stddef.h"
+      ],
+      "macros": [
+        "#define MYSQL_ERROR -1",
+        "#define MYSQL_H",
+        "#define MYSQL_SUCCESS 0"
+      ],
+      "name": "mysql.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "network.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/network.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_cleanup",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_get_status",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "NetworkStatus"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_listen",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_receive",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "buffer",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_send",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "const void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_set_nonblocking",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_status_string",
+          "parameters": [
+            {
+              "name": "status",
+              "type": "NetworkStatus",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "errno.h",
+        "fcntl.h",
+        "network.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "network.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "network.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "NetworkStatus": {
+          "name": "NetworkStatus",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "NET_STATUS_DISCONNECTED",
+              "value": null
+            },
+            {
+              "name": "NET_STATUS_CONNECTING",
+              "value": null
+            },
+            {
+              "name": "NET_STATUS_CONNECTED",
+              "value": null
+            },
+            {
+              "name": "NET_STATUS_ERROR",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/network.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_accept",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_cleanup",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_connect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "host",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_disconnect",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_get_status",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "const NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "NetworkStatus"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_listen",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "NetworkConfig *",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_receive",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "buffer",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_send",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "const void *",
+              "value": null
+            },
+            {
+              "name": "size",
+              "type": "size_t",
+              "value": null
+            }
+          ],
+          "return_type": "ssize_t"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_set_nonblocking",
+          "parameters": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "network_status_string",
+          "parameters": [
+            {
+              "name": "status",
+              "type": "NetworkStatus",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "arpa/inet.h",
+        "common.h",
+        "netdb.h",
+        "netinet/in.h",
+        "sys/socket.h",
+        "unistd.h"
+      ],
+      "macros": [
+        "#define DEFAULT_PORT 8080",
+        "#define MAX_CONNECTIONS 100",
+        "#define NETWORK_H"
+      ],
+      "name": "network.h",
+      "placeholder_headers": [],
+      "structs": {
+        "NetworkConfig": {
+          "fields": [
+            {
+              "name": "socket_fd",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "address",
+              "type": "struct sockaddr_in",
+              "value": null
+            },
+            {
+              "name": "port",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "hostname",
+              "type": "char *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "NetworkConfig",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "preprocessed.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/preprocessed.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "complex_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_function_pointers",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_preprocessing_edge_cases",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_typedef_preprocessing",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "preprocessed.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [],
+      "name": "preprocessed.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "preprocessed.h": {
+      "aliases": {
+        "basic_callback_t": {
+          "name": "basic_callback_t",
+          "original_type": "int(* basic_callback_t)(void)",
+          "uses": []
+        },
+        "feature_callback_t": {
+          "name": "feature_callback_t",
+          "original_type": "int(* feature_callback_t)(enabled_feature_t * feature)",
+          "uses": [
+            "enabled_feature_t"
+          ]
+        },
+        "large_buffer_t": {
+          "name": "large_buffer_t",
+          "original_type": "char large_buffer_t[MAX_SIZE]",
+          "uses": []
+        },
+        "small_buffer_t": {
+          "name": "small_buffer_t",
+          "original_type": "char small_buffer_t[MIN_SIZE]",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "status_t": {
+          "name": "status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_ENABLED",
+              "value": "1"
+            },
+            {
+              "name": "STATUS_DISABLED",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_OFF",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_UNKNOWN",
+              "value": "- 1"
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/preprocessed.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "debug_feature",
+          "parameters": [
+            {
+              "name": "feature",
+              "type": "enabled_feature_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_basic",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_feature",
+          "parameters": [
+            {
+              "name": "feature",
+              "type": "enabled_feature_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [
+        {
+          "name": "global_basic",
+          "type": "int",
+          "value": null
+        },
+        {
+          "name": "global_debug",
+          "type": "debug_struct_t",
+          "value": null
+        },
+        {
+          "name": "global_feature",
+          "type": "enabled_feature_t",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stddef.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "#define DEBUG_MODE 0",
+        "#define FEATURE_ENABLED 1",
+        "#define MAX_SIZE 100",
+        "#define MIN_SIZE 10",
+        "#define PREPROCESSED_H"
+      ],
+      "name": "preprocessed.h",
+      "placeholder_headers": [],
+      "structs": {
+        "basic_struct_t": {
+          "fields": [
+            {
+              "name": "basic_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "basic_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_enabled_t": {
+          "fields": [
+            {
+              "name": "debug_enabled_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_enabled_name",
+              "type": "char[64]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_enabled_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_feature_t": {
+          "fields": [
+            {
+              "name": "debug_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_name",
+              "type": "char[64]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_feature_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_optimized_t": {
+          "fields": [
+            {
+              "name": "debug_field",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_buffer",
+              "type": "char[128]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_optimized_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "debug_struct_t": {
+          "fields": [
+            {
+              "name": "debug_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "debug_name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "extra_debug_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "debug_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "default_struct_t": {
+          "fields": [
+            {
+              "name": "default_field",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "default_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "disabled_feature_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "disabled_feature_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "disabled_t": {
+          "fields": [
+            {
+              "name": "disabled_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "disabled_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "enabled_feature_t": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "enabled_feature_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "enabled_t": {
+          "fields": [
+            {
+              "name": "enabled_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "enabled_name",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "enabled_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "feature_struct_t": {
+          "fields": [
+            {
+              "name": "feature_id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "feature_name",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "feature_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "optimized_struct_t": {
+          "fields": [
+            {
+              "name": "optimized_field",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "large_buffer",
+              "type": "char[MAX_SIZE]",
+              "value": null
+            },
+            {
+              "name": "small_buffer",
+              "type": "char[MIN_SIZE]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "optimized_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "release_struct_t": {
+          "fields": [
+            {
+              "name": "release_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "release_struct_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "simple_debug_t": {
+          "fields": [
+            {
+              "name": "debug_id",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "simple_debug_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "basic_union_t": {
+          "fields": [
+            {
+              "name": "int_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "char_value",
+              "type": "char",
+              "value": null
+            }
+          ],
+          "name": "basic_union_t",
+          "tag_name": "",
+          "uses": []
+        },
+        "feature_union_t": {
+          "fields": [
+            {
+              "name": "int_value",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "char_value",
+              "type": "char",
+              "value": null
+            },
+            {
+              "name": "debug_value",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "name": "feature_union_t",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
+    "sample.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/sample.c",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "demo_triangle_usage",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_point",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "buffer",
+          "type": "char[MAX_SIZE]",
+          "value": null
+        },
+        {
+          "name": "global_counter",
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "name": "global_ptr",
+          "type": "double *",
+          "value": "NULL"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "filtered_header.h",
+        "first_level.h",
+        "geometry.h",
+        "logger.h",
+        "math_utils.h",
+        "sample.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [
+        "#define CALC(x, y) ((x) + (y))",
+        "#define DEBUG_MODE 1U",
+        "#define MAX_SIZE 100U"
+      ],
+      "name": "sample.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "sample.h": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {
+        "system_state_t": {
+          "name": "system_state_t",
+          "tag_name": "system_state_tag",
+          "values": [
+            {
+              "name": "STATE_IDLE",
+              "value": "0"
+            },
+            {
+              "name": "STATE_RUNNING",
+              "value": null
+            },
+            {
+              "name": "STATE_ERROR",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/sample.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "extern int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "extern point_t *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_point",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
+          "return_type": "extern void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "DEFAULT_LABEL",
+          "type": "char *",
+          "value": null
+        },
+        {
+          "name": "MAX_POINTS",
+          "type": "int",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "config.h",
+        "geometry.h",
+        "logger.h",
+        "stddef.h"
+      ],
+      "macros": [
+        "#define MAX(a, b) ((a) > (b) ? (a) : (b))",
+        "#define MIN(a, b) ((a) < (b) ? (a) : (b))",
+        "#define PI 3.14159",
+        "#define SAMPLE_H",
+        "#define VERSION \"1.0.0\""
+      ],
+      "name": "sample.h",
+      "placeholder_headers": [],
+      "structs": {
+        "point_t": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "char[32]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "point_t",
+          "tag_name": "point_tag",
+          "uses": []
+        }
+      },
+      "unions": {}
+    },
+    "sample2.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/sample2.c",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "calculate_sum",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "label",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "point_t *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "demo_triangle_usage",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "internal_helper",
+          "parameters": [],
+          "return_type": "static void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_point",
+          "parameters": [
+            {
+              "name": "p",
+              "type": "point_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "buffer",
+          "type": "char[MAX_SIZE]",
+          "value": null
+        },
+        {
+          "name": "global_counter",
+          "type": "int",
+          "value": "0"
+        },
+        {
+          "name": "global_ptr",
+          "type": "double *",
+          "value": "NULL"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "filtered_header.h",
+        "first_level.h",
+        "geometry.h",
+        "logger.h",
+        "math_utils.h",
+        "sample.h",
+        "stdio.h",
+        "stdlib.h",
+        "string.h"
+      ],
+      "macros": [
+        "#define CALC(x, y) ((x) + (y))",
+        "#define DEBUG_MODE 1U",
+        "#define MAX_SIZE 100U"
+      ],
+      "name": "sample2.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "sqlite3.h": {
+      "aliases": {
+        "sqlite3_callback": {
+          "name": "sqlite3_callback",
+          "original_type": "int(* sqlite3_callback)(void * , int , char * * , char * *)",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/sqlite3.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_bind_blob",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "const void *",
+              "value": null
+            },
+            {
+              "name": "n",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "destructor",
+              "type": "void ( * destructor ) ( void * )",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_bind_double",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_bind_int",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_bind_text",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "value",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "n",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "destructor",
+              "type": "void ( * destructor ) ( void * )",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_close",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_blob",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "const void *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_count",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_double",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "double"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_int",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_name",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_text",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "const unsigned char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_column_type",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            },
+            {
+              "name": "iCol",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_errmsg",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            }
+          ],
+          "return_type": "const char *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_exec",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            },
+            {
+              "name": "sql",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "callback",
+              "type": "sqlite3_callback",
+              "value": null
+            },
+            {
+              "name": "arg",
+              "type": "void *",
+              "value": null
+            },
+            {
+              "name": "errmsg",
+              "type": "char **",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_finalize",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_free",
+          "parameters": [
+            {
+              "name": "ptr",
+              "type": "void *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_open",
+          "parameters": [
+            {
+              "name": "filename",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "ppDb",
+              "type": "sqlite3 **",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_prepare_v2",
+          "parameters": [
+            {
+              "name": "db",
+              "type": "sqlite3 *",
+              "value": null
+            },
+            {
+              "name": "zSql",
+              "type": "const char *",
+              "value": null
+            },
+            {
+              "name": "nByte",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "ppStmt",
+              "type": "sqlite3_stmt **",
+              "value": null
+            },
+            {
+              "name": "pzTail",
+              "type": "const char **",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "sqlite3_step",
+          "parameters": [
+            {
+              "name": "pStmt",
+              "type": "sqlite3_stmt *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        }
+      ],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "stddef.h"
+      ],
+      "macros": [
+        "#define SQLITE3_H",
+        "#define SQLITE_ABORT        4   /* Callback routine requested an abort */",
+        "#define SQLITE_AUTH        23   /* Authorization denied */",
+        "#define SQLITE_BUSY         5   /* The database file is locked */",
+        "#define SQLITE_CANTOPEN    14   /* Unable to open the database file */",
+        "#define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */",
+        "#define SQLITE_CORRUPT     11   /* The database disk image is malformed */",
+        "#define SQLITE_DONE        101  /* sqlite3_step() has finished executing */",
+        "#define SQLITE_EMPTY       16   /* Database is empty */",
+        "#define SQLITE_ERROR        1   /* SQL error or missing database */",
+        "#define SQLITE_FORMAT      24   /* Auxiliary database format error */",
+        "#define SQLITE_FULL        13   /* Insertion failed because database is full */",
+        "#define SQLITE_INTERNAL     2   /* Internal logic error in SQLite */",
+        "#define SQLITE_INTERRUPT    9   /* Operation terminated by sqlite3_interrupt()*/",
+        "#define SQLITE_IOERR       10   /* Some kind of disk I/O error occurred */",
+        "#define SQLITE_LOCKED       6   /* A table in the database is locked */",
+        "#define SQLITE_MISMATCH    20   /* Data type mismatch */",
+        "#define SQLITE_MISUSE      21   /* Library used incorrectly */",
+        "#define SQLITE_NOLFS       22   /* Uses OS features not supported on host */",
+        "#define SQLITE_NOMEM        7   /* A malloc() failed */",
+        "#define SQLITE_NOTADB      26   /* File opened that is not a database file */",
+        "#define SQLITE_NOTFOUND    12   /* Unknown opcode in sqlite3_file_control() */",
+        "#define SQLITE_OK           0   /* Successful result */",
+        "#define SQLITE_PERM         3   /* Access permission denied */",
+        "#define SQLITE_PROTOCOL    15   /* Database lock protocol error */",
+        "#define SQLITE_RANGE       25   /* 2nd parameter to sqlite3_bind out of range */",
+        "#define SQLITE_READONLY     8   /* Attempt to write a readonly database */",
+        "#define SQLITE_ROW         100  /* sqlite3_step() has another row ready */",
+        "#define SQLITE_SCHEMA      17   /* The database schema changed */",
+        "#define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */"
+      ],
+      "name": "sqlite3.h",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "transformed.c": {
+      "aliases": {
+        "legacy_int_t": {
+          "name": "legacy_int_t",
+          "original_type": "int",
+          "uses": []
+        },
+        "legacy_string_t": {
+          "name": "legacy_string_t",
+          "original_type": "char *",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "legacy_color": {
+          "name": "legacy_color",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "LEGACY_RED",
+              "value": null
+            },
+            {
+              "name": "LEGACY_GREEN",
+              "value": null
+            },
+            {
+              "name": "LEGACY_BLUE",
+              "value": null
+            }
+          ]
+        },
+        "old_status": {
+          "name": "old_status",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OLD_STATUS_PENDING",
+              "value": null
+            },
+            {
+              "name": "OLD_STATUS_ACTIVE",
+              "value": null
+            },
+            {
+              "name": "OLD_STATUS_INACTIVE",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/transformed.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "debug_log",
+          "parameters": [
+            {
+              "name": "msg",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "deprecated_print_info",
+          "parameters": [
+            {
+              "name": "message",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "keep_this_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "legacy_calculate",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "old_create_point",
+          "parameters": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "return_type": "old_point *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_function_one",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_function_two",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "deprecated_message",
+          "type": "legacy_string_t",
+          "value": "\"old version\""
+        },
+        {
+          "name": "old_global_counter",
+          "type": "int",
+          "value": "0"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "stdlib.h",
+        "string.h",
+        "transformed.h"
+      ],
+      "macros": [
+        "#define DEPRECATED_MAX_SIZE 1024",
+        "#define LEGACY_DEBUG 1",
+        "#define OLD_VERSION \"1.0\""
+      ],
+      "name": "transformed.c",
+      "placeholder_headers": [],
+      "structs": {
+        "__anonymous_struct__": {
+          "fields": [
+            {
+              "name": ")",
+              "type": "struct old_point * point = malloc ( sizeof ( struct old_point )",
+              "value": null
+            },
+            {
+              "name": "point",
+              "type": "old_point",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "__anonymous_struct__",
+          "tag_name": "",
+          "uses": [
+            "old_point"
+          ]
+        },
+        "legacy_data": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[32]",
+              "value": null
+            },
+            {
+              "name": "position",
+              "type": "struct old_point",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "legacy_data",
+          "tag_name": "",
+          "uses": [
+            "old_point"
+          ]
+        },
+        "old_point": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "old_point",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "old_value": {
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            },
+            {
+              "name": "c",
+              "type": "char",
+              "value": null
+            }
+          ],
+          "name": "old_value",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
+    "transformed.h": {
+      "aliases": {
+        "legacy_handle_t": {
+          "name": "legacy_handle_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "legacy_uint_t": {
+          "name": "legacy_uint_t",
+          "original_type": "unsigned int",
+          "uses": []
+        },
+        "old_config_t": {
+          "name": "old_config_t",
+          "original_type": "void *",
+          "uses": []
+        },
+        "old_point_t": {
+          "name": "old_point_t",
+          "original_type": "void *",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "legacy_mode": {
+          "name": "legacy_mode",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "LEGACY_MODE_READ",
+              "value": null
+            },
+            {
+              "name": "LEGACY_MODE_WRITE",
+              "value": null
+            },
+            {
+              "name": "LEGACY_MODE_APPEND",
+              "value": null
+            }
+          ]
+        },
+        "old_error_type": {
+          "name": "old_error_type",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "OLD_ERROR_NONE",
+              "value": null
+            },
+            {
+              "name": "OLD_ERROR_INVALID",
+              "value": null
+            },
+            {
+              "name": "OLD_ERROR_MEMORY",
+              "value": null
+            }
+          ]
+        },
+        "status_t": {
+          "name": "status_t",
+          "tag_name": "",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": null
+            },
+            {
+              "name": "STATUS_ERROR",
+              "value": null
+            },
+            {
+              "name": "STATUS_PENDING",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/transformed.h",
+      "functions": [
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "cleanup_resources",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "debug_validate_config",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "old_config_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "deprecated_cleanup",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "initialize_system",
+          "parameters": [],
+          "return_type": "status_t"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "keep_this_function",
+          "parameters": [],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "legacy_init",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "old_config_t *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "old_create_config",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "const char *",
+              "value": null
+            }
+          ],
+          "return_type": "old_config_t *"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_data",
+          "parameters": [
+            {
+              "name": "point",
+              "type": "const point3d_t *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": true,
+          "is_inline": false,
+          "is_static": false,
+          "name": "test_helper_function",
+          "parameters": [],
+          "return_type": "void"
+        }
+      ],
+      "globals": [
+        {
+          "name": "legacy_path",
+          "type": "char *",
+          "value": null
+        },
+        {
+          "name": "old_error_code",
+          "type": "int",
+          "value": null
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "stdio.h",
+        "time.h",
+        "unistd.h"
+      ],
+      "macros": [
+        "#define DEPRECATED_FLAG 0x01",
+        "#define LEGACY_BUFFER_SIZE 512",
+        "#define OLD_API_VERSION 100",
+        "#define TRANSFORMED_H"
+      ],
+      "name": "transformed.h",
+      "placeholder_headers": [],
+      "structs": {
+        "legacy_node": {
+          "fields": [
+            {
+              "name": "data",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "next",
+              "type": "struct legacy_node *",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "legacy_node",
+          "tag_name": "",
+          "uses": [
+            "legacy_node"
+          ]
+        },
+        "old_config": {
+          "fields": [
+            {
+              "name": "version",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "char[64]",
+              "value": null
+            },
+            {
+              "name": "flags",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "old_config",
+          "tag_name": "",
+          "uses": []
+        },
+        "point3d_t": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "z",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "point3d_t",
+          "tag_name": "",
+          "uses": []
+        }
+      },
+      "unions": {
+        "old_variant": {
+          "fields": [
+            {
+              "name": "int_val",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "double_val",
+              "type": "double",
+              "value": null
+            },
+            {
+              "name": "string_val",
+              "type": "char *",
+              "value": null
+            }
+          ],
+          "name": "old_variant",
+          "tag_name": "",
+          "uses": []
+        }
+      }
+    },
+    "typedef_test.c": {
+      "aliases": {},
+      "anonymous_relationships": {},
+      "enums": {},
+      "file_path": "/workspace/tests/example/source/typedef_test.c",
+      "functions": [
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "create_complex",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "MyLen",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "MyString",
+              "value": null
+            }
+          ],
+          "return_type": "MyComplex *"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "log_buffer",
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "const MyBuffer *",
+              "value": null
+            }
+          ],
+          "return_type": "void"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "main",
+          "parameters": [],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "my_callback",
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "MyBuffer *",
+              "value": null
+            }
+          ],
+          "return_type": "int"
+        },
+        {
+          "is_declaration": false,
+          "is_inline": false,
+          "is_static": false,
+          "name": "process_buffer",
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "MyBuffer *",
+              "value": null
+            }
+          ],
+          "return_type": "MyInt"
+        }
+      ],
+      "globals": [
+        {
+          "name": "global_buffer",
+          "type": "MyBuffer",
+          "value": "{0 U, NULL}"
+        },
+        {
+          "name": "global_complex",
+          "type": "MyComplexPtr",
+          "value": "NULL"
+        },
+        {
+          "name": "global_length",
+          "type": "MyLen",
+          "value": "0 U"
+        }
+      ],
+      "include_relations": [],
+      "includes": [
+        "complex_example.h",
+        "geometry.h",
+        "logger.h",
+        "stdlib.h",
+        "typedef_test.h"
+      ],
+      "macros": [],
+      "name": "typedef_test.c",
+      "placeholder_headers": [],
+      "structs": {},
+      "unions": {}
+    },
+    "typedef_test.h": {
+      "aliases": {
+        "MyCallback": {
+          "name": "MyCallback",
+          "original_type": "int(* MyCallback)(MyBuffer * buffer)",
+          "uses": [
+            "MyBuffer"
+          ]
+        },
+        "MyComplexArray": {
+          "name": "MyComplexArray",
+          "original_type": "MyComplexPtr MyComplexArray[10]",
+          "uses": [
+            "MyComplexPtr"
+          ]
+        },
+        "MyComplexPtr": {
+          "name": "MyComplexPtr",
+          "original_type": "MyComplex *",
+          "uses": [
+            "MyComplex"
+          ]
+        },
+        "MyInt": {
+          "name": "MyInt",
+          "original_type": "int32_t",
+          "uses": []
+        },
+        "MyLen": {
+          "name": "MyLen",
+          "original_type": "uint32_t",
+          "uses": []
+        },
+        "MyString": {
+          "name": "MyString",
+          "original_type": "char *",
+          "uses": []
+        }
+      },
+      "anonymous_relationships": {},
+      "enums": {
+        "Color_t": {
+          "name": "Color_t",
+          "tag_name": "Color_tag",
+          "values": [
+            {
+              "name": "COLOR_RED",
+              "value": "0"
+            },
+            {
+              "name": "COLOR_GREEN",
+              "value": null
+            },
+            {
+              "name": "COLOR_BLUE",
+              "value": null
+            }
+          ]
+        },
+        "Status_t": {
+          "name": "Status_t",
+          "tag_name": "StatusEnum_tag",
+          "values": [
+            {
+              "name": "STATUS_OK",
+              "value": "0"
+            },
+            {
+              "name": "STATUS_FAIL",
+              "value": null
+            }
+          ]
+        }
+      },
+      "file_path": "/workspace/tests/example/source/typedef_test.h",
+      "functions": [],
+      "globals": [],
+      "include_relations": [],
+      "includes": [
+        "config.h",
+        "logger.h",
+        "sample.h",
+        "stdint.h"
+      ],
+      "macros": [
+        "#define TYPEDEF_TEST_H"
+      ],
+      "name": "typedef_test.h",
+      "placeholder_headers": [],
+      "structs": {
+        "ArrayHolder_t": {
+          "fields": [
+            {
+              "name": "type_tst",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "array_ofarray_aast",
+              "type": "int[2][2]",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "ArrayHolder_t",
+          "tag_name": "ArrayHolder_tag",
+          "uses": []
+        },
+        "MyBuffer": {
+          "fields": [
+            {
+              "name": "length",
+              "type": "MyLen",
+              "value": null
+            },
+            {
+              "name": "data",
+              "type": "MyString",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "MyBuffer",
+          "tag_name": "MyBuffer_tag",
+          "uses": [
+            "MyLen",
+            "MyString"
+          ]
+        },
+        "MyComplex": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "MyLen",
+              "value": null
+            },
+            {
+              "name": "name",
+              "type": "MyString",
+              "value": null
+            },
+            {
+              "name": "callback",
+              "type": "MyCallback",
+              "value": null
+            },
+            {
+              "name": "log_level",
+              "type": "log_level_t",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "MyComplex",
+          "tag_name": "MyComplexStruct_tag",
+          "uses": [
+            "MyCallback",
+            "MyLen",
+            "MyString",
+            "log_level_t"
+          ]
+        },
+        "NamedStruct_t": {
+          "fields": [
+            {
+              "name": "a",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "b",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "NamedStruct_t",
+          "tag_name": "NamedStruct_tag",
+          "uses": []
+        },
+        "Point_t": {
+          "fields": [
+            {
+              "name": "x",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "y",
+              "type": "int",
+              "value": null
+            }
+          ],
+          "methods": [],
+          "name": "Point_t",
+          "tag_name": "Point_tag",
+          "uses": []
+        }
+      },
+      "unions": {
+        "NamedUnion_t": {
+          "fields": [
+            {
+              "name": "c",
+              "type": "char",
+              "value": null
+            },
+            {
+              "name": "d",
+              "type": "double",
+              "value": null
+            }
+          ],
+          "name": "NamedUnion_t",
+          "tag_name": "NamedUnion_tag",
+          "uses": []
+        },
+        "Number_t": {
+          "fields": [
+            {
+              "name": "i",
+              "type": "int",
+              "value": null
+            },
+            {
+              "name": "f",
+              "type": "float",
+              "value": null
+            }
+          ],
+          "name": "Number_t",
+          "tag_name": "Number_tag",
+          "uses": []
+        }
+      }
+    }
+  },
+  "project_name": "example_project",
+  "source_folder": "tests/example/source,tests/example/source"
+}

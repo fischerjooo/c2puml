@@ -1,0 +1,37 @@
+test:
+  name: Error Handling - Partial Failures
+  description: Test CLI handling when some source folders fail but others succeed
+  category: feature
+  id: '204'
+---
+source_files:
+  test.c: |
+    #include <stdio.h>
+
+    int main() {
+        printf("Hello, World!\n");
+        return 0;
+    }
+---
+config.json: |
+  {
+    "project_name": "test_partial_failures",
+    "source_folders": ["src", "/nonexistent/path"],
+    "output_dir": "output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    stdout_contains: Failed to parse 1 out of 2 source folders
+  model:
+    validate_structure: true
+    expected_files:
+      - test.c
+    functions_exist:
+      - main
+  puml:
+    syntax_valid: true
+    contains_elements:
+    - main

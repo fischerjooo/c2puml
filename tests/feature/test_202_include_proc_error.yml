@@ -1,0 +1,29 @@
+test:
+  name: Include Processing – Error Handling Comprehensive
+  description: Consolidated missing dependency and generate-only isolation failure checks
+  category: feature
+  id: '202'
+---
+source_files:
+  main.c: |
+    #include "missing.h"
+    int main() { return 0; }
+---
+config.json: |
+  {
+    "project_name": "include_processing_errors",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

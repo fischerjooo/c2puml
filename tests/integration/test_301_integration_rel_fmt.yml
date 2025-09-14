@@ -1,0 +1,66 @@
+test:
+  name: Integration – Relationships and Formatting (Comprehensive)
+  description: Validate parsing across multiple headers and a C file, ensuring typedefs/enums/functions appear and PlantUML is syntactically valid
+  category: integration
+  id: '301'
+---
+source_files:
+  a.h: |
+    #ifndef A_H
+    #define A_H
+    typedef struct A { int ax; } A;
+    #endif
+  b.h: |
+    #ifndef B_H
+    #define B_H
+    #include "a.h"
+    typedef enum B { B0, B1 } B;
+    #endif
+  c.c: |
+    #include "a.h"
+    #include "b.h"
+    int f(A a, B b) { return a.ax + (int)b; }
+---
+config.json: |
+  {
+    "project_name": "integration_rel_format",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 45.0
+  model:
+    validate_structure: true
+    project_name: integration_rel_format
+    expected_files:
+      - a.h
+      - b.h
+      - c.c
+    structs_exist:
+      - A
+    enums_exist:
+      - B
+    functions_exist:
+      - f
+    includes_exist:
+      - a.h
+      - b.h
+    element_counts:
+      files: 3
+  puml:
+    syntax_valid: true
+    files:
+      c.puml:
+        contains_lines:
+        - C --> HEADER_A
+        - C --> HEADER_B
+        - int f(A a, B b)
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

@@ -1,0 +1,541 @@
+test:
+  name: Basic Example
+  description: Validate example project end-to-end via CLI using external config and
+    sources
+  category: example
+  id: '901'
+---
+assertions:
+  execution:
+    exit_code: 0
+    max_execution_time: 120.0
+  model:
+    project_name: example_project
+    functions_exist:
+    - calculate_sum
+    - create_point
+    - process_point
+    - triangle_area
+    - log_message
+    - set_log_callback
+    - add
+    - keep_this_function
+    - main
+    structs_exist:
+    - point_t
+    - triangle_t
+    - point3d_t
+    enums_exist:
+    - system_state_t
+    - log_level_t
+    - status_t
+    includes_exist:
+    - stdio.h
+    - stdlib.h
+    - string.h
+    - geometry.h
+    - logger.h
+    - math_utils.h
+    functions_not_exist:
+    - test_function_one
+    - test_function_two
+    - debug_log
+    - deprecated_print_info
+    structs_not_exist:
+    - legacy_node
+    - old_config
+    struct_details:
+      point_t:
+        fields:
+        - x
+        - y
+        - label
+      triangle_t:
+        fields:
+        - vertices
+        - label
+    enum_details:
+      log_level_t:
+        values:
+        - LOG_DEBUG
+        - LOG_INFO
+        - LOG_WARN
+        - LOG_ERROR
+    element_counts:
+      files: 30
+  puml:
+    syntax_valid: true
+    file_count: 12
+    contains_elements:
+    - calculate_sum
+    - create_point
+    - process_point
+    - triangle_area
+    - log_message
+    - set_log_callback
+    - add
+    - keep_this_function
+    - point_t
+    - triangle_t
+    not_contains_elements:
+    - legacy_node
+    - old_config
+    files:
+      sample.puml:
+        contains_elements:
+        - calculate_sum
+        - create_point
+        - process_point
+        - point_t
+        contains_lines:
+        - 'SAMPLE --> HEADER_GEOMETRY : <<include>>'
+        - 'SAMPLE --> HEADER_LOGGER : <<include>>'
+        - '+ int calculate_sum('
+        relationships_exist:
+        - { source: 'SAMPLE', target: 'HEADER_GEOMETRY', type: '-->' }
+        - { source: 'SAMPLE', target: 'HEADER_LOGGER', type: '-->' }
+        - { source: 'SAMPLE', target: 'HEADER_MATH_UTILS', type: '-->' }
+        - { source: 'SAMPLE', target: 'HEADER_SAMPLE', type: '-->' }
+        - { source: 'HEADER_SAMPLE', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_GEOMETRY', target: 'TYPEDEF_TRIANGLE_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_MATH_OP_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_REAL_T', type: '..>' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_GLOBALSTATUS', type: '..>' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_ID_T', type: '..>' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_STATUS_T', type: '..>' }
+        - { source: 'TYPEDEF_TRIANGLE_T', target: 'TYPEDEF_POINT_T', type: '..>' }
+        - { source: 'TYPEDEF_LOG_CALLBACK_T', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        classes_exist:
+        - { name: 'SAMPLE', stereotype: 'source' }
+        - { name: 'HEADER_GEOMETRY', stereotype: 'header' }
+        - { name: 'HEADER_LOGGER', stereotype: 'header' }
+        - { name: 'HEADER_MATH_UTILS', stereotype: 'header' }
+        - { name: 'HEADER_SAMPLE', stereotype: 'header' }
+        - { name: 'TYPEDEF_POINT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_TRIANGLE_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_LOG_LEVEL_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_LOG_CALLBACK_T', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF_MATH_OP_T', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF_REAL_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_GLOBALSTATUS', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_ID_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_STATUS_T', stereotype: 'typedef' }
+        not_contains_elements:
+        - filtered_struct_t
+        - filtered_function1
+        - filtered_global_var
+      sample2.puml:
+        contains_elements:
+        - filtered_struct_t
+        contains_lines:
+        - 'SAMPLE2 --> HEADER_FILTERED_HEADER : <<include>>'
+        - 'HEADER_FILTERED_HEADER ..> TYPEDEF_FILTERED_STRUCT_T : <<declares>>'
+        relationships_exist:
+        - { source: 'SAMPLE2', target: 'HEADER_FILTERED_HEADER', type: '-->' }
+        - { source: 'SAMPLE2', target: 'HEADER_FIRST_LEVEL', type: '-->' }
+        - { source: 'SAMPLE2', target: 'HEADER_GEOMETRY', type: '-->' }
+        - { source: 'SAMPLE2', target: 'HEADER_LOGGER', type: '-->' }
+        - { source: 'SAMPLE2', target: 'HEADER_MATH_UTILS', type: '-->' }
+        - { source: 'SAMPLE2', target: 'HEADER_SAMPLE', type: '-->' }
+        - { source: 'HEADER_FILTERED_HEADER', target: 'TYPEDEF_FILTERED_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_FILTERED_HEADER', target: 'TYPEDEF_FILTERED_ENUM_T', type: '..>' }
+        - { source: 'HEADER_GEOMETRY', target: 'TYPEDEF_TRIANGLE_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_MATH_OP_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_REAL_T', type: '..>' }
+        classes_exist:
+        - { name: 'SAMPLE2', stereotype: 'source' }
+        - { name: 'HEADER_FILTERED_HEADER', stereotype: 'header' }
+        - { name: 'HEADER_FIRST_LEVEL', stereotype: 'header' }
+        - { name: 'HEADER_GEOMETRY', stereotype: 'header' }
+        - { name: 'HEADER_LOGGER', stereotype: 'header' }
+        - { name: 'HEADER_MATH_UTILS', stereotype: 'header' }
+        - { name: 'HEADER_SAMPLE', stereotype: 'header' }
+        - { name: 'TYPEDEF_FILTERED_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_FILTERED_ENUM_T', stereotype: 'enumeration' }
+      geometry.puml:
+        contains_elements:
+        - create_triangle
+        - triangle_area
+        - triangle_t
+        contains_lines:
+        - 'GEOMETRY --> HEADER_GEOMETRY : <<include>>'
+        - '+ int triangle_area('
+        relationships_exist:
+        - { source: 'GEOMETRY', target: 'HEADER_GEOMETRY', type: '-->' }
+        - { source: 'HEADER_GEOMETRY', target: 'HEADER_MATH_UTILS', type: '-->' }
+        - { source: 'HEADER_GEOMETRY', target: 'HEADER_SAMPLE', type: '-->' }
+        - { source: 'HEADER_MATH_UTILS', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_SAMPLE', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_GEOMETRY', target: 'TYPEDEF_TRIANGLE_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_MATH_OP_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_REAL_T', type: '..>' }
+        - { source: 'TYPEDEF_TRIANGLE_T', target: 'TYPEDEF_POINT_T', type: '..>' }
+        classes_exist:
+        - { name: 'GEOMETRY', stereotype: 'source' }
+        - { name: 'HEADER_GEOMETRY', stereotype: 'header' }
+        - { name: 'HEADER_MATH_UTILS', stereotype: 'header' }
+        - { name: 'HEADER_SAMPLE', stereotype: 'header' }
+        - { name: 'HEADER_LOGGER', stereotype: 'header' }
+        - { name: 'TYPEDEF_TRIANGLE_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_POINT_T', stereotype: 'struct' }
+      logger.puml:
+        contains_elements:
+        - log_message
+        - set_log_callback
+        - log_level_t
+        contains_lines:
+        - 'class "log_level_t" as TYPEDEF_LOG_LEVEL_T'
+        - 'LOGGER --> HEADER_LOGGER : <<include>>'
+        relationships_exist:
+        - { source: 'LOGGER', target: 'HEADER_LOGGER', type: '-->' }
+        - { source: 'HEADER_LOGGER', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        - { source: 'HEADER_LOGGER', target: 'TYPEDEF_LOG_CALLBACK_T', type: '..>' }
+        - { source: 'TYPEDEF_LOG_CALLBACK_T', target: 'TYPEDEF_LOG_LEVEL_T', type: '..>' }
+        classes_exist:
+        - { name: 'LOGGER', stereotype: 'source' }
+        - { name: 'HEADER_LOGGER', stereotype: 'header' }
+        - { name: 'HEADER_CONFIG', stereotype: 'header' }
+        - { name: 'TYPEDEF_LOG_LEVEL_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_LOG_CALLBACK_T', stereotype: 'function pointer' }
+      math_utils.puml:
+        contains_elements:
+        - add
+        contains_lines:
+        - 'MATH_UTILS --> HEADER_MATH_UTILS : <<include>>'
+        - 'HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>'
+        - '+ int add('
+        relationships_exist:
+        - { source: 'MATH_UTILS', target: 'HEADER_MATH_UTILS', type: '-->' }
+        - { source: 'HEADER_MATH_UTILS', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_GLOBALSTATUS', type: '..>' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_ID_T', type: '..>' }
+        - { source: 'HEADER_CONFIG', target: 'TYPEDEF_STATUS_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_MATH_OP_T', type: '..>' }
+        - { source: 'HEADER_MATH_UTILS', target: 'TYPEDEF_REAL_T', type: '..>' }
+        classes_exist:
+        - { name: 'MATH_UTILS', stereotype: 'source' }
+        - { name: 'HEADER_MATH_UTILS', stereotype: 'header' }
+        - { name: 'HEADER_CONFIG', stereotype: 'header' }
+        - { name: 'TYPEDEF_MATH_OP_T', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF_REAL_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_GLOBALSTATUS', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_ID_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_STATUS_T', stereotype: 'typedef' }
+      transformed.puml:
+        contains_elements:
+        - keep_this_function
+        - main
+        - point3d_t
+        - status_t
+        contains_lines:
+        - 'TRANSFORMED --> HEADER_TRANSFORMED : <<include>>'
+        relationships_exist:
+        - { source: 'TRANSFORMED', target: 'HEADER_TRANSFORMED', type: '-->' }
+        - { source: 'HEADER_TRANSFORMED', target: 'TYPEDEF_MODERN_CONFIG', type: '..>' }
+        - { source: 'HEADER_TRANSFORMED', target: 'TYPEDEF_POINT3D_T', type: '..>' }
+        - { source: 'HEADER_TRANSFORMED', target: 'TYPEDEF_STATUS_T', type: '..>' }
+        - { source: 'HEADER_TRANSFORMED', target: 'TYPEDEF_CONFIG_T', type: '..>' }
+        - { source: 'TRANSFORMED', target: 'TYPEDEF___ANONYMOUS_STRUCT__', type: '..>' }
+        - { source: 'TRANSFORMED', target: 'TYPEDEF_OLD_POINT', type: '..>' }
+        classes_exist:
+        - { name: 'TRANSFORMED', stereotype: 'source' }
+        - { name: 'HEADER_TRANSFORMED', stereotype: 'header' }
+        - { name: 'TYPEDEF_MODERN_CONFIG', stereotype: 'struct' }
+        - { name: 'TYPEDEF_POINT3D_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_STATUS_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_CONFIG_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_OLD_POINT', stereotype: 'struct' }
+      typedef_test.puml:
+        contains_lines:
+        - 'TYPEDEF_TEST --> HEADER_TYPEDEF_TEST : <<include>>'
+        - 'HEADER_TYPEDEF_TEST ..> TYPEDEF_MYBUFFER : <<declares>>'
+        relationships_exist:
+        - { source: 'TYPEDEF_TEST', target: 'HEADER_TYPEDEF_TEST', type: '-->' }
+        - { source: 'TYPEDEF_TEST', target: 'HEADER_GEOMETRY', type: '-->' }
+        - { source: 'TYPEDEF_TEST', target: 'HEADER_LOGGER', type: '-->' }
+        - { source: 'TYPEDEF_TEST', target: 'HEADER_TYPEDEF_TEST', type: '-->' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'HEADER_CONFIG', type: '-->' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'HEADER_SAMPLE', type: '-->' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYBUFFER', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYCOMPLEX', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_NAMEDSTRUCT_T', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_POINT_T', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_COLOR_T', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_STATUS_T', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYCALLBACK', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYCOMPLEXARRAY', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYCOMPLEXPTR', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYINT', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYLEN', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_MYSTRING', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_NAMEDUNION_T', type: '..>' }
+        - { source: 'HEADER_TYPEDEF_TEST', target: 'TYPEDEF_NUMBER_T', type: '..>' }
+        classes_exist:
+        - { name: 'TYPEDEF_TEST', stereotype: 'source' }
+        - { name: 'HEADER_TYPEDEF_TEST', stereotype: 'header' }
+        - { name: 'HEADER_CONFIG', stereotype: 'header' }
+        - { name: 'HEADER_SAMPLE', stereotype: 'header' }
+        - { name: 'TYPEDEF_MYBUFFER', stereotype: 'struct' }
+        - { name: 'TYPEDEF_MYCOMPLEX', stereotype: 'struct' }
+        - { name: 'TYPEDEF_NAMEDSTRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_POINT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_COLOR_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_STATUS_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_MYCALLBACK', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF_MYCOMPLEXARRAY', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_MYCOMPLEXPTR', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_MYINT', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_MYLEN', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_MYSTRING', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_NAMEDUNION_T', stereotype: 'union' }
+        - { name: 'TYPEDEF_NUMBER_T', stereotype: 'union' }
+      application.puml:
+        contains_lines:
+        - 'APPLICATION --> HEADER_DATABASE : <<include>>'
+        - 'HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>'
+        relationships_exist:
+        - { source: 'APPLICATION', target: 'HEADER_COMMON', type: '-->' }
+        - { source: 'APPLICATION', target: 'HEADER_DATABASE', type: '-->' }
+        - { source: 'APPLICATION', target: 'HEADER_NETWORK', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_LIBPQ_FE', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_MYSQL', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_SQLITE3', type: '-->' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_COMMON_STATUS_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_ID_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_RESULT_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_STATUS_BOOL_T', type: '..>' }
+        - { source: 'HEADER_DATABASE', target: 'TYPEDEF_DATABASECONFIG', type: '..>' }
+        - { source: 'HEADER_DATABASE', target: 'TYPEDEF_QUERYRESULT', type: '..>' }
+        - { source: 'HEADER_DATABASE', target: 'TYPEDEF_DATABASETYPE', type: '..>' }
+        - { source: 'HEADER_LIBPQ_FE', target: 'TYPEDEF_EXECSTATUSTYPE', type: '..>' }
+        - { source: 'HEADER_NETWORK', target: 'TYPEDEF_NETWORKCONFIG', type: '..>' }
+        - { source: 'HEADER_NETWORK', target: 'TYPEDEF_NETWORKSTATUS', type: '..>' }
+        classes_exist:
+        - { name: 'APPLICATION', stereotype: 'source' }
+        - { name: 'HEADER_COMMON', stereotype: 'header' }
+        - { name: 'HEADER_DATABASE', stereotype: 'header' }
+        - { name: 'HEADER_NETWORK', stereotype: 'header' }
+        - { name: 'HEADER_LIBPQ_FE', stereotype: 'header' }
+        - { name: 'HEADER_MYSQL', stereotype: 'header' }
+        - { name: 'HEADER_SQLITE3', stereotype: 'header' }
+        - { name: 'TYPEDEF_COMMON_STATUS_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_ID_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_RESULT_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_STATUS_BOOL_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_DATABASECONFIG', stereotype: 'struct' }
+        - { name: 'TYPEDEF_QUERYRESULT', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DATABASETYPE', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_EXECSTATUSTYPE', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_NETWORKCONFIG', stereotype: 'struct' }
+        - { name: 'TYPEDEF_NETWORKSTATUS', stereotype: 'enumeration' }
+      database.puml:
+        contains_lines:
+        - 'DATABASE --> HEADER_DATABASE : <<include>>'
+        - 'HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>'
+        relationships_exist:
+        - { source: 'DATABASE', target: 'HEADER_DATABASE', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_COMMON', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_LIBPQ_FE', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_MYSQL', type: '-->' }
+        - { source: 'HEADER_DATABASE', target: 'HEADER_SQLITE3', type: '-->' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_COMMON_STATUS_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_ID_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_RESULT_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_STATUS_BOOL_T', type: '..>' }
+        - { source: 'HEADER_DATABASE', target: 'TYPEDEF_DATABASECONFIG', type: '..>' }
+        - { source: 'HEADER_DATABASE', target: 'TYPEDEF_QUERYRESULT', type: '..>' }
+        - { source: 'HEADER_DATABASE', target: 'TYPEDEF_DATABASETYPE', type: '..>' }
+        - { source: 'HEADER_LIBPQ_FE', target: 'TYPEDEF_EXECSTATUSTYPE', type: '..>' }
+        - { source: 'HEADER_SQLITE3', target: 'TYPEDEF_SQLITE3_CALLBACK', type: '..>' }
+        classes_exist:
+        - { name: 'DATABASE', stereotype: 'source' }
+        - { name: 'HEADER_DATABASE', stereotype: 'header' }
+        - { name: 'HEADER_COMMON', stereotype: 'header' }
+        - { name: 'HEADER_LIBPQ_FE', stereotype: 'header' }
+        - { name: 'HEADER_MYSQL', stereotype: 'header' }
+        - { name: 'HEADER_SQLITE3', stereotype: 'header' }
+        - { name: 'TYPEDEF_COMMON_STATUS_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_ID_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_RESULT_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_STATUS_BOOL_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_DATABASECONFIG', stereotype: 'struct' }
+        - { name: 'TYPEDEF_QUERYRESULT', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DATABASETYPE', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_EXECSTATUSTYPE', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_SQLITE3_CALLBACK', stereotype: 'function pointer' }
+      network.puml:
+        contains_lines:
+        - 'NETWORK --> HEADER_NETWORK : <<include>>'
+        - 'HEADER_NETWORK --> HEADER_COMMON : <<include>>'
+        relationships_exist:
+        - { source: 'NETWORK', target: 'HEADER_NETWORK', type: '-->' }
+        - { source: 'HEADER_NETWORK', target: 'HEADER_COMMON', type: '-->' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_COMMON_STATUS_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_ID_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_RESULT_T', type: '..>' }
+        - { source: 'HEADER_COMMON', target: 'TYPEDEF_STATUS_BOOL_T', type: '..>' }
+        - { source: 'HEADER_NETWORK', target: 'TYPEDEF_NETWORKCONFIG', type: '..>' }
+        - { source: 'HEADER_NETWORK', target: 'TYPEDEF_NETWORKSTATUS', type: '..>' }
+        classes_exist:
+        - { name: 'NETWORK', stereotype: 'source' }
+        - { name: 'HEADER_NETWORK', stereotype: 'header' }
+        - { name: 'HEADER_COMMON', stereotype: 'header' }
+        - { name: 'TYPEDEF_COMMON_STATUS_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_ID_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_RESULT_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_STATUS_BOOL_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_NETWORKCONFIG', stereotype: 'struct' }
+        - { name: 'TYPEDEF_NETWORKSTATUS', stereotype: 'enumeration' }
+      preprocessed.puml:
+        contains_lines:
+        - 'PREPROCESSED --> HEADER_PREPROCESSED : <<include>>'
+        - '+ int main('
+        relationships_exist:
+        - { source: 'PREPROCESSED', target: 'HEADER_PREPROCESSED', type: '-->' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_BASIC_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DEBUG_ENABLED_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DEBUG_FEATURE_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DEBUG_OPTIMIZED_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DEBUG_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DEFAULT_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DISABLED_FEATURE_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_DISABLED_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_ENABLED_FEATURE_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_ENABLED_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_FEATURE_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_OPTIMIZED_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_RELEASE_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_SIMPLE_DEBUG_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_STATUS_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_BASIC_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_FEATURE_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_LARGE_BUFFER_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_SMALL_BUFFER_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_BASIC_UNION_T', type: '..>' }
+        - { source: 'HEADER_PREPROCESSED', target: 'TYPEDEF_FEATURE_UNION_T', type: '..>' }
+        classes_exist:
+        - { name: 'PREPROCESSED', stereotype: 'source' }
+        - { name: 'HEADER_PREPROCESSED', stereotype: 'header' }
+        - { name: 'TYPEDEF_BASIC_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DEBUG_ENABLED_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DEBUG_FEATURE_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DEBUG_OPTIMIZED_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DEBUG_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DEFAULT_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DISABLED_FEATURE_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_DISABLED_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_ENABLED_FEATURE_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_ENABLED_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_FEATURE_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_OPTIMIZED_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_RELEASE_STRUCT_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_SIMPLE_DEBUG_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_STATUS_T', stereotype: 'enumeration' }
+        - { name: 'TYPEDEF_BASIC_CALLBACK_T', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF_FEATURE_CALLBACK_T', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF_LARGE_BUFFER_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_SMALL_BUFFER_T', stereotype: 'typedef' }
+        - { name: 'TYPEDEF_BASIC_UNION_T', stereotype: 'union' }
+        - { name: 'TYPEDEF_FEATURE_UNION_T', stereotype: 'union' }
+      complex.puml:
+        contains_lines:
+        - 'COMPLEX --> HEADER_COMPLEX : <<include>>'
+        - '+ void test_processor_utility_macros()'
+        - 'HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>'
+        relationships_exist:
+        - { source: 'COMPLEX', target: 'HEADER_COMPLEX', type: '-->' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_PROCESS_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF___ANONYMOUS_STRUCT__', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_COMPLEX_HANDLER_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_COMPLEX_NAMING_TEST_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_CONFIG_PARAM', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_DATA_ITEM_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_EXTREME_NESTING_TEST_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_HANDLER_ENTRY_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_MODERATELY_NESTED_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_MULTI_ANONYMOUS_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_OPERATION_SET_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_PARAM4', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_PROCESSOR_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_RESULT_GENERATOR_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_SIMPLIFIED_HANDLER_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_STRUCT_WITH_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_STRUCT_WITH_UNION_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_OPERATION_TYPE_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_PROCESSOR_MODULE_ENUM_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_PROCESS_CFG_PROCESS_FCT', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_STD_RETURNTYPE', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_COMPLEX_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_COMPLEX_FUNC_PTR_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_DATA_PROCESSOR_ARRAY_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_DATA_PROCESSOR_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_DEBUG_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_HANDLER_TABLE_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_MATH_OPERATION_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_MATH_OPS_ARRAY_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_RELEASE_CALLBACK_T', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_UINT16', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_UINT32', type: '..>' }
+        - { source: 'HEADER_COMPLEX', target: 'TYPEDEF_UINT8', type: '..>' }
+        - { source: 'TYPEDEF___ANONYMOUS_STRUCT__', target: 'TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION', type: '*--' }
+        - { source: 'TYPEDEF___ANONYMOUS_STRUCT__', target: 'TYPEDEF_LEVEL3_UNION', type: '*--' }
+        - { source: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T', target: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS', type: '*--' }
+        - { source: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS', target: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_POINT_DATA', type: '*--' }
+        - { source: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T', target: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM', type: '*--' }
+        - { source: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T', target: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_VALUE', type: '*--' }
+        - { source: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM', target: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE', type: '*--' }
+        - { source: 'TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM', target: 'TYPEDEF_CONFIG_VALUE', type: '*--' }
+        - { source: 'TYPEDEF_COMPLEX_CALLBACK_T', target: 'TYPEDEF_COMPLEX_CALLBACK_T_PARAM4', type: '*--' }
+        - { source: 'TYPEDEF_COMPLEX_HANDLER_T', target: 'TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER', type: '*--' }
+        - { source: 'TYPEDEF_COMPLEX_HANDLER_T', target: 'TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR', type: '*--' }
+        - { source: 'TYPEDEF_CONFIG_PARAM', target: 'TYPEDEF_CONFIG_PARAM_CONFIG_VALUE', type: '*--' }
+        - { source: 'TYPEDEF_CONFIG_PARAM', target: 'TYPEDEF_CONFIG_VALUE', type: '*--' }
+        - { source: 'TYPEDEF_DATA_UNION', target: 'TYPEDEF_DATA_UNION_POINT_VALUE', type: '*--' }
+        - { source: 'TYPEDEF_EXTREME_NESTING_TEST_T', target: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1', type: '*--' }
+        - { source: 'TYPEDEF_EXTREME_NESTING_TEST_T', target: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2', type: '*--' }
+        - { source: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1', target: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_1', type: '*--' }
+        - { source: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1', target: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_2', type: '*--' }
+        - { source: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2', target: 'TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_ITEM_VALUE', target: 'TYPEDEF_ITEM_VALUE_POINT_DATA', type: '*--' }
+        - { source: 'TYPEDEF_MIXED_UNION', target: 'TYPEDEF_MIXED_UNION_MIXED_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_MODERATELY_NESTED_T', target: 'TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT', target: 'TYPEDEF_LEVEL3_UNION', type: '*--' }
+        - { source: 'TYPEDEF_MULTI_ANONYMOUS_T', target: 'TYPEDEF_FIRST_ANON_UNION', type: '*--' }
+        - { source: 'TYPEDEF_MULTI_ANONYMOUS_T', target: 'TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_MULTI_ANONYMOUS_T', target: 'TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_UNION', type: '*--' }
+        - { source: 'TYPEDEF_MULTI_ANONYMOUS_T', target: 'TYPEDEF_MULTI_ANONYMOUS_T_SECOND_ANON_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T', target: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_ANON', type: '*--' }
+        - { source: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T', target: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_UNION', type: '*--' }
+        - { source: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T', target: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_ANON', type: '*--' }
+        - { source: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T', target: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_UNION', type: '*--' }
+        - { source: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T', target: 'TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_THIRD_ANON', type: '*--' }
+        - { source: 'TYPEDEF_RESULT_GENERATOR_T', target: 'TYPEDEF_RESULT_DATA', type: '*--' }
+        - { source: 'TYPEDEF_RESULT_GENERATOR_T', target: 'TYPEDEF_RESULT_GENERATOR_T_RESULT_DATA', type: '*--' }
+        - { source: 'TYPEDEF_STRUCT_UNION', target: 'TYPEDEF_STRUCT_UNION_STRUCT_UNION_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_STRUCT_WITH_STRUCT_T', target: 'TYPEDEF_STRUCT_WITH_STRUCT_T_INNER_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_STRUCT_WITH_UNION_T', target: 'TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION', type: '*--' }
+        - { source: 'TYPEDEF_UNION_WITH_STRUCT_T', target: 'TYPEDEF_UNION_WITH_STRUCT_T_COMPLEX_STRUCT', type: '*--' }
+        - { source: 'TYPEDEF_UNION_WITH_UNION_T', target: 'TYPEDEF_UNION_WITH_UNION_T_NESTED_UNION', type: '*--' }
+        classes_exist:
+        - { name: 'COMPLEX', stereotype: 'source' }
+        - { name: 'HEADER_COMPLEX', stereotype: 'header' }
+        - { name: 'TYPEDEF_COMPLEX_HANDLER_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER', stereotype: 'struct' }
+        - { name: 'TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR', stereotype: 'struct' }
+        - { name: 'TYPEDEF_COMPLEX_CALLBACK_T', stereotype: 'function pointer' }
+        - { name: 'TYPEDEF___ANONYMOUS_STRUCT__', stereotype: 'struct' }
+        - { name: 'TYPEDEF_LEVEL3_UNION', stereotype: 'union' }
+        - { name: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T', stereotype: 'struct' }
+        - { name: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS', stereotype: 'struct' }
+        - { name: 'TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_POINT_DATA', stereotype: 'struct' }

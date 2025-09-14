@@ -1,0 +1,741 @@
+@startuml complex
+
+class "complex" as COMPLEX <<source>> #LightBlue
+{
+    -- Global Variables --
+    - Process_Cfg_Process_acpfct_t Process_Cfg_Process_acpfct
+    - math_operation_t[10] global_math_ops
+    -- Functions --
+    + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), void ( * free_func ) ( void * ))
+    + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), complex_callback_t callback)
+    + int execute_operations(int value, math_ops_array_t ops, int op_count)
+    + math_operation_t * get_math_operations()
+    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void ( * pre_process ) ( int * , int ), void ( * post_process ) ( int * , int ))
+    + void test_processor_job_processing()
+    + void test_processor_utility_macros()
+
+    - static Std_ReturnType ProcessorAdapter_Process(const Process_T * job_pst)
+    - static Std_ReturnType ProcessorHardware_Process(const Process_T * job_pst)
+    - static Std_ReturnType ProcessorService_Process(const Process_T * job_pst)
+    - static int add_operation(int a, int b)
+    - static int divide_operation(int a, int b)
+    - static void init_math_operations()
+    - static int modulo_operation(int a, int b)
+    - static int multiply_operation(int a, int b)
+    - static void print_result(int * data, int size)
+    - void run_complex_tests()
+    - static int subtract_operation(int a, int b)
+    - static int test_callback(int * item)
+    - void test_complex_macro(int * x, int y, int z)
+    - void test_handle_operation(operation_type_t op_type, int * data, int size)
+    - void test_handler_table()
+    - void test_mixed_union()
+    - void test_operation_set()
+    - void test_process_array(int * arr, int size)
+    - void test_stringify_macro()
+}
+
+class "complex" as HEADER_COMPLEX <<header>> #LightGreen
+{
+    -- Macros --
+    + #define COMPLEX_H
+    + #define COMPLEX_MACRO_FUNC(x, y, z)
+    + #define CREATE_FUNC_NAME(prefix, suffix)
+    + #define DEPRECATED
+    + #define DEPRECATED __attribute__((deprecated))
+    + #define HANDLE_OPERATION(op_type, data, size, callback)
+    + #define PROCESS_ARRAY(arr, size, callback)
+    + #define STRINGIFY(x)
+    + #define TOSTRING(x)
+    + #define UTILS_U16_TO_U8ARR_BIG_ENDIAN(value_u16, ptr_pau8)
+    + #define UTILS_U32_TO_U8ARR_BIG_ENDIAN(value_u32, ptr_pau8)
+    + #define UTILS_U8ARR_TO_U16_BIG_ENDIAN(ptr_pau8)
+    + #define UTILS_U8ARR_TO_U32_BIG_ENDIAN(ptr_pau8)
+    -- Functions --
+    + complex_handler_t * create_complex_handler(const char * name, int ( * validate_func ) ( const char * ), void * ( * alloc_func ) ( size_t ), void ( * free_func ) ( void * ))
+    + void * create_handler(const char * name, int ( * init_func ) ( void * ), void ( * cleanup_func ) ( void * ), complex_callback_t callback)
+    + int execute_operations(int value, math_ops_array_t ops, int op_count)
+    + math_operation_t * get_math_operations()
+    + int process_with_callbacks(int[] data, int size, math_operation_t[] operations, int op_count, void ( * pre_process ) ( int * , int ), void ( * post_process ) ( int * , int ))
+    + void test_processor_job_processing()
+    + void test_processor_utility_macros()
+}
+
+class "Process_T" as TYPEDEF_PROCESS_T <<struct>> #LightYellow
+{
+    + int job_id
+    + char * job_data
+    + size_t data_size
+    + int priority
+}
+
+class "__anonymous_struct__" as TYPEDEF___ANONYMOUS_STRUCT__ <<struct>> #LightYellow
+{
+    + int level2_id
+    + level3_union level3_union
+}
+
+class "array_of_anon_structs_t" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T <<struct>> #LightYellow
+{
+    + int count
+    + array_of_anon_structs_t_items items
+}
+
+class "array_of_anon_structs_t_items" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS <<struct>> #LightYellow
+{
+    + int int_data
+    + float float_data
+    + item_value_point_data point_data
+}
+
+class "array_of_anon_structs_t_items_point_data" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_POINT_DATA <<struct>> #LightYellow
+{
+    + int x
+    + int int
+}
+
+class "callback_with_anon_struct_t_config_param" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM <<struct>> #LightYellow
+{
+    + int config_flags
+    + char[64] config_name
+    + config_value config_value
+}
+
+class "complex_callback_t_param4" as TYPEDEF_COMPLEX_CALLBACK_T_PARAM4 <<struct>> #LightYellow
+{
+    + int nested1
+    + char * nested2
+    + void(* nested_func)(int) nested_func
+}
+
+class "complex_handler_t" as TYPEDEF_COMPLEX_HANDLER_T <<struct>> #LightYellow
+{
+    + int id
+    + complex_handler_t_validator validator
+    + complex_handler_t_memory_manager memory_manager
+}
+
+class "complex_handler_t_memory_manager" as TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER <<struct>> #LightYellow
+{
+    + int max_size
+    + void * ( * alloc_func ) ( size_t ) alloc_func
+    + void ( * free_func ) ( void * ) free_func
+    + int ( * resize_func ) ( void * *, size_t ) resize_func
+}
+
+class "complex_handler_t_validator" as TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR <<struct>> #LightYellow
+{
+    + char[32] name
+    + int ( * validate_func ) ( const char * ) validate_func
+    + void ( * format_func ) ( char *, int ) format_func
+}
+
+class "complex_naming_test_t" as TYPEDEF_COMPLEX_NAMING_TEST_T <<struct>> #LightYellow
+{
+    + complex_naming_test_t_first_struct first_struct
+    + complex_naming_test_t_second_struct second_struct
+    + mixed_union mixed_union
+    + complex_naming_test_t_third_struct third_struct
+}
+
+class "complex_naming_test_t_first_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT <<struct>> #LightYellow
+{
+    + int nested_a1
+    + complex_naming_test_t_first_struct_deep_struct_a1 deep_struct_a1
+    + complex_naming_test_t_first_struct_deep_struct_a2 deep_struct_a2
+    + struct { ... } nested_a2
+}
+
+class "complex_naming_test_t_first_struct_deep_struct_a1" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT_DEEP_STRUCT_A1 <<struct>> #LightYellow
+{
+    + int deep_a1
+}
+
+class "complex_naming_test_t_first_struct_deep_struct_a2" as TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT_DEEP_STRUCT_A2 <<struct>> #LightYellow
+{
+    + int deep_a2
+}
+
+class "complex_naming_test_t_mixed_union_deep_in_union" as TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION_DEEP_IN_UNION <<struct>> #LightYellow
+{
+    + int deep_union_struct
+}
+
+class "complex_naming_test_t_second_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_SECOND_STRUCT <<struct>> #LightYellow
+{
+    + int nested_b1
+}
+
+class "complex_naming_test_t_third_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT <<struct>> #LightYellow
+{
+    + int struct_union_int
+    + struct_union_struct_union_struct struct_union_struct
+}
+
+class "complex_naming_test_t_third_struct_struct_union_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT_STRUCT_UNION_STRUCT <<struct>> #LightYellow
+{
+    + int struct_union_struct_field
+}
+
+class "config_param" as TYPEDEF_CONFIG_PARAM <<struct>> #LightYellow
+{
+    + int config_flags
+    + char[64] config_name
+    + config_value config_value
+}
+
+class "data_item_t" as TYPEDEF_DATA_ITEM_T <<struct>> #LightYellow
+{
+    + config_value value
+    + char * name
+}
+
+class "data_union_point_value" as TYPEDEF_DATA_UNION_POINT_VALUE <<struct>> #LightYellow
+{
+    + int x
+    + int y
+    + int z
+}
+
+class "extreme_nesting_test_t" as TYPEDEF_EXTREME_NESTING_TEST_T <<struct>> #LightYellow
+{
+    + extreme_nesting_test_t_level2_struct_1 level2_struct_1
+    + extreme_nesting_test_t_level2_struct_2 level2_struct_2
+}
+
+class "extreme_nesting_test_t_level2_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 <<struct>> #LightYellow
+{
+    + extreme_nesting_test_t_level2_struct_1_level4_struct_1 level4_struct_1
+    + extreme_nesting_test_t_level2_struct_1_level4_struct_2 level4_struct_2
+    + struct { ... } level3_field
+}
+
+class "extreme_nesting_test_t_level2_struct_1_level4_struct_1" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_1 <<struct>> #LightYellow
+{
+    + int level4_field
+}
+
+class "extreme_nesting_test_t_level2_struct_1_level4_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_2 <<struct>> #LightYellow
+{
+    + int level4_field2
+}
+
+class "extreme_nesting_test_t_level2_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 <<struct>> #LightYellow
+{
+    + mixed_union_mixed_struct mixed_struct
+}
+
+class "extreme_nesting_test_t_level2_struct_2_mixed_struct" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_STRUCT <<struct>> #LightYellow
+{
+    + int mixed_field
+}
+
+class "handler_entry_t" as TYPEDEF_HANDLER_ENTRY_T <<struct>> #LightYellow
+{
+    + int id
+    + char[16] name
+    + void ( * ) ( void ) init_func
+    + int ( * ) ( int , int ) process_func
+    + void ( * ) ( void ) cleanup_func
+}
+
+class "item_value_point_data" as TYPEDEF_ITEM_VALUE_POINT_DATA <<struct>> #LightYellow
+{
+    + int x
+    + int y
+}
+
+class "mixed_union_mixed_struct" as TYPEDEF_MIXED_UNION_MIXED_STRUCT <<struct>> #LightYellow
+{
+    + int mixed_field
+}
+
+class "moderately_nested_t" as TYPEDEF_MODERATELY_NESTED_T <<struct>> #LightYellow
+{
+    + int level1_id
+    + moderately_nested_t_level2_struct level2_struct
+}
+
+class "moderately_nested_t_level2_struct" as TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT <<struct>> #LightYellow
+{
+    + level3_union level3_union
+}
+
+class "multi_anonymous_t" as TYPEDEF_MULTI_ANONYMOUS_T <<struct>> #LightYellow
+{
+    + multi_anonymous_t_first_anon_struct first_anon_struct
+    + multi_anonymous_t_second_anon_struct second_anon_struct
+    + first_anon_union first_anon_union
+}
+
+class "multi_anonymous_t_first_anon_struct" as TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_STRUCT <<struct>> #LightYellow
+{
+    + int first_x
+    + int first_y
+}
+
+class "multi_anonymous_t_second_anon_struct" as TYPEDEF_MULTI_ANONYMOUS_T_SECOND_ANON_STRUCT <<struct>> #LightYellow
+{
+    + int deep_value
+}
+
+class "multiple_simple_anonymous_t" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T <<struct>> #LightYellow
+{
+    + multiple_simple_anonymous_t_first_anon first_anon
+    + multiple_simple_anonymous_t_second_anon second_anon
+    + multiple_simple_anonymous_t_third_anon third_anon
+    + first_union first_union
+    + second_union second_union
+}
+
+class "multiple_simple_anonymous_t_first_anon" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_ANON <<struct>> #LightYellow
+{
+    + int first_field
+}
+
+class "multiple_simple_anonymous_t_second_anon" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_ANON <<struct>> #LightYellow
+{
+    + int second_field
+}
+
+class "multiple_simple_anonymous_t_third_anon" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_THIRD_ANON <<struct>> #LightYellow
+{
+    + int third_field
+}
+
+class "operation_set_t" as TYPEDEF_OPERATION_SET_T <<struct>> #LightYellow
+{
+    + int count
+    + math_operation_t[5] operations
+    + void(* callbacks[3])(int , char *) callbacks
+}
+
+class "param4" as TYPEDEF_PARAM4 <<struct>> #LightYellow
+{
+    + int nested1
+    + char * nested2
+    + void ( * ) ( int ) nested_func
+}
+
+class "processor_t" as TYPEDEF_PROCESSOR_T <<struct>> #LightYellow
+{
+    + int id
+    + char[64] name
+    + int ( * ) ( int , char * ) process_func
+    + void ( * ) ( void * ) cleanup_func
+}
+
+class "result_generator_t" as TYPEDEF_RESULT_GENERATOR_T <<struct>> #LightYellow
+{
+    + int result_code
+    + result_data result_data
+}
+
+class "simplified_handler_t" as TYPEDEF_SIMPLIFIED_HANDLER_T <<struct>> #LightYellow
+{
+    + int event_count
+    + char[32] event_name
+    + int event_flags
+}
+
+class "struct_union_struct_union_struct" as TYPEDEF_STRUCT_UNION_STRUCT_UNION_STRUCT <<struct>> #LightYellow
+{
+    + int struct_union_struct_field
+}
+
+class "struct_with_struct_t" as TYPEDEF_STRUCT_WITH_STRUCT_T <<struct>> #LightYellow
+{
+    + int outer_id
+    + char[32] outer_name
+    + struct_with_struct_t_inner_struct inner_struct
+    + int outer_flags
+}
+
+class "struct_with_struct_t_inner_struct" as TYPEDEF_STRUCT_WITH_STRUCT_T_INNER_STRUCT <<struct>> #LightYellow
+{
+    + int inner_x
+    + int inner_y
+    + char[16] inner_label
+}
+
+class "struct_with_union_t" as TYPEDEF_STRUCT_WITH_UNION_T <<struct>> #LightYellow
+{
+    + int type_id
+    + data_union data_union
+    + int checksum
+}
+
+class "union_with_struct_t_complex_struct" as TYPEDEF_UNION_WITH_STRUCT_T_COMPLEX_STRUCT <<struct>> #LightYellow
+{
+    + int error_code
+    + char[128] error_msg
+}
+
+class "operation_type_t" as TYPEDEF_OPERATION_TYPE_T <<enumeration>> #LightYellow
+{
+    OP_ADD = 0
+    OP_SUB = 1
+    OP_MUL = 2
+    OP_DIV = 3
+}
+
+class "processor_module_enum_t" as TYPEDEF_PROCESSOR_MODULE_ENUM_T <<enumeration>> #LightYellow
+{
+    PROCESSOR_CFG_MODULE_COUNT = 3
+    PROCESSOR_CFG_MODULE_ADAPTER = 0
+    PROCESSOR_CFG_MODULE_SERVICE = 1
+    PROCESSOR_CFG_MODULE_HARDWARE = 2
+}
+
+class "Process_Cfg_Process_acpfct_t" as TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T <<typedef>> #LightYellow
+{
+    alias of Process_Cfg_Process_fct Process_Cfg_Process_acpfct_t[PROCESSOR_CFG_MODULE_COUNT]
+}
+
+class "Process_Cfg_Process_fct" as TYPEDEF_PROCESS_CFG_PROCESS_FCT <<function pointer>> #LightYellow
+{
+    alias of Std_ReturnType(* Process_Cfg_Process_fct)(const Process_T * job_pst)
+}
+
+class "Std_ReturnType" as TYPEDEF_STD_RETURNTYPE <<typedef>> #LightYellow
+{
+    alias of int
+}
+
+class "callback_with_anon_struct_t" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T <<function pointer>> #LightYellow
+{
+    alias of void(* callback_with_anon_struct_t)( int id , struct { int config_flags ; char config_name [ 64 ] ; union { int int_config ; float float_config ; } config_value ; } * config_param , void * user_data )
+}
+
+class "complex_callback_t" as TYPEDEF_COMPLEX_CALLBACK_T <<function pointer>> #LightYellow
+{
+    alias of int(* complex_callback_t)( int param1 , char * param2 , void * param3 , struct { int nested1 ; char * nested2 ; void(* nested_func)(int); } * param4 )
+}
+
+class "complex_func_ptr_t" as TYPEDEF_COMPLEX_FUNC_PTR_T <<function pointer>> #LightYellow
+{
+    alias of int ( * ( * complex_func_ptr_t ) ( int , char * ) ) ( double , void * )
+}
+
+class "data_processor_array_t" as TYPEDEF_DATA_PROCESSOR_ARRAY_T <<typedef>> #LightYellow
+{
+    alias of data_processor_t *
+}
+
+class "data_processor_t" as TYPEDEF_DATA_PROCESSOR_T <<function pointer>> #LightYellow
+{
+    alias of int(* data_processor_t)(data_item_t * item , void * context)
+}
+
+class "debug_callback_t" as TYPEDEF_DEBUG_CALLBACK_T <<function pointer>> #LightYellow
+{
+    alias of void(* debug_callback_t)(const char * message , int level)
+}
+
+class "handler_table_t" as TYPEDEF_HANDLER_TABLE_T <<typedef>> #LightYellow
+{
+    alias of handler_entry_t handler_table_t[8]
+}
+
+class "math_operation_t" as TYPEDEF_MATH_OPERATION_T <<function pointer>> #LightYellow
+{
+    alias of int(* math_operation_t)(int , int)
+}
+
+class "math_ops_array_t" as TYPEDEF_MATH_OPS_ARRAY_T <<typedef>> #LightYellow
+{
+    alias of math_operation_t math_ops_array_t[10]
+}
+
+class "release_callback_t" as TYPEDEF_RELEASE_CALLBACK_T <<function pointer>> #LightYellow
+{
+    alias of void(* release_callback_t)(const char * message)
+}
+
+class "result_generator_t" as TYPEDEF_RESULT_GENERATOR_T <<typedef>> #LightYellow
+{
+    alias of struct { int result_code
+}
+
+class "uint16" as TYPEDEF_UINT16 <<typedef>> #LightYellow
+{
+    alias of uint16_t
+}
+
+class "uint32" as TYPEDEF_UINT32 <<typedef>> #LightYellow
+{
+    alias of uint32_t
+}
+
+class "uint8" as TYPEDEF_UINT8 <<typedef>> #LightYellow
+{
+    alias of uint8_t
+}
+
+class "__anonymous_struct___level3_union" as TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION <<union>> #LightYellow
+{
+    + int level3_int
+    + float level3_float
+}
+
+class "callback_with_anon_struct_t_config_param_config_value" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE <<union>> #LightYellow
+{
+    + int int_config
+    + int float
+}
+
+class "callback_with_anon_struct_t_config_value" as TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_VALUE <<union>> #LightYellow
+{
+    + int int_config
+    + float float_config
+}
+
+class "complex_naming_test_t_mixed_union" as TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION <<union>> #LightYellow
+{
+    + int union_struct_field
+    + complex_naming_test_t_mixed_union_deep_in_union deep_in_union
+}
+
+class "config_param_config_value" as TYPEDEF_CONFIG_PARAM_CONFIG_VALUE <<union>> #LightYellow
+{
+    + int int_config
+    + float float_config
+}
+
+class "config_value" as TYPEDEF_CONFIG_VALUE <<union>> #LightYellow
+{
+    + int int_config
+    + float float_config
+}
+
+class "data_union" as TYPEDEF_DATA_UNION <<union>> #LightYellow
+{
+    + int int_value
+    + float float_value
+    + char[64] string_value
+    + data_union_point_value point_value
+}
+
+class "first_anon_union" as TYPEDEF_FIRST_ANON_UNION <<union>> #LightYellow
+{
+    + int union_int
+    + float union_float
+}
+
+class "first_union" as TYPEDEF_FIRST_UNION <<union>> #LightYellow
+{
+    + int union_field1
+}
+
+class "item_value" as TYPEDEF_ITEM_VALUE <<union>> #LightYellow
+{
+    + int int_data
+    + float float_data
+    + item_value_point_data point_data
+}
+
+class "level3_union" as TYPEDEF_LEVEL3_UNION <<union>> #LightYellow
+{
+    + int level3_int
+    + float level3_float
+}
+
+class "mixed_union" as TYPEDEF_MIXED_UNION <<union>> #LightYellow
+{
+    + mixed_union_mixed_struct mixed_struct
+}
+
+class "mixed_union_t" as TYPEDEF_MIXED_UNION_T <<union>> #LightYellow
+{
+    + int int_val
+    + char * str_val
+    + void ( * ) ( void ) void_func
+    + int ( * ) ( int ) int_func
+}
+
+class "multi_anonymous_t_first_anon_union" as TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_UNION <<union>> #LightYellow
+{
+    + int union_int
+    + float union_float
+}
+
+class "multiple_simple_anonymous_t_first_union" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_UNION <<union>> #LightYellow
+{
+    + int union_field1
+}
+
+class "multiple_simple_anonymous_t_second_union" as TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_UNION <<union>> #LightYellow
+{
+    + int union_field2
+}
+
+class "result_data" as TYPEDEF_RESULT_DATA <<union>> #LightYellow
+{
+    + int success_value
+    + char[128] error_message
+}
+
+class "result_generator_t_result_data" as TYPEDEF_RESULT_GENERATOR_T_RESULT_DATA <<union>> #LightYellow
+{
+    + int success_value
+    + char[128] error_message
+}
+
+class "second_union" as TYPEDEF_SECOND_UNION <<union>> #LightYellow
+{
+    + int union_field2
+}
+
+class "struct_union" as TYPEDEF_STRUCT_UNION <<union>> #LightYellow
+{
+    + int struct_union_int
+    + struct_union_struct_union_struct struct_union_struct
+}
+
+class "struct_with_union_t_data_union" as TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION <<union>> #LightYellow
+{
+    + int x
+    + int y
+    + int z
+}
+
+class "union_with_struct_t" as TYPEDEF_UNION_WITH_STRUCT_T <<union>> #LightYellow
+{
+    + int simple_int
+    + float simple_float
+    + union_with_struct_t_complex_struct complex_struct
+    + char[256] raw_bytes
+}
+
+class "union_with_union_t" as TYPEDEF_UNION_WITH_UNION_T <<union>> #LightYellow
+{
+    + int primary_int
+    + union_with_union_t_nested_union nested_union
+    + char[32] primary_bytes
+}
+
+class "union_with_union_t_nested_union" as TYPEDEF_UNION_WITH_UNION_T_NESTED_UNION <<union>> #LightYellow
+{
+    + char deep_char
+    + short deep_short
+}
+
+
+' Include relationships
+COMPLEX --> HEADER_COMPLEX : <<include>>
+
+' Declaration relationships
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF___ANONYMOUS_STRUCT__ : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_ARRAY_OF_ANON_STRUCTS_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_HANDLER_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_NAMING_TEST_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_CONFIG_PARAM : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_DATA_ITEM_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_EXTREME_NESTING_TEST_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_HANDLER_ENTRY_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MODERATELY_NESTED_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MULTI_ANONYMOUS_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_OPERATION_SET_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PARAM4 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_RESULT_GENERATOR_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_SIMPLIFIED_HANDLER_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_STRUCT_WITH_STRUCT_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_STRUCT_WITH_UNION_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_OPERATION_TYPE_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESSOR_MODULE_ENUM_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_STD_RETURNTYPE : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_CALLBACK_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_COMPLEX_FUNC_PTR_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_DATA_PROCESSOR_ARRAY_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_DATA_PROCESSOR_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_DEBUG_CALLBACK_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_HANDLER_TABLE_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MATH_OPERATION_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MATH_OPS_ARRAY_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_RELEASE_CALLBACK_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_RESULT_GENERATOR_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UINT16 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UINT32 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UINT8 : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_DATA_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_FIRST_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_ITEM_VALUE : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_MIXED_UNION_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_SECOND_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_STRUCT_UNION : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UNION_WITH_STRUCT_T : <<declares>>
+HEADER_COMPLEX ..> TYPEDEF_UNION_WITH_UNION_T : <<declares>>
+
+' Uses relationships
+TYPEDEF_COMPLEX_NAMING_TEST_T ..> TYPEDEF_MIXED_UNION : <<uses>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T ..> TYPEDEF_FIRST_UNION : <<uses>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T ..> TYPEDEF_SECOND_UNION : <<uses>>
+TYPEDEF_OPERATION_SET_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
+TYPEDEF_STRUCT_WITH_UNION_T ..> TYPEDEF_DATA_UNION : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESS_ACPFCT_T ..> TYPEDEF_PROCESS_CFG_PROCESS_FCT : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_PROCESS_T : <<uses>>
+TYPEDEF_PROCESS_CFG_PROCESS_FCT ..> TYPEDEF_STD_RETURNTYPE : <<uses>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T ..> TYPEDEF_CONFIG_PARAM : <<uses>>
+TYPEDEF_COMPLEX_CALLBACK_T ..> TYPEDEF_PARAM4 : <<uses>>
+TYPEDEF_DATA_PROCESSOR_ARRAY_T ..> TYPEDEF_DATA_PROCESSOR_T : <<uses>>
+TYPEDEF_DATA_PROCESSOR_T ..> TYPEDEF_DATA_ITEM_T : <<uses>>
+TYPEDEF_HANDLER_TABLE_T ..> TYPEDEF_HANDLER_ENTRY_T : <<uses>>
+TYPEDEF_MATH_OPS_ARRAY_T ..> TYPEDEF_MATH_OPERATION_T : <<uses>>
+
+' Anonymous structure relationships (composition)
+TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPEDEF___ANONYMOUS_STRUCT___LEVEL3_UNION : <<contains>>
+TYPEDEF___ANONYMOUS_STRUCT__ *-- TYPEDEF_LEVEL3_UNION : <<contains>>
+TYPEDEF_ARRAY_OF_ANON_STRUCTS_T *-- TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS : <<contains>>
+TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS *-- TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_POINT_DATA : <<contains>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM : <<contains>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_VALUE : <<contains>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM *-- TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM_CONFIG_VALUE : <<contains>>
+TYPEDEF_CALLBACK_WITH_ANON_STRUCT_T_CONFIG_PARAM *-- TYPEDEF_CONFIG_VALUE : <<contains>>
+TYPEDEF_COMPLEX_CALLBACK_T *-- TYPEDEF_COMPLEX_CALLBACK_T_PARAM4 : <<contains>>
+TYPEDEF_COMPLEX_HANDLER_T *-- TYPEDEF_COMPLEX_HANDLER_T_MEMORY_MANAGER : <<contains>>
+TYPEDEF_COMPLEX_HANDLER_T *-- TYPEDEF_COMPLEX_HANDLER_T_VALIDATOR : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T *-- TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T *-- TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T *-- TYPEDEF_COMPLEX_NAMING_TEST_T_SECOND_STRUCT : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T *-- TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT *-- TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT_DEEP_STRUCT_A1 : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT *-- TYPEDEF_COMPLEX_NAMING_TEST_T_FIRST_STRUCT_DEEP_STRUCT_A2 : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION *-- TYPEDEF_COMPLEX_NAMING_TEST_T_MIXED_UNION_DEEP_IN_UNION : <<contains>>
+TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT *-- TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT_STRUCT_UNION_STRUCT : <<contains>>
+TYPEDEF_CONFIG_PARAM *-- TYPEDEF_CONFIG_PARAM_CONFIG_VALUE : <<contains>>
+TYPEDEF_CONFIG_PARAM *-- TYPEDEF_CONFIG_VALUE : <<contains>>
+TYPEDEF_DATA_UNION *-- TYPEDEF_DATA_UNION_POINT_VALUE : <<contains>>
+TYPEDEF_EXTREME_NESTING_TEST_T *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 : <<contains>>
+TYPEDEF_EXTREME_NESTING_TEST_T *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 : <<contains>>
+TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_1 : <<contains>>
+TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_1_LEVEL4_STRUCT_2 : <<contains>>
+TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 *-- TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_STRUCT : <<contains>>
+TYPEDEF_ITEM_VALUE *-- TYPEDEF_ITEM_VALUE_POINT_DATA : <<contains>>
+TYPEDEF_MIXED_UNION *-- TYPEDEF_MIXED_UNION_MIXED_STRUCT : <<contains>>
+TYPEDEF_MODERATELY_NESTED_T *-- TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT : <<contains>>
+TYPEDEF_MODERATELY_NESTED_T_LEVEL2_STRUCT *-- TYPEDEF_LEVEL3_UNION : <<contains>>
+TYPEDEF_MULTI_ANONYMOUS_T *-- TYPEDEF_FIRST_ANON_UNION : <<contains>>
+TYPEDEF_MULTI_ANONYMOUS_T *-- TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_STRUCT : <<contains>>
+TYPEDEF_MULTI_ANONYMOUS_T *-- TYPEDEF_MULTI_ANONYMOUS_T_FIRST_ANON_UNION : <<contains>>
+TYPEDEF_MULTI_ANONYMOUS_T *-- TYPEDEF_MULTI_ANONYMOUS_T_SECOND_ANON_STRUCT : <<contains>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T *-- TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_ANON : <<contains>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T *-- TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_FIRST_UNION : <<contains>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T *-- TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_ANON : <<contains>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T *-- TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_SECOND_UNION : <<contains>>
+TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T *-- TYPEDEF_MULTIPLE_SIMPLE_ANONYMOUS_T_THIRD_ANON : <<contains>>
+TYPEDEF_RESULT_GENERATOR_T *-- TYPEDEF_RESULT_DATA : <<contains>>
+TYPEDEF_RESULT_GENERATOR_T *-- TYPEDEF_RESULT_GENERATOR_T_RESULT_DATA : <<contains>>
+TYPEDEF_STRUCT_UNION *-- TYPEDEF_STRUCT_UNION_STRUCT_UNION_STRUCT : <<contains>>
+TYPEDEF_STRUCT_WITH_STRUCT_T *-- TYPEDEF_STRUCT_WITH_STRUCT_T_INNER_STRUCT : <<contains>>
+TYPEDEF_STRUCT_WITH_UNION_T *-- TYPEDEF_STRUCT_WITH_UNION_T_DATA_UNION : <<contains>>
+TYPEDEF_UNION_WITH_STRUCT_T *-- TYPEDEF_UNION_WITH_STRUCT_T_COMPLEX_STRUCT : <<contains>>
+TYPEDEF_UNION_WITH_UNION_T *-- TYPEDEF_UNION_WITH_UNION_T_NESTED_UNION : <<contains>>
+
+@enduml

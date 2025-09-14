@@ -1,0 +1,58 @@
+test:
+  name: "Tokenizer Join Bugs Detection"
+  description: "Test to detect tokenizer join bugs that cause field name corruption like inty and floatfloat_config"
+  category: "unit"
+  id: "0130"
+---
+source_files:
+  tokenizer_bug_test.c: |
+    #include <stdio.h>
+    
+    typedef struct {
+        int x;
+        int y;  // Should not become "inty"
+    } point_t;
+    
+    typedef struct {
+        int int_config;
+        float float_config;  // Should not become "floatfloat_config"
+    } config_t;
+    
+    typedef struct {
+        struct {
+            int nested_field;
+        } nested_struct;
+        union {
+            int union_int;
+            float union_float;
+        } nested_union;
+    } complex_t;
+---
+config.json: |
+  {
+    "project_name": "tokenizer_bug_test",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 1
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+      - model.json
+      - model_transformed.json
+      - tokenizer_bug_test.puml
+  puml:
+    syntax_valid: true
+    files:
+      tokenizer_bug_test.puml:
+        contains_lines:
+          - "+ int x"
+          - "+ int y"
+          - "+ int int_config"
+          - "+ float float_config"
+        not_contains_lines:
+          - "+ int inty"
+          - "+ float floatfloat_config"

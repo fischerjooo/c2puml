@@ -1,0 +1,73 @@
+test:
+  name: Debug Nested Union Field Parsing
+  id: '107'
+  description: Validate that nested unions within typedefs are correctly parsed and field structures are preserved
+---
+source_files:
+  nested_union.c: |
+    typedef union {
+        int primary_int;
+        union {
+            float nested_float;
+            double nested_double;
+        } nested_union;
+        char primary_bytes[32];
+    } test_union_t;
+
+    void process_union(test_union_t* tu) {
+        tu->primary_int = 42;
+    }
+
+    test_union_t global_union;
+---
+config.json: |
+  {
+    "project_name": "debug_nested_union_field_parsing",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    validate_structure: true
+    expected_files:
+      - nested_union.c
+    unions_exist:
+    - test_union_t
+    - test_union_t_nested_union
+    functions_exist:
+    - process_union
+    globals_exist:
+    - global_union
+    union_details:
+      test_union_t_nested_union:
+        values: []
+    element_counts:
+      unions: 2
+      functions: 1
+      globals: 1
+      aliases: 0
+  puml:
+    syntax_valid: true
+    contains_elements:
+    - test_union_t
+    - process_union
+    - global_union
+    contains_lines:
+    - void process_union(test_union_t * tu)
+    - + int primary_int
+    - + test_union_t_nested_union nested_union
+    - + char[32] primary_bytes
+    - + float nested_float
+    - + double nested_double
+    - test_union_t global_union
+    class_count: 3
+    relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

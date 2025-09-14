@@ -1,0 +1,188 @@
+test:
+  name: Generator Includes and Filtering – Comprehensive
+  description: Consolidated duplicate include handling with include filtering and depth control
+  category: unit
+  id: '122'
+---
+source_files:
+  main.c: |
+    #include "utils.h"
+    #include "config.h"
+    int main() { int r = add_numbers(5,3); int v = get_config_value(); return r + v; }
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+    #include "config.h"
+    int add_numbers(int a, int b);
+    int process_with_config(int value);
+    #endif
+  config.h: |
+    #ifndef CONFIG_H
+    #define CONFIG_H
+    #define DEFAULT_VALUE 42
+    #define MAX_ITEMS 100
+    extern int global_config;
+    int get_config_value(void);
+    #endif
+  processor.c: |
+    #include "api.h"
+    #include "worker.h"
+    #include "private_worker.h"
+    void process_data() { api_function(); worker_function(); }
+    int app_main() { process_data(); return 0; }
+  api.h: |
+    #ifndef API_H
+    #define API_H
+    #include "types.h"
+    #include "platform.h"
+    #include "memory.h"
+    void api_function(void);
+    extern int api_global;
+    #endif
+  worker.h: |
+    #ifndef WORKER_H
+    #define WORKER_H
+    #include "validation.h"
+    #include "errors.h"
+    void worker_function(void);
+    extern int worker_global;
+    #endif
+  private_worker.h: |
+    #ifndef PRIVATE_WORKER_H
+    #define PRIVATE_WORKER_H
+    #include "internal.h"
+    void private_worker_function(void);
+    #endif
+  types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+    #include "constants.h"
+    typedef int ProcessorID;
+    typedef struct { int x, y; } Point;
+    #endif
+  platform.h: |
+    #ifndef PLATFORM_H
+    #define PLATFORM_H
+    #define PLATFORM_LINUX
+    #define MAX_THREADS 16
+    #endif
+  memory.h: |
+    #ifndef MEMORY_H
+    #define MEMORY_H
+    void* allocate_memory(size_t size);
+    void free_memory(void* ptr);
+    #endif
+  validation.h: |
+    #ifndef VALIDATION_H
+    #define VALIDATION_H
+    int validate_input(int value);
+    #endif
+  errors.h: |
+    #ifndef ERRORS_H
+    #define ERRORS_H
+    enum ErrorCode { ERROR_NONE, ERROR_INVALID, ERROR_MEMORY };
+    #endif
+  constants.h: |
+    #ifndef CONSTANTS_H
+    #define CONSTANTS_H
+    #define MAX_BUFFER_SIZE 1024
+    #define DEFAULT_TIMEOUT 5000
+    #endif
+  internal.h: |
+    #ifndef INTERNAL_H
+    #define INTERNAL_H
+    void internal_function(void);
+    #endif
+---
+config.json: |
+  {
+    "project_name": "generator_includes_and_filtering",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3,
+    "file_specific": {
+      "processor.c": {
+        "include_filter": ["^api\\.h$", "^worker\\.h$", "^types\\.h$", "^platform\\.h$"],
+        "include_depth": 2
+      }
+    }
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - main.puml
+    - processor.puml
+  model:
+    expected_files:
+    - main.c
+    - utils.h
+    - config.h
+    - processor.c
+    - api.h
+    - worker.h
+    - types.h
+    - platform.h
+    - memory.h
+    - validation.h
+    - errors.h
+    - constants.h
+    - internal.h
+    - private_worker.h
+    functions_exist:
+    - main
+    - add_numbers
+    - process_with_config
+    - get_config_value
+    - process_data
+    - app_main
+    - api_function
+    - worker_function
+    macros_exist:
+    - DEFAULT_VALUE
+    - MAX_ITEMS
+    - CONFIG_H
+    - UTILS_H
+    - PLATFORM_LINUX
+    - MAX_THREADS
+    globals_exist:
+    - global_config
+    - api_global
+    - worker_global
+  puml:
+    syntax_valid: true
+    files:
+      main.puml:
+        contains_elements:
+        - main
+        - add_numbers
+        - get_config_value
+        - DEFAULT_VALUE
+        contains_lines:
+        - int main()
+        - + int add_numbers(int a, int b)
+        - + int get_config_value()
+      processor.puml:
+        contains_elements:
+        - processor
+        - api
+        - worker
+        - types
+        - platform
+        contains_lines:
+        - PROCESSOR --> HEADER_API
+        - PROCESSOR --> HEADER_WORKER
+        - void process_data()
+        - int app_main()
+        relationships_exist:
+        - { source: PROCESSOR, target: HEADER_API, type: "-->" }
+        - { source: PROCESSOR, target: HEADER_WORKER, type: "-->" }
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

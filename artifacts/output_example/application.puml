@@ -1,0 +1,280 @@
+@startuml application
+
+class "application" as APPLICATION <<source>> #LightBlue
+{
+    -- Global Variables --
+    - volatile int running
+    -- Functions --
+    + int main(int argc, char *[] argv)
+
+    - void signal_handler(int sig)
+}
+
+class "common" as HEADER_COMMON <<header>> #LightGreen
+{
+    -- Macros --
+    + #define ARRAY_SIZE(arr)
+    + #define COMMON_H
+    + #define DEPRECATED
+    + #define DEPRECATED __attribute__((deprecated))
+    + #define ERROR_GENERAL -1
+    + #define ERROR_INVALID_PARAM -2
+    + #define ERROR_MEMORY -3
+    + #define ERROR_TIMEOUT -4
+    + #define MAX(a, b)
+    + #define MIN(a, b)
+    + #define PACKED
+    + #define PACKED __attribute__((packed))
+    + #define SUCCESS 0
+    + #define UNUSED(x)
+    -- Functions --
+    + void common_cleanup()
+    + const char * common_get_error_string(result_t error)
+    + result_t common_init()
+}
+
+class "database" as HEADER_DATABASE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define DATABASE_H
+    + #define MAX_DB_NAME_LENGTH 256
+    + #define MAX_QUERY_LENGTH 4096
+    -- Functions --
+    + int database_begin_transaction(DatabaseConfig * config)
+    + int database_commit_transaction(DatabaseConfig * config)
+    + int database_connect(DatabaseConfig * config)
+    + void database_disconnect(DatabaseConfig * config)
+    + int database_escape_string(const DatabaseConfig * config, const char * input, char * output, size_t max_output_size)
+    + QueryResult * database_execute_query(DatabaseConfig * config, const char * query)
+    + int database_execute_update(DatabaseConfig * config, const char * query)
+    + void database_free_result(QueryResult * result)
+    + const char * database_get_error(const DatabaseConfig * config)
+    + int database_is_connected(const DatabaseConfig * config)
+    + int database_rollback_transaction(DatabaseConfig * config)
+}
+
+class "libpq-fe" as HEADER_LIBPQ_FE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONNECTION_BAD 1
+    + #define CONNECTION_OK 0
+    + #define LIBPQ_FE_H
+    -- Functions --
+    + void PQclear(PGresult * res)
+    + PGconn * PQconnectdb(const char * conninfo)
+    + const char * PQerrorMessage(const PGconn * conn)
+    + PGresult * PQexec(PGconn * conn, const char * command)
+    + void PQfinish(PGconn * conn)
+    + char * PQfname(const PGresult * res, int field_num)
+    + char * PQgetvalue(const PGresult * res, int tup_num, int field_num)
+    + int PQnfields(const PGresult * res)
+    + int PQntuples(const PGresult * res)
+    + int PQresultStatus(const PGresult * res)
+    + int PQstatus(const PGconn * conn)
+}
+
+class "mysql" as HEADER_MYSQL <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MYSQL_ERROR -1
+    + #define MYSQL_H
+    + #define MYSQL_SUCCESS 0
+    -- Functions --
+    + void mysql_close(MYSQL * mysql)
+    + const char * mysql_error(MYSQL * mysql)
+    + MYSQL_ROW mysql_fetch_row(MYSQL_RES * result)
+    + void mysql_free_result(MYSQL_RES * result)
+    + MYSQL * mysql_init(MYSQL * mysql)
+    + unsigned int mysql_num_fields(MYSQL_RES * result)
+    + unsigned long mysql_num_rows(MYSQL_RES * result)
+    + int mysql_ping(MYSQL * mysql)
+    + int mysql_query(MYSQL * mysql, const char * query)
+    + MYSQL * mysql_real_connect(MYSQL * mysql, const char * host, const char * user, const char * passwd, const char * db, unsigned int port, const char * unix_socket, unsigned long clientflag)
+    + MYSQL_RES * mysql_store_result(MYSQL * mysql)
+}
+
+class "network" as HEADER_NETWORK <<header>> #LightGreen
+{
+    -- Macros --
+    + #define DEFAULT_PORT 8080
+    + #define MAX_CONNECTIONS 100
+    + #define NETWORK_H
+    -- Functions --
+    + int network_accept(NetworkConfig * config)
+    + void network_cleanup(NetworkConfig * config)
+    + int network_connect(NetworkConfig * config, const char * host, int port)
+    + void network_disconnect(NetworkConfig * config)
+    + NetworkStatus network_get_status(const NetworkConfig * config)
+    + int network_init(NetworkConfig * config)
+    + int network_listen(NetworkConfig * config, int port)
+    + ssize_t network_receive(int socket_fd, void * buffer, size_t size)
+    + ssize_t network_send(int socket_fd, const void * data, size_t size)
+    + int network_set_nonblocking(int socket_fd)
+    + const char * network_status_string(NetworkStatus status)
+}
+
+class "sqlite3" as HEADER_SQLITE3 <<header>> #LightGreen
+{
+    -- Macros --
+    + #define SQLITE3_H
+    + #define SQLITE_ABORT        4   /* Callback routine requested an abort */
+    + #define SQLITE_AUTH        23   /* Authorization denied */
+    + #define SQLITE_BUSY         5   /* The database file is locked */
+    + #define SQLITE_CANTOPEN    14   /* Unable to open the database file */
+    + #define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */
+    + #define SQLITE_CORRUPT     11   /* The database disk image is malformed */
+    + #define SQLITE_DONE        101  /* sqlite3_step() has finished executing */
+    + #define SQLITE_EMPTY       16   /* Database is empty */
+    + #define SQLITE_ERROR        1   /* SQL error or missing database */
+    + #define SQLITE_FORMAT      24   /* Auxiliary database format error */
+    + #define SQLITE_FULL        13   /* Insertion failed because database is full */
+    + #define SQLITE_INTERNAL     2   /* Internal logic error in SQLite */
+    + #define SQLITE_INTERRUPT    9   /* Operation terminated by sqlite3_interrupt()*/
+    + #define SQLITE_IOERR       10   /* Some kind of disk I/O error occurred */
+    + #define SQLITE_LOCKED       6   /* A table in the database is locked */
+    + #define SQLITE_MISMATCH    20   /* Data type mismatch */
+    + #define SQLITE_MISUSE      21   /* Library used incorrectly */
+    + #define SQLITE_NOLFS       22   /* Uses OS features not supported on host */
+    + #define SQLITE_NOMEM        7   /* A malloc() failed */
+    + #define SQLITE_NOTADB      26   /* File opened that is not a database file */
+    + #define SQLITE_NOTFOUND    12   /* Unknown opcode in sqlite3_file_control() */
+    + #define SQLITE_OK           0   /* Successful result */
+    + #define SQLITE_PERM         3   /* Access permission denied */
+    + #define SQLITE_PROTOCOL    15   /* Database lock protocol error */
+    + #define SQLITE_RANGE       25   /* 2nd parameter to sqlite3_bind out of range */
+    + #define SQLITE_READONLY     8   /* Attempt to write a readonly database */
+    + #define SQLITE_ROW         100  /* sqlite3_step() has another row ready */
+    + #define SQLITE_SCHEMA      17   /* The database schema changed */
+    + #define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
+    -- Functions --
+    + int sqlite3_bind_blob(sqlite3_stmt * pStmt, int i, const void * value, int n, void ( * destructor ) ( void * ))
+    + int sqlite3_bind_double(sqlite3_stmt * pStmt, int i, double value)
+    + int sqlite3_bind_int(sqlite3_stmt * pStmt, int i, int value)
+    + int sqlite3_bind_text(sqlite3_stmt * pStmt, int i, const char * value, int n, void ( * destructor ) ( void * ))
+    + int sqlite3_close(sqlite3 * db)
+    + const void * sqlite3_column_blob(sqlite3_stmt * pStmt, int iCol)
+    + int sqlite3_column_count(sqlite3_stmt * pStmt)
+    + double sqlite3_column_double(sqlite3_stmt * pStmt, int iCol)
+    + int sqlite3_column_int(sqlite3_stmt * pStmt, int iCol)
+    + const char * sqlite3_column_name(sqlite3_stmt * pStmt, int iCol)
+    + const unsigned char * sqlite3_column_text(sqlite3_stmt * pStmt, int iCol)
+    + int sqlite3_column_type(sqlite3_stmt * pStmt, int iCol)
+    + const char * sqlite3_errmsg(sqlite3 * db)
+    + int sqlite3_exec(sqlite3 * db, const char * sql, sqlite3_callback callback, void * arg, char ** errmsg)
+    + int sqlite3_finalize(sqlite3_stmt * pStmt)
+    + void sqlite3_free(void * ptr)
+    + int sqlite3_open(const char * filename, sqlite3 ** ppDb)
+    + int sqlite3_prepare_v2(sqlite3 * db, const char * zSql, int nByte, sqlite3_stmt ** ppStmt, const char ** pzTail)
+    + int sqlite3_step(sqlite3_stmt * pStmt)
+}
+
+class "common_status_t" as TYPEDEF_COMMON_STATUS_T <<enumeration>> #LightYellow
+{
+    STATUS_OK = 0
+    STATUS_ERROR = - 1
+    STATUS_PENDING = 1
+    STATUS_TIMEOUT = 2
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    alias of uint32_t
+}
+
+class "result_t" as TYPEDEF_RESULT_T <<typedef>> #LightYellow
+{
+    alias of int32_t
+}
+
+class "status_bool_t" as TYPEDEF_STATUS_BOOL_T <<typedef>> #LightYellow
+{
+    alias of bool
+}
+
+class "DatabaseConfig" as TYPEDEF_DATABASECONFIG <<struct>> #LightYellow
+{
+    + DatabaseType type
+    + char[MAX_DB_NAME_LENGTH] db_name
+    + char[256] host
+    + int port
+    + char[128] username
+    + char[128] password
+    + void * connection
+}
+
+class "QueryResult" as TYPEDEF_QUERYRESULT <<struct>> #LightYellow
+{
+    + int row_count
+    + int column_count
+    + char * * data
+    + char * * column_names
+}
+
+class "DatabaseType" as TYPEDEF_DATABASETYPE <<enumeration>> #LightYellow
+{
+    DB_TYPE_SQLITE
+    DB_TYPE_MYSQL
+    DB_TYPE_POSTGRESQL
+}
+
+class "ExecStatusType" as TYPEDEF_EXECSTATUSTYPE <<enumeration>> #LightYellow
+{
+    PGRES_EMPTY_QUERY = 0
+    PGRES_COMMAND_OK = 1
+    PGRES_TUPLES_OK = 2
+    PGRES_COPY_OUT = 3
+    PGRES_COPY_IN = 4
+    PGRES_BAD_RESPONSE = 5
+    PGRES_NONFATAL_ERROR = 6
+    PGRES_FATAL_ERROR = 7
+}
+
+class "NetworkConfig" as TYPEDEF_NETWORKCONFIG <<struct>> #LightYellow
+{
+    + int socket_fd
+    + struct sockaddr_in address
+    + int port
+    + char * hostname
+}
+
+class "NetworkStatus" as TYPEDEF_NETWORKSTATUS <<enumeration>> #LightYellow
+{
+    NET_STATUS_DISCONNECTED
+    NET_STATUS_CONNECTING
+    NET_STATUS_CONNECTED
+    NET_STATUS_ERROR
+}
+
+class "sqlite3_callback" as TYPEDEF_SQLITE3_CALLBACK <<function pointer>> #LightYellow
+{
+    alias of int(* sqlite3_callback)(void * , int , char * * , char * *)
+}
+
+
+' Include relationships
+APPLICATION --> HEADER_COMMON : <<include>>
+APPLICATION --> HEADER_DATABASE : <<include>>
+APPLICATION --> HEADER_NETWORK : <<include>>
+HEADER_DATABASE --> HEADER_COMMON : <<include>>
+HEADER_DATABASE --> HEADER_LIBPQ_FE : <<include>>
+HEADER_DATABASE --> HEADER_MYSQL : <<include>>
+HEADER_DATABASE --> HEADER_SQLITE3 : <<include>>
+HEADER_NETWORK --> HEADER_COMMON : <<include>>
+
+' Declaration relationships
+HEADER_COMMON ..> TYPEDEF_COMMON_STATUS_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_ID_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_RESULT_T : <<declares>>
+HEADER_COMMON ..> TYPEDEF_STATUS_BOOL_T : <<declares>>
+HEADER_DATABASE ..> TYPEDEF_DATABASECONFIG : <<declares>>
+HEADER_DATABASE ..> TYPEDEF_QUERYRESULT : <<declares>>
+HEADER_DATABASE ..> TYPEDEF_DATABASETYPE : <<declares>>
+HEADER_LIBPQ_FE ..> TYPEDEF_EXECSTATUSTYPE : <<declares>>
+HEADER_NETWORK ..> TYPEDEF_NETWORKCONFIG : <<declares>>
+HEADER_NETWORK ..> TYPEDEF_NETWORKSTATUS : <<declares>>
+HEADER_SQLITE3 ..> TYPEDEF_SQLITE3_CALLBACK : <<declares>>
+
+' Uses relationships
+TYPEDEF_DATABASECONFIG ..> TYPEDEF_DATABASETYPE : <<uses>>
+
+@enduml

@@ -1,0 +1,148 @@
+test:
+  name: Anonymous Structures and Unions – Comprehensive
+  description: Consolidated validation of anonymous structs/unions in typedefs, nested structures, and field flattening
+  category: unit
+  id: '105'
+---
+source_files:
+  anon_all.c: |
+    // Anonymous struct within typedef with nested union and inner struct
+    typedef struct {
+        int count;
+        struct {
+            int item_id;
+            char item_name[32];
+            union {
+                int int_data;
+                float float_data;
+                struct { int x, y; } point_data;
+            } item_value;
+        } items[10];
+    } array_of_anon_structs_t;
+
+    void process_array(array_of_anon_structs_t* arr) {
+        arr->count = 5;
+        arr->items[0].item_id = 1;
+    }
+
+    array_of_anon_structs_t global_array;
+
+    // Deeply nested anonymous structures
+    typedef struct {
+        struct {
+            struct { int level3_field; } level3_struct;
+        } level2_struct;
+    } nested_anonymous_t;
+
+    void init_nested(nested_anonymous_t* n) { n->level2_struct.level3_struct.level3_field = 42; }
+    nested_anonymous_t global_nested = {0};
+
+    // Anonymous union within struct
+    typedef struct {
+        int type_id;
+        union {
+            int int_value;
+            float float_value;
+            char string_value[64];
+            struct { int x, y, z; } point_value;
+        } data_union;
+        int checksum;
+    } struct_with_union_t;
+
+    void set_union_data(struct_with_union_t* s, int type) {
+        s->type_id = type;
+        if (type == 1) { s->data_union.int_value = 42; }
+        else if (type == 2) { s->data_union.point_value.x = 10; }
+        s->checksum = 0xFF;
+    }
+
+    struct_with_union_t global_struct;
+---
+config.json: |
+  {
+    "project_name": "anonymous_structures_and_unions",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - anon_all.puml
+  model:
+    files:
+      anon_all.c:
+        structs_exist:
+        - array_of_anon_structs_t
+        - nested_anonymous_t
+        - struct_with_union_t
+        - __anonymous_struct__
+        - array_of_anon_structs_t_items
+        - data_union_point_value
+        - nested_anonymous_t_level2_struct
+        - __anonymous_struct___level3_struct
+        unions_exist:
+        - data_union
+        - struct_with_union_t_data_union
+        functions_exist:
+        - process_array
+        - init_nested
+        - set_union_data
+        globals_exist:
+        - global_array
+        - global_nested
+        - global_struct
+    struct_fields:
+      array_of_anon_structs_t:
+      - name: count
+        type: int
+      - name: items
+        type: array_of_anon_structs_t_items
+      struct_with_union_t:
+      - name: type_id
+        type: int
+      - name: data_union
+        type: data_union
+      - name: checksum
+        type: int
+      data_union_point_value:
+      - name: x
+        type: int
+      - name: y
+        type: int
+      - name: z
+        type: int
+  puml:
+    syntax_valid: true
+    files:
+      anon_all.puml:
+        contains_elements:
+        - array_of_anon_structs_t
+        - nested_anonymous_t
+        - struct_with_union_t
+        - process_array
+        - init_nested
+        - set_union_data
+        - global_array
+        - global_nested
+        - global_struct
+        contains_lines:
+        - void process_array(
+        - void init_nested(
+        - void set_union_data(
+        - + int count
+        - + array_of_anon_structs_t_items items
+        - + data_union data_union
+        - + int checksum
+        - + int x
+        - + int y
+        - + int z
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

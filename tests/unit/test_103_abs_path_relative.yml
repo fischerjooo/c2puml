@@ -1,0 +1,81 @@
+test:
+  name: Relative Path Handling in Include Tree
+  id: '103'
+  description: Test that relative paths are handled correctly in include tree building without absolute path bugs
+---
+source_files:
+  utils.h: |
+    #ifndef UTILS_H
+    #define UTILS_H
+
+    typedef struct {
+        int id;
+        char name[32];
+    } util_data_t;
+
+    void init_utils(void);
+
+    #endif
+  main.c: |
+    #include "utils.h"
+
+    int main() {
+        util_data_t data;
+        init_utils();
+        return 0;
+    }
+---
+config.json: |
+  {
+    "project_name": "relative_path_handling_in_include_tree",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    structs_exist:
+    - util_data_t
+    functions_exist:
+    - main
+    - init_utils
+    globals_exist: []
+    files:
+      main.c:
+        includes:
+        - utils.h
+        functions:
+        - main
+      utils.h:
+        structs:
+          util_data_t:
+            fields:
+            - id
+            - name
+        functions:
+        - init_utils
+    element_counts:
+      structs: 1
+      functions: 2
+      aliases: 0
+  puml:
+    syntax_valid: true
+    contains_elements:
+    - util_data_t
+    - main
+    - init_utils
+    contains_lines:
+    - int main()
+    - + void init_utils()
+    - + int id
+    - + char[32] name
+    class_count: 3
+    relationship_count: 2
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

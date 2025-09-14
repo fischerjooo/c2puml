@@ -1,0 +1,41 @@
+---
+description: "Config filters and include/exclude behavior"
+source_files:
+  "main.c": |
+      #include "main.h"
+      int keep_fn(void) { return 0; }
+      int drop_gen(void) { return 1; }
+
+  "main.h": |
+      #ifndef MAIN_H
+      #define MAIN_H
+      int keep_fn(void);
+      #endif
+
+  "config.json": |
+    {
+      "project_name": "cfg_filters",
+      "source_folders": ["."],
+      "output_dir": "./output",
+      "file_filters": {"include": [".*\\.c$"], "exclude": [".*_gen\\.c$"]},
+      "file_specific": {"main.c": {"include_filter": ["^main\\.h$"]}}
+    }
+---
+assertions:
+  execution:
+    exit_code: 0
+  model:
+    files:
+      main.c:
+        functions:
+          - keep_fn
+        includes:
+          - main.h
+  puml:
+    syntax_valid: true
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
+

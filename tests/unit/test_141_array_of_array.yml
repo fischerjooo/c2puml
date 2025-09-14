@@ -1,0 +1,84 @@
+test:
+  name: "Generator – Array of Array formatting"
+  description: Validate that multi-dimensional arrays with U suffix render as type[2][2] name
+  category: unit
+  id: '141'
+  steps: ["parse", "transform", "generate"]
+---
+source_files:
+  main.c: |
+    #include "typedef_test.h"
+    #define NULL_PTR ((void*)0)
+    int array_of_array_global[5][6];
+    uint32_t Obf_Buffer_2_0_0_u32[3U];
+    uint32_t Obf_Buffer_2_0_1_u32[2U];
+    uint32_t Obf_Buffer_2_3_0_u32[2U];
+    Obf_TypeA_tst Obf_Array2D_aa[2U][2U] =
+    {
+        {// Partition 0
+            {// Priority 0
+                3U, //size_cu32
+                &Obf_Buffer_2_0_0_u32[0U],
+                0U,//wIdx_u32
+                0U //rIdx_u32
+            },
+            {// Priority 1
+                2U, //size_cu32
+                &Obf_Buffer_2_0_1_u32[0U],
+                0U,//wIdx_u32
+                0U //rIdx_u32
+            },
+        },
+        {// Partition 3
+            {// Priority 0
+                2U, //size_cu32
+                &Obf_Buffer_2_3_0_u32[0U],
+                0U,//wIdx_u32
+                0U //rIdx_u32
+            },
+            {// Priority 1
+                1U, //size_cu32
+                NULL_PTR,
+                0U,//wIdx_u32
+                0U //rIdx_u32
+            },
+        },
+    };
+    int main(void) { return array_of_array_global[0][0]; }
+  typedef_test.h: |
+    #include <stdint.h>
+    typedef struct ArrayHolder_tag {
+        int type_tst;
+        int array_ofarray_aast[2U][2U];
+    } ArrayHolder_t;
+    
+    typedef struct Obf_TypeA_tag {
+        uint32_t size_cu32;
+        uint32_t * buffer_pu32;
+        uint32_t wIdx_u32;
+        uint32_t rIdx_u32;
+    } Obf_TypeA_tst;
+---
+config.json: |
+  {
+    "project_name": "array_of_array",
+    "source_folders": ["src"],
+    "output_dir": "output",
+    "include_depth": 1,
+    "recursive_search": false
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+  puml:
+    syntax_valid: true
+    files:
+      main.c.puml:
+        contains_lines:
+          - 'class "ArrayHolder_t" as TYPEDEF_ARRAYHOLDER_T <<struct>>'
+          - '+ int type_tst'
+          - '+ int[2][2] array_ofarray_aast'
+          - '-- Global Variables --'
+          - '- int[5][6] array_of_array_global'
+          - '- Obf_TypeA_tst[2][2] Obf_Array2D_aa'

@@ -1,0 +1,190 @@
+# Generated output directories
+uoutput_uml/
+output_packaged/
+test_output/
+final_output/
+cli_output/
+test_plantuml_output/
+*.puml
+
+# Allow artifacts/output_example directory to be tracked
+!artifacts/output_example/
+!artifacts/output_example/*.puml
+!artifacts/output_example/*.json
+!artifacts/output_example/*.png
+
+# Ignore JPG files (we only want PNG)
+artifacts/output_example/*.jpg
+artifacts/output_example/*.jpeg
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.env/
+
+# IDE and editor files
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Temporary and test files
+*.tmp
+*.temp
+*.log
+*.json
+!simple_config.json
+!test_model.json
+!tests/example/config.json
+!artifacts/output_example/*.json
+!tests/unit/test_*.yml
+!tests/feature/test_*.yml
+!tests/integration/test_*.yml
+!tests/example/test_*.yml
+test_*.json
+final_*.json
+cleanup_*.json
+.dmypy.json
+dmypy.json
+
+# Coverage and test reports
+.coverage
+.tox/
+.nox/
+.coverage.*
+.cache
+nosetests.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+test-results.xml
+test_backups_*/
+
+# Allow htmlcov directory to be tracked in git
+!htmlcov/
+!htmlcov/**
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Local configuration files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore C object files
+*.o
+
+# PlantUML JAR file
+plantuml.jar
+
+# Allow all files in artifacts/
+!artifacts/
+!artifacts/**
+scripts/plantuml.jar
+
+# Test framework temporary files
+tests/*/test-*/
+tests/*/temp/
+tests/*/output/
+
+# Local temporary helper scripts
+.tmp_map_tests.py
+
+# Ignore temporary helper Python scripts at repository root
+/temp_*.py
+
+# Ignore temporary debug dirs from local test reproduction
+/tmp107/
+/tmp107b/
+
+# Generic: ignore any files or directories starting with tmp (at any depth)
+tmp*
+**/tmp*

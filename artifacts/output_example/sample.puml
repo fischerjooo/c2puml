@@ -1,0 +1,167 @@
+@startuml sample
+
+class "sample" as SAMPLE <<source>> #LightBlue
+{
+    -- Macros --
+    - #define CALC(x, y)
+    - #define DEBUG_MODE 1U
+    - #define MAX_SIZE 100U
+    -- Global Variables --
+    - char[MAX_SIZE] buffer
+    - int global_counter
+    - double * global_ptr
+    -- Functions --
+    + int calculate_sum(int a, int b)
+    + point_t * create_point(int x, int y, const char * label)
+    + int main()
+    + void process_point(point_t * p)
+
+    - void demo_triangle_usage()
+    - static void internal_helper()
+}
+
+class "config" as HEADER_CONFIG <<header>> #LightGreen
+{
+    -- Macros --
+    + #define CONFIG_H
+    + #define DEFAULT_BUFFER_SIZE 256
+    + #define MAX_LABEL_LEN 64
+    + #define PROJECT_NAME "ComplexCProject"
+}
+
+class "geometry" as HEADER_GEOMETRY <<header>> #LightGreen
+{
+    -- Macros --
+    + #define GEOMETRY_H
+    -- Functions --
+    + triangle_t create_triangle(const point_t * a, const point_t * b, const point_t * c, const char * label)
+    + int triangle_area(const triangle_t * tri)
+}
+
+class "logger" as HEADER_LOGGER <<header>> #LightGreen
+{
+    -- Macros --
+    + #define LOGGER_H
+    -- Functions --
+    + void log_message(log_level_t level, const char * fmt, ...)
+    + void set_log_callback(log_callback_t cb)
+}
+
+class "math_utils" as HEADER_MATH_UTILS <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MATH_UTILS_H
+    -- Functions --
+    + int add(int a, int b)
+    + real_t average(const int * arr, size_t len)
+    + int subtract(int a, int b)
+}
+
+class "sample" as HEADER_SAMPLE <<header>> #LightGreen
+{
+    -- Macros --
+    + #define MAX(a, b)
+    + #define MIN(a, b)
+    + #define PI 3.14159
+    + #define SAMPLE_H
+    + #define VERSION "1.0.0"
+    -- Global Variables --
+    + char * DEFAULT_LABEL
+    + int MAX_POINTS
+    -- Functions --
+    + int calculate_sum(int a, int b)
+    + point_t * create_point(int x, int y, const char * label)
+    + void process_point(point_t * p)
+}
+
+class "GlobalStatus" as TYPEDEF_GLOBALSTATUS <<enumeration>> #LightYellow
+{
+    GS_OK
+    GS_ERROR
+    GS_UNKNOWN
+}
+
+class "id_t" as TYPEDEF_ID_T <<typedef>> #LightYellow
+{
+    alias of uint32_t
+}
+
+class "status_t" as TYPEDEF_STATUS_T <<typedef>> #LightYellow
+{
+    alias of int32_t
+}
+
+class "triangle_t" as TYPEDEF_TRIANGLE_T <<struct>> #LightYellow
+{
+    + point_t[3] vertices
+    + char[MAX_LABEL_LEN] label
+}
+
+class "log_level_t" as TYPEDEF_LOG_LEVEL_T <<enumeration>> #LightYellow
+{
+    LOG_DEBUG = 0
+    LOG_INFO
+    LOG_WARN
+    LOG_ERROR
+}
+
+class "log_callback_t" as TYPEDEF_LOG_CALLBACK_T <<function pointer>> #LightYellow
+{
+    alias of void(* log_callback_t)(log_level_t level , const char * message)
+}
+
+class "math_op_t" as TYPEDEF_MATH_OP_T <<function pointer>> #LightYellow
+{
+    alias of int(* math_op_t)(int , int)
+}
+
+class "real_t" as TYPEDEF_REAL_T <<typedef>> #LightYellow
+{
+    alias of double
+}
+
+class "point_t" as TYPEDEF_POINT_T <<struct>> #LightYellow
+{
+    + int x
+    + int y
+    + char[32] label
+}
+
+class "system_state_t" as TYPEDEF_SYSTEM_STATE_T <<enumeration>> #LightYellow
+{
+    STATE_IDLE = 0
+    STATE_RUNNING
+    STATE_ERROR
+}
+
+
+' Include relationships
+HEADER_GEOMETRY --> HEADER_MATH_UTILS : <<include>>
+HEADER_GEOMETRY --> HEADER_SAMPLE : <<include>>
+HEADER_LOGGER --> HEADER_CONFIG : <<include>>
+HEADER_MATH_UTILS --> HEADER_CONFIG : <<include>>
+SAMPLE --> HEADER_GEOMETRY : <<include>>
+SAMPLE --> HEADER_LOGGER : <<include>>
+SAMPLE --> HEADER_MATH_UTILS : <<include>>
+SAMPLE --> HEADER_SAMPLE : <<include>>
+HEADER_SAMPLE --> HEADER_CONFIG : <<include>>
+HEADER_SAMPLE --> HEADER_GEOMETRY : <<include>>
+HEADER_SAMPLE --> HEADER_LOGGER : <<include>>
+
+' Declaration relationships
+HEADER_CONFIG ..> TYPEDEF_GLOBALSTATUS : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_ID_T : <<declares>>
+HEADER_CONFIG ..> TYPEDEF_STATUS_T : <<declares>>
+HEADER_GEOMETRY ..> TYPEDEF_TRIANGLE_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_LEVEL_T : <<declares>>
+HEADER_LOGGER ..> TYPEDEF_LOG_CALLBACK_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_MATH_OP_T : <<declares>>
+HEADER_MATH_UTILS ..> TYPEDEF_REAL_T : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_POINT_T : <<declares>>
+HEADER_SAMPLE ..> TYPEDEF_SYSTEM_STATE_T : <<declares>>
+
+' Uses relationships
+TYPEDEF_TRIANGLE_T ..> TYPEDEF_POINT_T : <<uses>>
+TYPEDEF_LOG_CALLBACK_T ..> TYPEDEF_LOG_LEVEL_T : <<uses>>
+
+@enduml

@@ -1,0 +1,186 @@
+---
+description: "Comprehensive PlantUML generator functionality test"
+source_files:
+  "generator_test.c": |
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    
+    // Test structures for PlantUML generation
+    typedef struct {
+        int id;
+        char name[50];
+        float value;
+    } Person;
+    
+    typedef struct {
+        char* data;
+        size_t length;
+        Person* owner;
+    } DataBuffer;
+    
+    // Test enums for PlantUML generation
+    typedef enum {
+        STATUS_OK = 0,
+        STATUS_ERROR = 1,
+        STATUS_PENDING = 2
+    } Status;
+    
+    typedef enum {
+        RED,
+        GREEN,
+        BLUE,
+        YELLOW
+    } Color;
+    
+    // Test unions for PlantUML generation
+    typedef union {
+        int i;
+        float f;
+        char c;
+        double d;
+    } Value;
+    
+    // Test functions for PlantUML generation
+    Status process_person(Person* person);
+    int validate_data(DataBuffer* buffer);
+    void cleanup_all(void);
+    Color get_random_color(void);
+    
+    // Test global variables for PlantUML generation
+    int global_counter = 0;
+    const char* app_name = "Generator Test";
+    Person default_person = {1, "Default", 0.0};
+    DataBuffer* active_buffer = NULL;
+    
+    // Test typedefs for PlantUML generation
+    typedef int PersonId;
+    typedef char* String;
+    typedef void (*Callback)(int);
+    
+    // Function implementations
+    Status process_person(Person* person) {
+        if (person == NULL) return STATUS_ERROR;
+        person->id++;
+        return STATUS_OK;
+    }
+    
+    int validate_data(DataBuffer* buffer) {
+        if (buffer == NULL || buffer->data == NULL) {
+            return 0;
+        }
+        return buffer->length > 0 ? 1 : 0;
+    }
+    
+    void cleanup_all(void) {
+        if (active_buffer != NULL) {
+            free(active_buffer->data);
+            free(active_buffer);
+            active_buffer = NULL;
+        }
+    }
+    
+    Color get_random_color(void) {
+        return (Color)(rand() % 4);
+    }
+
+  "generator_header.h": |
+    #ifndef GENERATOR_HEADER_H
+    #define GENERATOR_HEADER_H
+    
+    #include <stddef.h>
+    
+    // Forward declarations for PlantUML generation
+    typedef struct Person Person;
+    typedef struct DataBuffer DataBuffer;
+    typedef enum Status Status;
+    typedef enum Color Color;
+    typedef union Value Value;
+    typedef int PersonId;
+    typedef char* String;
+    typedef void (*Callback)(int);
+    
+    // Function prototypes for PlantUML generation
+    Status process_person(Person* person);
+    int validate_data(DataBuffer* buffer);
+    void cleanup_all(void);
+    Color get_random_color(void);
+    
+    // Constants for PlantUML generation
+    #define MAX_PERSONS 100
+    #define DEFAULT_BUFFER_SIZE 1024
+    #define VERSION_MAJOR 2
+    #define VERSION_MINOR 1
+    
+    #endif // GENERATOR_HEADER_H
+
+  "config.json": |
+    {
+      "project_name": "GeneratorTest",
+      "source_folders": ["."],
+      "output_dir": "output",
+      "recursive_search": true,
+      "include_depth_limit": 2,
+      "model_output_path": "model.json",
+      "model_transformed_output_path": "model_transformed.json"
+    }
+
+assertions:
+  execution:
+    exit_code: 0
+  
+  model:
+    project_name: GeneratorTest
+    files_exist:
+      - "generator_test.c"
+      - "generator_header.h"
+    
+    element_counts:
+      files: 2
+    
+    functions_exist:
+      - "process_person"
+      - "validate_data"
+      - "cleanup_all"
+      - "get_random_color"
+    
+    structs_exist:
+      - "Person"
+      - "DataBuffer"
+    
+    enums_exist:
+      - "Status"
+      - "Color"
+    
+    unions_exist:
+      - "Value"
+    
+    globals_exist:
+      - "global_counter"
+      - "app_name"
+      - "default_person"
+      - "active_buffer"
+  
+  puml:
+    syntax_valid: true
+    files_exist:
+      - "generator_test.puml"
+      - "generator_header.puml"
+    
+    contains_elements:
+      - "Person"
+      - "DataBuffer"
+      - "Status"
+      - "Color"
+      - "Value"
+      - "process_person"
+      - "validate_data"
+      - "cleanup_all"
+      - "get_random_color"
+      - "global_counter"
+      - "app_name"
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json

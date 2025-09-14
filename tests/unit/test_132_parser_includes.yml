@@ -1,0 +1,148 @@
+test:
+  name: Parser Includes – Comprehensive
+  description: Basic include parsing plus include filtering/depth interactions in unit scope
+  category: unit
+  id: '132'
+---
+source_files:
+  includes.c: |
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "myheader.h"
+    #include "config.h"
+  processor.c: |
+    #include "api.h"
+    #include "worker.h"
+    #include "private_worker.h"
+    void process_data(void) { api_function(); worker_function(); }
+  api.h: |
+    #ifndef API_H
+    #define API_H
+    #include "types.h"
+    #include "platform.h"
+    #include "memory.h"
+    void api_function(void);
+    extern int api_global;
+    #endif
+  worker.h: |
+    #ifndef WORKER_H
+    #define WORKER_H
+    #include "validation.h"
+    #include "errors.h"
+    void worker_function(void);
+    extern int worker_global;
+    #endif
+  private_worker.h: |
+    #ifndef PRIVATE_WORKER_H
+    #define PRIVATE_WORKER_H
+    #include "internal.h"
+    void private_worker_function(void);
+    #endif
+  types.h: |
+    #ifndef TYPES_H
+    #define TYPES_H
+    #include "constants.h"
+    typedef int ProcessorID;
+    #endif
+  platform.h: |
+    #ifndef PLATFORM_H
+    #define PLATFORM_H
+    #define PLATFORM_LINUX
+    #define MAX_THREADS 16
+    #endif
+  memory.h: |
+    #ifndef MEMORY_H
+    #define MEMORY_H
+    void* allocate_memory(size_t size);
+    void free_memory(void* ptr);
+    #endif
+  validation.h: |
+    #ifndef VALIDATION_H
+    #define VALIDATION_H
+    int validate_input(int value);
+    #endif
+  errors.h: |
+    #ifndef ERRORS_H
+    #define ERRORS_H
+    enum ErrorCode { ERROR_NONE, ERROR_INVALID, ERROR_MEMORY };
+    #endif
+  constants.h: |
+    #ifndef CONSTANTS_H
+    #define CONSTANTS_H
+    #define MAX_BUFFER_SIZE 1024
+    #define DEFAULT_TIMEOUT 5000
+    #endif
+  internal.h: |
+    #ifndef INTERNAL_H
+    #define INTERNAL_H
+    void internal_function(void);
+    #endif
+---
+config.json: |
+  {
+    "project_name": "parser_includes_comprehensive",
+    "source_folders": ["."],
+    "output_dir": "./output",
+    "recursive_search": true,
+    "include_depth": 3,
+    "file_specific": {
+      "processor.c": {
+        "include_filter": ["^api\\.h$", "^worker\\.h$", "^types\\.h$", "^platform\\.h$"],
+        "include_depth": 2
+      }
+    }
+  }
+---
+assertions:
+  execution:
+    exit_code: 0
+    output_files:
+    - model.json
+    - model_transformed.json
+    - includes.puml
+    - processor.puml
+  model:
+    files:
+      includes.c:
+        includes:
+        - stdio.h
+        - stdlib.h
+        - myheader.h
+        - config.h
+      processor.c:
+        functions_exist:
+        - process_data
+      api.h:
+        includes_exist:
+        - types.h
+        - platform.h
+        - memory.h
+      worker.h:
+        includes_exist:
+        - validation.h
+        - errors.h
+      types.h:
+        includes_exist:
+        - constants.h
+      platform.h:
+        macros_exist:
+        - PLATFORM_LINUX
+        - MAX_THREADS
+  puml:
+    syntax_valid: true
+    files:
+      processor.puml:
+        contains_elements:
+        - api
+        - worker
+        - types
+        - platform
+        contains_lines:
+        - PROCESSOR --> HEADER_API
+        - PROCESSOR --> HEADER_WORKER
+        - void process_data()
+  files:
+    output_dir_exists: ./output
+    files_exist:
+      - ./output/model.json
+      - ./output/model_transformed.json
