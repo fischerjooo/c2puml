@@ -95,6 +95,6 @@ tests/unit/test_143_config_edges.py::TestConfigEdges::test_config_edges_cli PASS
 tests/unit/test_144_preprocessor_edges.py::TestPreprocessorEdges::test_preprocessor_edges_cli PASSED [ 98%]
 tests/unit/test_145_transformer_include_relations.py::TestTransformerIncludeRelations::test_transformer_include_relations_cli PASSED [100%]
 
-============================= 84 passed in 19.19s ==============================
+============================= 84 passed in 18.50s ==============================
 /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages/coverage/control.py:945: CoverageWarning: No data was collected. (no-data-collected)
   self._warn("No data was collected.", slug="no-data-collected")
