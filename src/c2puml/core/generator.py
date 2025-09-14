@@ -778,6 +778,19 @@ class Generator:
         """Generate field with proper handling of nested structures"""
         field_text = f"{field.type} {field.name}"
 
+        # Guard: skip suspicious statement-like content leaking into fields
+        # e.g., control flow or assignments (except function pointer declarators)
+        try:
+            if re.search(r"\b(if|for|while|switch|return|goto)\b", field_text):
+                return
+            if '=' in field_text and not re.search(r"\(\s*\*\s*\w+\s*\)", field_text):
+                return
+            # Skip generic parentheses (likely function calls) unless function pointer declarator
+            if '(' in field_text and not re.search(r"\(\s*\*", field_text):
+                return
+        except Exception:
+            pass
+
         # Check if this is a nested struct field with newlines
         if field.type.startswith("struct {") and "\n" in field.type:
             # Parse the nested struct content and flatten it
