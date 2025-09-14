@@ -1,7 +1,7 @@
-# Release Notes - v2025-09-14-patch_1
+# Release Notes - v2025.9.14.1
 
 ## Release Information
-- **Tag**: v2025-09-14-patch_1
+- **Tag**: v2025.9.14.1
 - **Date**: 2025-09-14
 - **Branch**: release
 
