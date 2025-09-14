@@ -85,7 +85,7 @@ class "array_of_anon_structs_t_items" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS <
 {
     + int int_data
     + float float_data
-    + array_of_anon_structs_t_items_point_data point_data
+    + item_value_point_data point_data
 }
 
 class "array_of_anon_structs_t_items_point_data" as TYPEDEF_ARRAY_OF_ANON_STRUCTS_T_ITEMS_POINT_DATA <<struct>> #LightYellow
@@ -169,7 +169,7 @@ class "complex_naming_test_t_second_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_SEC
 class "complex_naming_test_t_third_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT <<struct>> #LightYellow
 {
     + int struct_union_int
-    + complex_naming_test_t_third_struct_struct_union_struct struct_union_struct
+    + struct_union_struct_union_struct struct_union_struct
 }
 
 class "complex_naming_test_t_third_struct_struct_union_struct" as TYPEDEF_COMPLEX_NAMING_TEST_T_THIRD_STRUCT_STRUCT_UNION_STRUCT <<struct>> #LightYellow
@@ -222,7 +222,7 @@ class "extreme_nesting_test_t_level2_struct_1_level4_struct_2" as TYPEDEF_EXTREM
 
 class "extreme_nesting_test_t_level2_struct_2" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2 <<struct>> #LightYellow
 {
-    + extreme_nesting_test_t_level2_struct_2_mixed_struct mixed_struct
+    + mixed_union_mixed_struct mixed_struct
 }
 
 class "extreme_nesting_test_t_level2_struct_2_mixed_struct" as TYPEDEF_EXTREME_NESTING_TEST_T_LEVEL2_STRUCT_2_MIXED_STRUCT <<struct>> #LightYellow
