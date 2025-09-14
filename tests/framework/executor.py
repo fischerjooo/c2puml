@@ -229,6 +229,7 @@ class TestExecutor:
                     "-m",
                     "coverage",
                     "run",
+                    "--branch",
                     "-p",
                     main_script_path,
                     *args,

@@ -11,7 +11,7 @@
 <header>
     <div class="content">
         <h1>Coverage report:
-            <span class="pc_cov">79%</span>
+            <span class="pc_cov">77%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -27,6 +27,8 @@
                         <kbd>s</kbd>
                         <kbd>m</kbd>
                         <kbd>x</kbd>
+                        <kbd>b</kbd>
+                        <kbd>p</kbd>
                         <kbd>c</kbd>
                         &nbsp; change column sorting
                     </p>
@@ -55,7 +57,7 @@
         </h2>
         <p class="text">
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-14 16:38 +0000
+            created at 2025-09-14 17:06 +0000
         </p>
     </div>
 </header>
@@ -68,6 +70,8 @@
                 <th id="statements" aria-sort="none" data-default-sort-order="descending" data-shortcut="s">statements<span class="arrows"></span></th>
                 <th id="missing" aria-sort="none" data-default-sort-order="descending" data-shortcut="m">missing<span class="arrows"></span></th>
                 <th id="excluded" aria-sort="none" data-default-sort-order="descending" data-shortcut="x">excluded<span class="arrows"></span></th>
+                <th id="branches" aria-sort="none" data-default-sort-order="descending" data-shortcut="b">branches<span class="arrows"></span></th>
+                <th id="partial" aria-sort="none" data-default-sort-order="descending" data-shortcut="p">partial<span class="arrows"></span></th>
                 <th id="coverage" class="right" aria-sort="none" data-shortcut="c">coverage<span class="arrows"></span></th>
             </tr>
         </thead>
@@ -78,7 +82,9 @@
                 <td>10</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 10">80%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="9 12">75%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00___init___py.html">src/c2puml/__init__.py</a></td>
@@ -86,78 +92,98 @@
                 <td>23</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="23 23">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t46">src/c2puml/config.py</a></td>
                 <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t46"><data value='init__'>Config.__init__</data></a></td>
-                <td>52</td>
-                <td>18</td>
+                <td>47</td>
+                <td>14</td>
                 <td>0</td>
-                <td class="right" data-ratio="34 52">65%</td>
+                <td>46</td>
+                <td>19</td>
+                <td class="right" data-ratio="56 93">60%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t114">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t114"><data value='post_init__'>Config.__post_init__</data></a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t108">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t108"><data value='post_init__'>Config.__post_init__</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t118">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t118"><data value='compile_patterns'>Config._compile_patterns</data></a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t112">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t112"><data value='compile_patterns'>Config._compile_patterns</data></a></td>
                 <td>12</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 12">83%</td>
-            </tr>
-            <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t140">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t140"><data value='load'>Config.load</data></a></td>
-                <td>23</td>
-                <td>23</td>
+                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 23">0%</td>
+                <td class="right" data-ratio="14 16">88%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t179">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t179"><data value='save'>Config.save</data></a></td>
-                <td>6</td>
-                <td>6</td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t134">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t134"><data value='load'>Config.load</data></a></td>
+                <td>23</td>
+                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>16</td>
+                <td>4</td>
+                <td class="right" data-ratio="31 39">79%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t206">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t206"><data value='has_filters'>Config.has_filters</data></a></td>
-                <td>2</td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t173">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t173"><data value='save'>Config.save</data></a></td>
+                <td>6</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t215">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t215"><data value='should_include_file'>Config._should_include_file</data></a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t200">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t200"><data value='has_filters'>Config.has_filters</data></a></td>
+                <td>2</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t209">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t209"><data value='should_include_file'>Config._should_include_file</data></a></td>
                 <td>9</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 9">89%</td>
+                <td>0</td>
+                <td>10</td>
+                <td>0</td>
+                <td class="right" data-ratio="19 19">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t237">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t237"><data value='eq__'>Config.__eq__</data></a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t231">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t231"><data value='eq__'>Config.__eq__</data></a></td>
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t258">src/c2puml/config.py</a></td>
-                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t258"><data value='repr__'>Config.__repr__</data></a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t252">src/c2puml/config.py</a></td>
+                <td class="name left"><a href="z_732e0e464a642b00_config_py.html#t252"><data value='repr__'>Config.__repr__</data></a></td>
                 <td>0</td>
                 <td>0</td>
                 <td>5</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 0">100%</td>
             </tr>
             <tr class="region">
@@ -166,12 +192,16 @@
                 <td>34</td>
                 <td>0</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="34 34">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7___init___py.html">src/c2puml/core/__init__.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7___init___py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>6</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="6 6">100%</td>
@@ -182,7 +212,9 @@
                 <td>8</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 8">62%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 14">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t61">src/c2puml/core/generator.py</a></td>
@@ -190,7 +222,9 @@
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="17 17">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t99">src/c2puml/core/generator.py</a></td>
@@ -198,7 +232,9 @@
                 <td>18</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 18">100%</td>
+                <td>10</td>
+                <td>0</td>
+                <td class="right" data-ratio="28 28">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t137">src/c2puml/core/generator.py</a></td>
@@ -206,7 +242,9 @@
                 <td>10</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 10">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="18 18">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t179">src/c2puml/core/generator.py</a></td>
@@ -214,7 +252,9 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 3">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t202">src/c2puml/core/generator.py</a></td>
@@ -222,12 +262,16 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="11 11">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t228">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t228"><data value='load_model'>Generator._load_model</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -238,7 +282,9 @@
                 <td>27</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="26 27">96%</td>
+                <td>18</td>
+                <td>4</td>
+                <td class="right" data-ratio="40 45">89%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t238">src/c2puml/core/generator.py</a></td>
@@ -246,7 +292,9 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t291">src/c2puml/core/generator.py</a></td>
@@ -254,7 +302,9 @@
                 <td>19</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="19 19">100%</td>
+                <td>16</td>
+                <td>1</td>
+                <td class="right" data-ratio="34 35">97%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t332">src/c2puml/core/generator.py</a></td>
@@ -262,12 +312,16 @@
                 <td>17</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="16 17">94%</td>
+                <td>8</td>
+                <td>2</td>
+                <td class="right" data-ratio="22 25">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t363">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t363"><data value='format_global_variable'>Generator._format_global_variable</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -278,7 +332,9 @@
                 <td>22</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="21 22">95%</td>
+                <td>8</td>
+                <td>2</td>
+                <td class="right" data-ratio="27 30">90%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t401">src/c2puml/core/generator.py</a></td>
@@ -286,7 +342,9 @@
                 <td>19</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="17 19">89%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="25 27">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t430">src/c2puml/core/generator.py</a></td>
@@ -294,7 +352,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t439">src/c2puml/core/generator.py</a></td>
@@ -302,7 +362,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t448">src/c2puml/core/generator.py</a></td>
@@ -310,12 +372,16 @@
                 <td>11</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 11">82%</td>
+                <td>10</td>
+                <td>2</td>
+                <td class="right" data-ratio="15 21">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t471">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t471"><data value='generate_c_file_class'>Generator._generate_c_file_class</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -326,6 +392,8 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
@@ -334,7 +402,9 @@
                 <td>24</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="23 24">96%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="30 32">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t573">src/c2puml/core/generator.py</a></td>
@@ -342,7 +412,9 @@
                 <td>16</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="16 16">100%</td>
+                <td>12</td>
+                <td>0</td>
+                <td class="right" data-ratio="28 28">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t605">src/c2puml/core/generator.py</a></td>
@@ -350,12 +422,16 @@
                 <td>23</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 23">87%</td>
+                <td>18</td>
+                <td>1</td>
+                <td class="right" data-ratio="37 41">90%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t650">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t650"><data value='generate_typedef_classes'>Generator._generate_typedef_classes</data></a></td>
                 <td>4</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="4 4">100%</td>
@@ -366,7 +442,9 @@
                 <td>13</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 13">85%</td>
+                <td>10</td>
+                <td>3</td>
+                <td class="right" data-ratio="18 23">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t692">src/c2puml/core/generator.py</a></td>
@@ -374,7 +452,9 @@
                 <td>11</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 11">100%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="18 19">95%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t713">src/c2puml/core/generator.py</a></td>
@@ -382,7 +462,9 @@
                 <td>9</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 9">100%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="12 13">92%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t730">src/c2puml/core/generator.py</a></td>
@@ -390,7 +472,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t737">src/c2puml/core/generator.py</a></td>
@@ -398,7 +482,9 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 5">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t748">src/c2puml/core/generator.py</a></td>
@@ -406,12 +492,16 @@
                 <td>9</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 9">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="14 15">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t768">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t768"><data value='process_alias_content'>Generator._process_alias_content</data></a></td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="3 3">100%</td>
@@ -422,12 +512,16 @@
                 <td>20</td>
                 <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 20">45%</td>
+                <td>14</td>
+                <td>2</td>
+                <td class="right" data-ratio="15 34">44%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t817">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t817"><data value='generate_relationships'>Generator._generate_relationships</data></a></td>
                 <td>4</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="4 4">100%</td>
@@ -438,7 +532,9 @@
                 <td>20</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="19 20">95%</td>
+                <td>16</td>
+                <td>2</td>
+                <td class="right" data-ratio="33 36">92%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t878">src/c2puml/core/generator.py</a></td>
@@ -446,12 +542,16 @@
                 <td>16</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="16 16">100%</td>
+                <td>14</td>
+                <td>2</td>
+                <td class="right" data-ratio="28 30">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t909">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t909"><data value='get_file_uml_id'>Generator._get_file_uml_id</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -462,7 +562,9 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="14 14">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t925">src/c2puml/core/generator.py</a></td>
@@ -470,7 +572,9 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 5">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t948">src/c2puml/core/generator.py</a></td>
@@ -478,7 +582,9 @@
                 <td>14</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 14">93%</td>
+                <td>14</td>
+                <td>2</td>
+                <td class="right" data-ratio="25 28">89%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t975">src/c2puml/core/generator.py</a></td>
@@ -486,7 +592,9 @@
                 <td>19</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 19">95%</td>
+                <td>16</td>
+                <td>1</td>
+                <td class="right" data-ratio="33 35">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t1010">src/c2puml/core/generator.py</a></td>
@@ -494,7 +602,9 @@
                 <td>10</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 10">80%</td>
+                <td>8</td>
+                <td>2</td>
+                <td class="right" data-ratio="14 18">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html#t1029">src/c2puml/core/generator.py</a></td>
@@ -502,12 +612,16 @@
                 <td>7</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 7">86%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="11 13">85%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html">src/c2puml/core/generator.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_generator_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>59</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="59 59">100%</td>
@@ -518,7 +632,9 @@
                 <td>6</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 6">83%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="6 8">75%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t25">src/c2puml/core/parse_utils.py</a></td>
@@ -526,12 +642,16 @@
                 <td>10</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 10">90%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 12">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t39">src/c2puml/core/parse_utils.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t39"><data value='fix_array_bracket_spacing'>fix_array_bracket_spacing</data></a></td>
                 <td>4</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="4 4">100%</td>
@@ -542,6 +662,8 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
@@ -550,7 +672,9 @@
                 <td>12</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 12">92%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="18 20">90%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t80">src/c2puml/core/parse_utils.py</a></td>
@@ -558,7 +682,9 @@
                 <td>14</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="14 14">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="19 20">95%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t106">src/c2puml/core/parse_utils.py</a></td>
@@ -566,12 +692,16 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t114">src/c2puml/core/parse_utils.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html#t114"><data value='normalize_dim_value'>normalize_dim_value</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -582,12 +712,16 @@
                 <td>25</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="19 25">76%</td>
+                <td>12</td>
+                <td>4</td>
+                <td class="right" data-ratio="25 37">68%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html">src/c2puml/core/parse_utils.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parse_utils_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>12</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="12 12">100%</td>
@@ -598,6 +732,8 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
@@ -606,12 +742,16 @@
                 <td>71</td>
                 <td>31</td>
                 <td>0</td>
-                <td class="right" data-ratio="40 71">56%</td>
+                <td>28</td>
+                <td>8</td>
+                <td class="right" data-ratio="56 99">57%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t173">src/c2puml/core/parser.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t173"><data value='parse_file'>CParser.parse_file</data></a></td>
                 <td>20</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="20 20">100%</td>
@@ -622,7 +762,9 @@
                 <td>22</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 22">91%</td>
+                <td>12</td>
+                <td>2</td>
+                <td class="right" data-ratio="30 34">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t287">src/c2puml/core/parser.py</a></td>
@@ -630,7 +772,9 @@
                 <td>26</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="25 26">96%</td>
+                <td>16</td>
+                <td>4</td>
+                <td class="right" data-ratio="37 42">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t336">src/c2puml/core/parser.py</a></td>
@@ -638,7 +782,9 @@
                 <td>22</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 22">91%</td>
+                <td>10</td>
+                <td>1</td>
+                <td class="right" data-ratio="29 32">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t387">src/c2puml/core/parser.py</a></td>
@@ -646,7 +792,9 @@
                 <td>18</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="16 18">89%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="19 22">86%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t434">src/c2puml/core/parser.py</a></td>
@@ -654,7 +802,9 @@
                 <td>56</td>
                 <td>16</td>
                 <td>0</td>
-                <td class="right" data-ratio="40 56">71%</td>
+                <td>34</td>
+                <td>4</td>
+                <td class="right" data-ratio="64 90">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t549">src/c2puml/core/parser.py</a></td>
@@ -662,7 +812,9 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="12 13">92%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t561">src/c2puml/core/parser.py</a></td>
@@ -670,7 +822,9 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="12 13">92%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t576">src/c2puml/core/parser.py</a></td>
@@ -678,7 +832,9 @@
                 <td>12</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="12 12">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="20 20">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t602">src/c2puml/core/parser.py</a></td>
@@ -686,7 +842,9 @@
                 <td>10</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 10">100%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="17 18">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t616">src/c2puml/core/parser.py</a></td>
@@ -694,7 +852,9 @@
                 <td>10</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 10">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="18 18">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t630">src/c2puml/core/parser.py</a></td>
@@ -702,7 +862,9 @@
                 <td>10</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 10">100%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="17 18">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t644">src/c2puml/core/parser.py</a></td>
@@ -710,7 +872,9 @@
                 <td>11</td>
                 <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 11">0%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 19">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t705">src/c2puml/core/parser.py</a></td>
@@ -718,12 +882,16 @@
                 <td>37</td>
                 <td>15</td>
                 <td>0</td>
-                <td class="right" data-ratio="22 37">59%</td>
+                <td>16</td>
+                <td>4</td>
+                <td class="right" data-ratio="34 53">64%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t764">src/c2puml/core/parser.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t764"><data value='detect_encoding'>CParser._detect_encoding</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -734,7 +902,9 @@
                 <td>7</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 7">86%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="11 13">85%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t786">src/c2puml/core/parser.py</a></td>
@@ -742,7 +912,9 @@
                 <td>124</td>
                 <td>13</td>
                 <td>0</td>
-                <td class="right" data-ratio="111 124">90%</td>
+                <td>98</td>
+                <td>8</td>
+                <td class="right" data-ratio="195 222">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1041">src/c2puml/core/parser.py</a></td>
@@ -750,7 +922,9 @@
                 <td>23</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="22 23">96%</td>
+                <td>16</td>
+                <td>1</td>
+                <td class="right" data-ratio="37 39">95%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1084">src/c2puml/core/parser.py</a></td>
@@ -758,7 +932,9 @@
                 <td>14</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="12 14">86%</td>
+                <td>10</td>
+                <td>2</td>
+                <td class="right" data-ratio="20 24">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1120">src/c2puml/core/parser.py</a></td>
@@ -766,7 +942,9 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="12 12">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1134">src/c2puml/core/parser.py</a></td>
@@ -774,7 +952,9 @@
                 <td>18</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 18">100%</td>
+                <td>14</td>
+                <td>0</td>
+                <td class="right" data-ratio="32 32">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1162">src/c2puml/core/parser.py</a></td>
@@ -782,7 +962,9 @@
                 <td>15</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="14 15">93%</td>
+                <td>12</td>
+                <td>1</td>
+                <td class="right" data-ratio="25 27">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1183">src/c2puml/core/parser.py</a></td>
@@ -790,7 +972,9 @@
                 <td>86</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="83 86">97%</td>
+                <td>54</td>
+                <td>6</td>
+                <td class="right" data-ratio="131 140">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1308">src/c2puml/core/parser.py</a></td>
@@ -798,7 +982,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1315">src/c2puml/core/parser.py</a></td>
@@ -806,7 +992,9 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1324">src/c2puml/core/parser.py</a></td>
@@ -814,7 +1002,9 @@
                 <td>51</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="47 51">92%</td>
+                <td>44</td>
+                <td>10</td>
+                <td class="right" data-ratio="79 95">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1403">src/c2puml/core/parser.py</a></td>
@@ -822,12 +1012,16 @@
                 <td>105</td>
                 <td>48</td>
                 <td>0</td>
-                <td class="right" data-ratio="57 105">54%</td>
+                <td>62</td>
+                <td>13</td>
+                <td class="right" data-ratio="90 167">54%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1613">src/c2puml/core/parser.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1613"><data value='fix_array_bracket_spacing'>CParser._fix_array_bracket_spacing</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -838,12 +1032,16 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1621">src/c2puml/core/parser.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1621"><data value='clean_type_string'>CParser._clean_type_string</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -854,12 +1052,16 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1635">src/c2puml/core/parser.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html#t1635"><data value='init__'>Parser.__init__</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -870,7 +1072,9 @@
                 <td>55</td>
                 <td>9</td>
                 <td>0</td>
-                <td class="right" data-ratio="46 55">84%</td>
+                <td>22</td>
+                <td>4</td>
+                <td class="right" data-ratio="62 77">81%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_py.html">src/c2puml/core/parser.py</a></td>
@@ -878,12 +1082,16 @@
                 <td>51</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="49 51">96%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="50 53">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t11">src/c2puml/core/parser_anonymous_processor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t11"><data value='init__'>AnonymousTypedefProcessor.__init__</data></a></td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="3 3">100%</td>
@@ -894,7 +1102,9 @@
                 <td>10</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 10">100%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="13 14">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t38">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -902,7 +1112,9 @@
                 <td>9</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 9">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="15 15">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t55">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -910,7 +1122,9 @@
                 <td>15</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="15 15">100%</td>
+                <td>12</td>
+                <td>1</td>
+                <td class="right" data-ratio="26 27">96%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t89">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -918,7 +1132,9 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 3">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t99">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -926,7 +1142,9 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 3">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t109">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -934,12 +1152,16 @@
                 <td>32</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="30 32">94%</td>
+                <td>14</td>
+                <td>2</td>
+                <td class="right" data-ratio="42 46">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t163">src/c2puml/core/parser_anonymous_processor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t163"><data value='generate_anonymous_name'>AnonymousTypedefProcessor._generate_anonymous_name</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -950,6 +1172,8 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
@@ -958,12 +1182,16 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="9 10">90%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t186">src/c2puml/core/parser_anonymous_processor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t186"><data value='register_anonymous_structure'>AnonymousTypedefProcessor._register_anonymous_structure</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -974,12 +1202,16 @@
                 <td>27</td>
                 <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="16 27">59%</td>
+                <td>18</td>
+                <td>4</td>
+                <td class="right" data-ratio="24 45">53%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t246">src/c2puml/core/parser_anonymous_processor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t246"><data value='create_anonymous_struct'>AnonymousTypedefProcessor._create_anonymous_struct</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -990,6 +1222,8 @@
                 <td>2</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
@@ -998,7 +1232,9 @@
                 <td>57</td>
                 <td>18</td>
                 <td>0</td>
-                <td class="right" data-ratio="39 57">68%</td>
+                <td>34</td>
+                <td>7</td>
+                <td class="right" data-ratio="62 91">68%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t351">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1006,7 +1242,9 @@
                 <td>59</td>
                 <td>21</td>
                 <td>0</td>
-                <td class="right" data-ratio="38 59">64%</td>
+                <td>34</td>
+                <td>9</td>
+                <td class="right" data-ratio="55 93">59%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t447">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1014,7 +1252,9 @@
                 <td>28</td>
                 <td>28</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 28">0%</td>
+                <td>14</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 42">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t489">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1022,12 +1262,16 @@
                 <td>7</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 7">57%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="7 13">54%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t505">src/c2puml/core/parser_anonymous_processor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t505"><data value='replace_anonymous_struct_with_reference'>AnonymousTypedefProcessor._replace_anonymous_struct_with_reference</data></a></td>
                 <td>6</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="6 6">100%</td>
@@ -1038,7 +1282,9 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t542">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1046,7 +1292,9 @@
                 <td>89</td>
                 <td>57</td>
                 <td>0</td>
-                <td class="right" data-ratio="32 89">36%</td>
+                <td>62</td>
+                <td>8</td>
+                <td class="right" data-ratio="50 151">33%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t711">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1054,7 +1302,9 @@
                 <td>16</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="15 16">94%</td>
+                <td>12</td>
+                <td>1</td>
+                <td class="right" data-ratio="26 28">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t737">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1062,7 +1312,9 @@
                 <td>33</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="32 33">97%</td>
+                <td>28</td>
+                <td>5</td>
+                <td class="right" data-ratio="55 61">90%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t801">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1070,7 +1322,9 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 5">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 11">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t812">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1078,7 +1332,9 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="15 15">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t828">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1086,7 +1342,9 @@
                 <td>7</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 7">86%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="13 15">87%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t841">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1094,7 +1352,9 @@
                 <td>21</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 21">95%</td>
+                <td>14</td>
+                <td>2</td>
+                <td class="right" data-ratio="32 35">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t872">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1102,7 +1362,9 @@
                 <td>21</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="19 21">90%</td>
+                <td>14</td>
+                <td>3</td>
+                <td class="right" data-ratio="30 35">86%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t903">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1110,7 +1372,9 @@
                 <td>25</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="22 25">88%</td>
+                <td>14</td>
+                <td>5</td>
+                <td class="right" data-ratio="31 39">79%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html#t941">src/c2puml/core/parser_anonymous_processor.py</a></td>
@@ -1118,12 +1382,16 @@
                 <td>23</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 23">87%</td>
+                <td>14</td>
+                <td>5</td>
+                <td class="right" data-ratio="29 37">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html">src/c2puml/core/parser_anonymous_processor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_anonymous_processor_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>34</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="34 34">100%</td>
@@ -1134,12 +1402,16 @@
                 <td>0</td>
                 <td>0</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 0">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t129">src/c2puml/core/parser_tokenizer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t129"><data value='init__'>CTokenizer.__init__</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -1150,7 +1422,9 @@
                 <td>49</td>
                 <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="38 49">78%</td>
+                <td>20</td>
+                <td>4</td>
+                <td class="right" data-ratio="52 69">75%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t257">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1158,7 +1432,9 @@
                 <td>80</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="75 80">94%</td>
+                <td>40</td>
+                <td>3</td>
+                <td class="right" data-ratio="112 120">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t398">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1166,7 +1442,9 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 3">100%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 5">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t412">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1174,12 +1452,16 @@
                 <td>18</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="17 18">94%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="24 26">92%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t455">src/c2puml/core/parser_tokenizer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t455"><data value='init__'>StructureFinder.__init__</data></a></td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="3 3">100%</td>
@@ -1190,7 +1472,9 @@
                 <td>2</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="1 2">50%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t465">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1198,7 +1482,9 @@
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>10</td>
+                <td>0</td>
+                <td class="right" data-ratio="23 23">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t488">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1206,7 +1492,9 @@
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>10</td>
+                <td>0</td>
+                <td class="right" data-ratio="23 23">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t507">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1214,7 +1502,9 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="11 11">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t523">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1222,12 +1512,16 @@
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>10</td>
+                <td>0</td>
+                <td class="right" data-ratio="23 23">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t542">src/c2puml/core/parser_tokenizer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t542"><data value='current_token_is'>StructureFinder._current_token_is</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1238,6 +1532,8 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
             <tr class="region">
@@ -1246,12 +1542,16 @@
                 <td>5</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 5">80%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 7">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t559">src/c2puml/core/parser_tokenizer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t559"><data value='find_matching_brace'>StructureFinder._find_matching_brace</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -1262,7 +1562,9 @@
                 <td>70</td>
                 <td>13</td>
                 <td>0</td>
-                <td class="right" data-ratio="57 70">81%</td>
+                <td>54</td>
+                <td>8</td>
+                <td class="right" data-ratio="95 124">77%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t686">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1270,7 +1572,9 @@
                 <td>33</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="29 33">88%</td>
+                <td>18</td>
+                <td>4</td>
+                <td class="right" data-ratio="43 51">84%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t748">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1278,7 +1582,9 @@
                 <td>48</td>
                 <td>10</td>
                 <td>0</td>
-                <td class="right" data-ratio="38 48">79%</td>
+                <td>34</td>
+                <td>5</td>
+                <td class="right" data-ratio="61 82">74%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t830">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1286,7 +1592,9 @@
                 <td>12</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 12">92%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="16 18">89%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t855">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1294,7 +1602,9 @@
                 <td>45</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="42 45">93%</td>
+                <td>28</td>
+                <td>6</td>
+                <td class="right" data-ratio="64 73">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t985">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1302,7 +1612,9 @@
                 <td>9</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 9">67%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="9 15">60%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1004">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1310,7 +1622,9 @@
                 <td>21</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="17 21">81%</td>
+                <td>16</td>
+                <td>4</td>
+                <td class="right" data-ratio="29 37">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1037">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1318,7 +1632,9 @@
                 <td>24</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 24">83%</td>
+                <td>16</td>
+                <td>4</td>
+                <td class="right" data-ratio="32 40">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1085">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1326,7 +1642,9 @@
                 <td>29</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="24 29">83%</td>
+                <td>20</td>
+                <td>6</td>
+                <td class="right" data-ratio="38 49">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1144">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1334,7 +1652,9 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1156">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1342,7 +1662,9 @@
                 <td>228</td>
                 <td>21</td>
                 <td>0</td>
-                <td class="right" data-ratio="207 228">91%</td>
+                <td>172</td>
+                <td>42</td>
+                <td class="right" data-ratio="333 400">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1561">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1350,7 +1672,9 @@
                 <td>28</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="27 28">96%</td>
+                <td>22</td>
+                <td>7</td>
+                <td class="right" data-ratio="42 50">84%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html#t1601">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1358,7 +1682,9 @@
                 <td>26</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="25 26">96%</td>
+                <td>20</td>
+                <td>3</td>
+                <td class="right" data-ratio="42 46">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_parser_tokenizer_py.html">src/c2puml/core/parser_tokenizer.py</a></td>
@@ -1366,6 +1692,8 @@
                 <td>87</td>
                 <td>0</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="87 87">100%</td>
             </tr>
             <tr class="region">
@@ -1374,15 +1702,19 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t52">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t52"><data value='add_define'>PreprocessorEvaluator.add_define</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 5">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t58">src/c2puml/core/preprocessor.py</a></td>
@@ -1390,12 +1722,16 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t63">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t63"><data value='is_defined'>PreprocessorEvaluator.is_defined</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1406,6 +1742,8 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
@@ -1414,12 +1752,16 @@
                 <td>5</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 5">80%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 7">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t85">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t85"><data value='expand_defined_operator'>PreprocessorEvaluator._expand_defined_operator</data></a></td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="3 3">100%</td>
@@ -1430,23 +1772,29 @@
                 <td>2</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t98">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t98"><data value='expand_macros'>PreprocessorEvaluator._expand_macros</data></a></td>
                 <td>4</td>
+                <td>0</td>
+                <td>0</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 4">50%</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t107">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t107"><data value='evaluate_simple_expression'>PreprocessorEvaluator._evaluate_simple_expression</data></a></td>
                 <td>79</td>
-                <td>49</td>
+                <td>28</td>
                 <td>0</td>
-                <td class="right" data-ratio="30 79">38%</td>
+                <td>36</td>
+                <td>11</td>
+                <td class="right" data-ratio="76 115">66%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t228">src/c2puml/core/preprocessor.py</a></td>
@@ -1454,7 +1802,9 @@
                 <td>4</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 4">75%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t239">src/c2puml/core/preprocessor.py</a></td>
@@ -1462,7 +1812,9 @@
                 <td>35</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="29 35">83%</td>
+                <td>24</td>
+                <td>4</td>
+                <td class="right" data-ratio="45 59">76%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t314">src/c2puml/core/preprocessor.py</a></td>
@@ -1470,7 +1822,9 @@
                 <td>18</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 18">72%</td>
+                <td>16</td>
+                <td>1</td>
+                <td class="right" data-ratio="24 34">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t336">src/c2puml/core/preprocessor.py</a></td>
@@ -1478,7 +1832,9 @@
                 <td>14</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 14">93%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="20 22">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t355">src/c2puml/core/preprocessor.py</a></td>
@@ -1486,13 +1842,17 @@
                 <td>7</td>
                 <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t365">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t365"><data value='parse_undef'>PreprocessorEvaluator._parse_undef</data></a></td>
                 <td>3</td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
@@ -1502,7 +1862,9 @@
                 <td>25</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="20 25">80%</td>
+                <td>24</td>
+                <td>4</td>
+                <td class="right" data-ratio="38 49">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t411">src/c2puml/core/preprocessor.py</a></td>
@@ -1510,7 +1872,9 @@
                 <td>12</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="12 12">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="18 18">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t435">src/c2puml/core/preprocessor.py</a></td>
@@ -1518,7 +1882,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t446">src/c2puml/core/preprocessor.py</a></td>
@@ -1526,12 +1892,16 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="12 12">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t462">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t462"><data value='init__'>PreprocessorManager.__init__</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -1542,7 +1912,9 @@
                 <td>6</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 6">67%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 10">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html#t482">src/c2puml/core/preprocessor.py</a></td>
@@ -1550,12 +1922,16 @@
                 <td>6</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 6">33%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 12">42%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html">src/c2puml/core/preprocessor.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_preprocessor_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>48</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="48 48">100%</td>
@@ -1566,12 +1942,16 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t31">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t31"><data value='transform'>Transformer.transform</data></a></td>
                 <td>8</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="8 8">100%</td>
@@ -1582,7 +1962,9 @@
                 <td>9</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 9">67%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 11">64%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t61">src/c2puml/core/transformer.py</a></td>
@@ -1590,7 +1972,9 @@
                 <td>10</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 10">70%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 12">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t79">src/c2puml/core/transformer.py</a></td>
@@ -1598,7 +1982,9 @@
                 <td>9</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 9">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="13 13">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t100">src/c2puml/core/transformer.py</a></td>
@@ -1606,12 +1992,16 @@
                 <td>8</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 8">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="12 12">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t118">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t118"><data value='log_model_state_after_container'>Transformer._log_model_state_after_container</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -1622,12 +2012,16 @@
                 <td>7</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 7">86%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="13 15">87%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t145">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t145"><data value='discover_transformation_containers'>Transformer._discover_transformation_containers</data></a></td>
                 <td>4</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="4 4">100%</td>
@@ -1638,12 +2032,16 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="9 9">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t175">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t175"><data value='is_legacy_transformation_format'>Transformer._is_legacy_transformation_format</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1654,6 +2052,8 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
@@ -1662,7 +2062,9 @@
                 <td>10</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 10">80%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="11 14">79%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t221">src/c2puml/core/transformer.py</a></td>
@@ -1670,7 +2072,9 @@
                 <td>6</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 6">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="12 12">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t232">src/c2puml/core/transformer.py</a></td>
@@ -1678,7 +2082,9 @@
                 <td>9</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 9">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="13 13">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t257">src/c2puml/core/transformer.py</a></td>
@@ -1686,7 +2092,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t271">src/c2puml/core/transformer.py</a></td>
@@ -1694,7 +2102,9 @@
                 <td>4</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 4">50%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 6">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t285">src/c2puml/core/transformer.py</a></td>
@@ -1702,7 +2112,9 @@
                 <td>15</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="15 15">100%</td>
+                <td>12</td>
+                <td>1</td>
+                <td class="right" data-ratio="26 27">96%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t313">src/c2puml/core/transformer.py</a></td>
@@ -1710,7 +2122,9 @@
                 <td>15</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="15 15">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="21 21">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t346">src/c2puml/core/transformer.py</a></td>
@@ -1718,7 +2132,9 @@
                 <td>72</td>
                 <td>12</td>
                 <td>0</td>
-                <td class="right" data-ratio="60 72">83%</td>
+                <td>36</td>
+                <td>4</td>
+                <td class="right" data-ratio="92 108">85%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t500">src/c2puml/core/transformer.py</a></td>
@@ -1726,7 +2142,9 @@
                 <td>11</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 11">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="16 17">94%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t521">src/c2puml/core/transformer.py</a></td>
@@ -1734,7 +2152,9 @@
                 <td>18</td>
                 <td>18</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 18">0%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 26">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t564">src/c2puml/core/transformer.py</a></td>
@@ -1742,7 +2162,9 @@
                 <td>21</td>
                 <td>21</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 21">0%</td>
+                <td>18</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 39">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t593">src/c2puml/core/transformer.py</a></td>
@@ -1750,7 +2172,9 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t601">src/c2puml/core/transformer.py</a></td>
@@ -1758,7 +2182,9 @@
                 <td>7</td>
                 <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 11">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t611">src/c2puml/core/transformer.py</a></td>
@@ -1766,12 +2192,16 @@
                 <td>13</td>
                 <td>13</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 13">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 17">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t646">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t646"><data value='matches_any_pattern'>Transformer._matches_any_pattern</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1782,6 +2212,8 @@
                 <td>5</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 5">40%</td>
             </tr>
             <tr class="region">
@@ -1790,7 +2222,9 @@
                 <td>9</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 9">100%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="14 15">93%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t679">src/c2puml/core/transformer.py</a></td>
@@ -1798,7 +2232,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t698">src/c2puml/core/transformer.py</a></td>
@@ -1806,7 +2242,9 @@
                 <td>52</td>
                 <td>52</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 52">0%</td>
+                <td>42</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 94">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t784">src/c2puml/core/transformer.py</a></td>
@@ -1814,7 +2252,9 @@
                 <td>6</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 6">67%</td>
+                <td>6</td>
+                <td>2</td>
+                <td class="right" data-ratio="8 12">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t794">src/c2puml/core/transformer.py</a></td>
@@ -1822,7 +2262,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 14">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t807">src/c2puml/core/transformer.py</a></td>
@@ -1830,7 +2272,9 @@
                 <td>42</td>
                 <td>24</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 42">43%</td>
+                <td>34</td>
+                <td>7</td>
+                <td class="right" data-ratio="37 76">49%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t878">src/c2puml/core/transformer.py</a></td>
@@ -1838,7 +2282,9 @@
                 <td>45</td>
                 <td>9</td>
                 <td>0</td>
-                <td class="right" data-ratio="36 45">80%</td>
+                <td>36</td>
+                <td>9</td>
+                <td class="right" data-ratio="63 81">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t950">src/c2puml/core/transformer.py</a></td>
@@ -1846,7 +2292,9 @@
                 <td>7</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 7">86%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="9 11">82%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t962">src/c2puml/core/transformer.py</a></td>
@@ -1854,7 +2302,9 @@
                 <td>15</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="12 15">80%</td>
+                <td>6</td>
+                <td>2</td>
+                <td class="right" data-ratio="16 21">76%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t998">src/c2puml/core/transformer.py</a></td>
@@ -1862,7 +2312,9 @@
                 <td>16</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="16 16">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="22 22">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1036">src/c2puml/core/transformer.py</a></td>
@@ -1870,7 +2322,9 @@
                 <td>10</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 10">70%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="11 14">79%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1055">src/c2puml/core/transformer.py</a></td>
@@ -1878,12 +2332,16 @@
                 <td>11</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 11">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="19 19">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1062">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1062"><data value='create_renamed_alias'>Transformer._rename_typedefs.create_renamed_alias</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1894,12 +2352,16 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 5">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1082">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1082"><data value='get_function_name'>Transformer._rename_functions.get_function_name</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1910,6 +2372,8 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
@@ -1918,7 +2382,9 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 5">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1098">src/c2puml/core/transformer.py</a></td>
@@ -1926,7 +2392,9 @@
                 <td>6</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 6">83%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="7 10">70%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1106">src/c2puml/core/transformer.py</a></td>
@@ -1934,7 +2402,9 @@
                 <td>10</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 10">90%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="11 14">79%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1123">src/c2puml/core/transformer.py</a></td>
@@ -1942,12 +2412,16 @@
                 <td>5</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 5">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1128">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1128"><data value='get_global_name'>Transformer._rename_globals.get_global_name</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -1958,6 +2432,8 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
@@ -1966,7 +2442,9 @@
                 <td>4</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 4">50%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 6">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1152">src/c2puml/core/transformer.py</a></td>
@@ -1974,7 +2452,9 @@
                 <td>14</td>
                 <td>14</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 14">0%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 20">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1185">src/c2puml/core/transformer.py</a></td>
@@ -1982,7 +2462,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1200">src/c2puml/core/transformer.py</a></td>
@@ -1990,12 +2472,16 @@
                 <td>4</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 4">75%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1205">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1205"><data value='create_renamed_struct'>Transformer._rename_structs.create_renamed_struct</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2006,12 +2492,16 @@
                 <td>4</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 4">75%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1217">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1217"><data value='create_renamed_enum'>Transformer._rename_enums.create_renamed_enum</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2022,13 +2512,17 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1229">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1229"><data value='create_renamed_union'>Transformer._rename_unions.create_renamed_union</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -2038,7 +2532,9 @@
                 <td>29</td>
                 <td>27</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 29">7%</td>
+                <td>20</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 49">6%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1277">src/c2puml/core/transformer.py</a></td>
@@ -2046,7 +2542,9 @@
                 <td>5</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1291">src/c2puml/core/transformer.py</a></td>
@@ -2054,7 +2552,9 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 11">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1307">src/c2puml/core/transformer.py</a></td>
@@ -2062,7 +2562,9 @@
                 <td>4</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 4">100%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1326">src/c2puml/core/transformer.py</a></td>
@@ -2070,7 +2572,9 @@
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="20 21">95%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1355">src/c2puml/core/transformer.py</a></td>
@@ -2078,12 +2582,16 @@
                 <td>14</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="14 14">100%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="21 22">95%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1386">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1386"><data value='remove_typedefs'>Transformer._remove_typedefs</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2094,12 +2602,16 @@
                 <td>2</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1394">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1394"><data value='get_function_name'>Transformer._remove_functions.get_function_name</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2110,6 +2622,8 @@
                 <td>2</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
@@ -2118,12 +2632,16 @@
                 <td>6</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 6">83%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="7 10">70%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1415">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1415"><data value='remove_globals'>Transformer._remove_globals</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -2134,6 +2652,8 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
@@ -2142,7 +2662,9 @@
                 <td>13</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="13 13">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="21 21">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1445">src/c2puml/core/transformer.py</a></td>
@@ -2150,12 +2672,16 @@
                 <td>9</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 9">67%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 13">54%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1467">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1467"><data value='remove_structs'>Transformer._remove_structs</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2166,12 +2692,16 @@
                 <td>1</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1479">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1479"><data value='remove_unions'>Transformer._remove_unions</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2182,7 +2712,9 @@
                 <td>7</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="5 7">71%</td>
+                <td>8</td>
+                <td>4</td>
+                <td class="right" data-ratio="9 15">60%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1502">src/c2puml/core/transformer.py</a></td>
@@ -2190,7 +2722,9 @@
                 <td>7</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 7">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="9 9">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html#t1518">src/c2puml/core/transformer.py</a></td>
@@ -2198,12 +2732,16 @@
                 <td>5</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="3 5">60%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html">src/c2puml/core/transformer.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_transformer_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>75</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="75 75">100%</td>
@@ -2214,6 +2752,8 @@
                 <td>2</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
@@ -2222,7 +2762,9 @@
                 <td>12</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="12 12">100%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="18 18">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t55">src/c2puml/core/verifier.py</a></td>
@@ -2230,7 +2772,9 @@
                 <td>6</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 6">50%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="6 12">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t66">src/c2puml/core/verifier.py</a></td>
@@ -2238,7 +2782,9 @@
                 <td>24</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="21 24">88%</td>
+                <td>24</td>
+                <td>3</td>
+                <td class="right" data-ratio="42 48">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t112">src/c2puml/core/verifier.py</a></td>
@@ -2246,7 +2792,9 @@
                 <td>6</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 6">67%</td>
+                <td>6</td>
+                <td>2</td>
+                <td class="right" data-ratio="8 12">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t124">src/c2puml/core/verifier.py</a></td>
@@ -2254,7 +2802,9 @@
                 <td>9</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="6 9">67%</td>
+                <td>10</td>
+                <td>3</td>
+                <td class="right" data-ratio="13 19">68%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t143">src/c2puml/core/verifier.py</a></td>
@@ -2262,7 +2812,9 @@
                 <td>6</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 6">67%</td>
+                <td>6</td>
+                <td>2</td>
+                <td class="right" data-ratio="8 12">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t155">src/c2puml/core/verifier.py</a></td>
@@ -2270,12 +2822,16 @@
                 <td>10</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 10">70%</td>
+                <td>10</td>
+                <td>3</td>
+                <td class="right" data-ratio="14 20">70%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t175">src/c2puml/core/verifier.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t175"><data value='verify_global'>ModelVerifier._verify_global</data></a></td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="1 1">100%</td>
@@ -2286,7 +2842,9 @@
                 <td>6</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 6">50%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="6 12">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t192">src/c2puml/core/verifier.py</a></td>
@@ -2294,7 +2852,9 @@
                 <td>5</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 5">60%</td>
+                <td>6</td>
+                <td>2</td>
+                <td class="right" data-ratio="7 11">64%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t206">src/c2puml/core/verifier.py</a></td>
@@ -2302,7 +2862,9 @@
                 <td>10</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="7 10">70%</td>
+                <td>10</td>
+                <td>3</td>
+                <td class="right" data-ratio="14 20">70%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t232">src/c2puml/core/verifier.py</a></td>
@@ -2310,7 +2872,9 @@
                 <td>3</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 3">67%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 5">60%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t240">src/c2puml/core/verifier.py</a></td>
@@ -2318,7 +2882,9 @@
                 <td>12</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="10 12">83%</td>
+                <td>10</td>
+                <td>2</td>
+                <td class="right" data-ratio="18 22">82%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t270">src/c2puml/core/verifier.py</a></td>
@@ -2326,7 +2892,9 @@
                 <td>12</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 12">67%</td>
+                <td>10</td>
+                <td>4</td>
+                <td class="right" data-ratio="14 22">64%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html#t297">src/c2puml/core/verifier.py</a></td>
@@ -2334,12 +2902,16 @@
                 <td>9</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 9">89%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="15 17">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html">src/c2puml/core/verifier.py</a></td>
                 <td class="name left"><a href="z_a8b3cb5ca554c7b7_verifier_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>21</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="21 21">100%</td>
@@ -2350,6 +2922,8 @@
                 <td>2</td>
                 <td>0</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
@@ -2358,7 +2932,9 @@
                 <td>12</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 12">33%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 18">28%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_main_py.html#t50">src/c2puml/main.py</a></td>
@@ -2366,7 +2942,9 @@
                 <td>93</td>
                 <td>32</td>
                 <td>0</td>
-                <td class="right" data-ratio="61 93">66%</td>
+                <td>26</td>
+                <td>7</td>
+                <td class="right" data-ratio="74 119">62%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_main_py.html">src/c2puml/main.py</a></td>
@@ -2374,6 +2952,8 @@
                 <td>13</td>
                 <td>0</td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="13 13">100%</td>
             </tr>
             <tr class="region">
@@ -2382,6 +2962,8 @@
                 <td>0</td>
                 <td>0</td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 0">100%</td>
             </tr>
             <tr class="region">
@@ -2390,7 +2972,9 @@
                 <td>8</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="4 8">50%</td>
+                <td>8</td>
+                <td>4</td>
+                <td class="right" data-ratio="8 16">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t57">src/c2puml/models.py</a></td>
@@ -2398,7 +2982,9 @@
                 <td>6</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 6">50%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="6 12">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t78">src/c2puml/models.py</a></td>
@@ -2406,7 +2992,9 @@
                 <td>11</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="9 11">82%</td>
+                <td>10</td>
+                <td>2</td>
+                <td class="right" data-ratio="17 21">81%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t108">src/c2puml/models.py</a></td>
@@ -2414,7 +3002,9 @@
                 <td>2</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="1 2">50%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t119">src/c2puml/models.py</a></td>
@@ -2422,7 +3012,9 @@
                 <td>2</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="1 2">50%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t132">src/c2puml/models.py</a></td>
@@ -2430,7 +3022,9 @@
                 <td>3</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 3">67%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 5">60%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t152">src/c2puml/models.py</a></td>
@@ -2438,7 +3032,9 @@
                 <td>2</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="1 2">50%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t168">src/c2puml/models.py</a></td>
@@ -2446,7 +3042,9 @@
                 <td>4</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 4">50%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="4 8">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t194">src/c2puml/models.py</a></td>
@@ -2454,7 +3052,9 @@
                 <td>3</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="3 3">100%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t201">src/c2puml/models.py</a></td>
@@ -2462,7 +3062,9 @@
                 <td>24</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="24 24">100%</td>
+                <td>12</td>
+                <td>3</td>
+                <td class="right" data-ratio="33 36">92%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t244">src/c2puml/models.py</a></td>
@@ -2470,7 +3072,9 @@
                 <td>46</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="42 46">91%</td>
+                <td>16</td>
+                <td>4</td>
+                <td class="right" data-ratio="54 62">87%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t362">src/c2puml/models.py</a></td>
@@ -2478,7 +3082,9 @@
                 <td>4</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="2 4">50%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="4 8">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t369">src/c2puml/models.py</a></td>
@@ -2486,12 +3092,16 @@
                 <td>6</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t387">src/c2puml/models.py</a></td>
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t387"><data value='from_dict'>ProjectModel.from_dict</data></a></td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="2 2">100%</td>
@@ -2502,6 +3112,8 @@
                 <td>6</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
@@ -2510,7 +3122,9 @@
                 <td>23</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="23 23">100%</td>
+                <td>16</td>
+                <td>0</td>
+                <td class="right" data-ratio="39 39">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html#t453">src/c2puml/models.py</a></td>
@@ -2518,7 +3132,9 @@
                 <td>11</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="11 11">100%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="19 19">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_models_py.html">src/c2puml/models.py</a></td>
@@ -2526,6 +3142,8 @@
                 <td>88</td>
                 <td>0</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="88 88">100%</td>
             </tr>
             <tr class="region">
@@ -2534,13 +3152,17 @@
                 <td>20</td>
                 <td>12</td>
                 <td>0</td>
-                <td class="right" data-ratio="8 20">40%</td>
+                <td>8</td>
+                <td>2</td>
+                <td class="right" data-ratio="10 28">36%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_732e0e464a642b00_utils_py.html">src/c2puml/utils.py</a></td>
                 <td class="name left"><a href="z_732e0e464a642b00_utils_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>8</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="7 8">88%</td>
             </tr>
@@ -2549,10 +3171,12 @@
             <tr class="total">
                 <td class="name left">Total</td>
                 <td class="name left">&nbsp;</td>
-                <td>4762</td>
-                <td>977</td>
+                <td>4757</td>
+                <td>921</td>
                 <td>14</td>
-                <td class="right" data-ratio="3785 4762">79%</td>
+                <td>2578</td>
+                <td>445</td>
+                <td class="right" data-ratio="5661 7335">77%</td>
             </tr>
         </tfoot>
     </table>
@@ -2564,7 +3188,7 @@
     <div class="content">
         <p>
             <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
-            created at 2025-09-14 16:38 +0000
+            created at 2025-09-14 17:06 +0000
         </p>
     </div>
     <aside class="hidden">
