@@ -308,6 +308,9 @@ class AnonymousTypedefProcessor:
             if '=' in decl and not re.search(r"\(\s*\*\s*\w+\s*\)", decl):
                 # Allow function pointer syntax '( *name )' but skip other '=' assignments
                 continue
+            # Skip any lines containing parentheses (likely function calls) unless function pointer declarator
+            if '(' in decl and not re.search(r"\(\s*\*", decl):
+                continue
 
             # Remove trailing semicolon
             decl = decl.rstrip(';').strip()
